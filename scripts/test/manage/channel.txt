@@ -1,0 +1,31 @@
+--新增频道
+method:POST
+http://localhost:8080/manage/channel
+{
+"name":"新闻"
+}
+
+--修改频道
+method:PUT
+http://localhost:8080/manage/channel
+{
+ "id":"01dddb0534b54fd4a5cd1fd411441cbf",
+ "name":"新闻1",
+ "showOrder": 1
+ }
+
+ --得到频道
+ method:GET
+ http://localhost:8080/manage/channel/01dddb0534b54fd4a5cd1fd411441cbf
+
+ --发布频道
+ method:PUT
+ http://localhost:8080/manage/channel/01dddb0534b54fd4a5cd1fd411441cbf/open
+
+--关闭频道
+method:PUT
+http://localhost:8080/manage/channel/01dddb0534b54fd4a5cd1fd411441cbf/close
+
+--得到子频道
+method:GET
+http://localhost:8080/manage/channel/01dddb0534b54fd4a5cd1fd411441cbf/children

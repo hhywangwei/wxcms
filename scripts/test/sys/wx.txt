@@ -1,0 +1,7 @@
+--新增站点
+http://localhost:8080/sys/wx/deploy
+method:post
+{
+"id":"393e82297b514996beba689bcc1dc61c",
+"templateId":1
+}

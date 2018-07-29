@@ -1,0 +1,32 @@
+--http://localhost:8080/manage/article
+POST
+{
+  "channelId":"b99a81a3220b4c1b9cd6e3346152f049",
+  "title":"测试1",
+  "shortTitle":"测试一",
+  "subTitle":"测试111",
+  "content":"非常快",
+  "catalogs": ["新闻"],
+  "tag":"hot",
+  "showOrder":1
+}
+
+--http://localhost:8080/manage/article
+PUT
+{
+  "id":"2affcf43b64a49308230ea83cbb253bb",
+  "title":"测试22222222222",
+  "shortTitle":"测试一",
+  "subTitle":"测试111",
+  "content":"非常快xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "catalogs": ["新闻"],
+  "tag":"hot",
+  "author":"wangwei",
+  "showOrder":1
+}
+
+--http://localhost:8080/manage/article/2affcf43b64a49308230ea83cbb253bb
+GET
+
+--http://localhost:8080/manage/goods/9118780a3ca24985b98e565e8b06a19b
+DELETE

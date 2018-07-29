@@ -1,0 +1,108 @@
+spring:
+  appliation:
+    name: cms-server
+    description: cms server application
+    author: <a href="mailto:hhywangwei@gmail.com">WangWei</a>
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    multipart:
+      enabled: true
+      file-size-threshold: 0
+      max-file-size: 15MB
+      max-request-siz: 18MB
+  mvc:
+    date-format: yyyy-MM-dd HH:mm:ss
+    favicon:
+      enabled: false
+  jackson:
+      date-format: yyyy-MM-dd HH:mm:ss
+      default-property-inclusion: non_null
+      deserialization:
+        FAIL_ON_UNKNOWN_PROPERTIES: false
+      time-zone: GMT+8
+  datasource:
+      type: com.zaxxer.hikari.HikariDataSource
+      username: dev
+      password: appeme_com
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://gz-cdb-3plbi3ut.sql.tencentcdb.com:62462/cms_db?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+      hikari:
+        maximum-pool-size: 20
+        idle-timeout: 3600000
+        max-lifetime: 21600000
+        data-source-properties:
+          cache-prep-stmts: true
+          useServerPrepStmts: true
+          prep-stmt-cache-size: 250
+          prep-stmt-cache-sql-limit: 2048
+  flyway:
+    locations: classpath:/db
+    enabled: true
+
+  data:
+    redis:
+      repositories:
+        enabled: false
+  redis:
+    url: redis://linku456258@203.195.237.87:6379
+    timeout: 10000
+    pool:
+      maxActive: 10
+      maxIdle: 10
+      maxWait: -1
+      minIdle: 5
+
+server:
+  port: 8080
+  compression:
+    enabled: true
+    mime-types: text/html,application/json
+
+upload:
+  max: 3
+  root: d:/data
+  baseUrl: http://127.0.0.1/file
+  maxImageLength: 716800
+  thumbWidth: 256
+  thumbPrefix: _thumb_
+  orgiPrefix: _orgi_
+
+wx:
+  component:
+    appid: wx55673486a4379678
+    secret: 09b8f183b1af1dfe124bdd41a2bae7eb
+    validate_token: tuoshecx_2018
+    encoding_aes_key: AYqzeDHisHtdqADPMPeeCPRpEoKZjTMktHxTzXIOXMP
+    redirect_uri: http://api.tuoshecx.com/wx/component/authorizer
+    success_uri: http://manage.tuoshecx.com/wx/auth_success.html
+    fail_uri: http://manage.tuoshecx.com/wx/auth_fail.html
+  small:
+    msg_templates:
+    - id: AT0009
+      call_key: order_pay_success
+      keyword_ids: [45, 47, 2, 3]
+      remark: 订单支付成功通知
+    - id: AT0357
+      call_key: group_success
+      keyword_ids: [1, 17, 2]
+      remark: 团购成功通知
+    - id: AT0323
+      call_key: group_fail
+      keyword_ids: [1, 4, 5]
+      remark: 团购失败通知
+    - id: AT1075
+      call_key: second_kill_success
+      keyword_ids: [5, 4, 8]
+      remark: 秒杀成功通知
+  pay:
+    mchid: 1494207272
+    key: Hw0Mrm9QAGIn2r9DyxdP6rU1tmXp2CgJ
+    bill-create-ip: 8.8.8.8
+    notify-url: https://api.tuoshecx.com/wx/pay/notify
+    pay_type: shop
+
+tencent:
+  map_key: L2XBZ-L7LWD-GAV46-H23SI-KAGJF-KRFUN

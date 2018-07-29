@@ -1,0 +1,19 @@
+http://localhost:8080/manage/account
+method: get
+
+--修改店员
+PUT
+http://localhost:8080/manage/account
+{
+"name":"王伟",
+"phone":"18601689972",
+"roles": ["ROLE_SHOP_USER"]
+}
+
+--修改密码
+PUT
+http://localhost:8080/manage/account/updatePassword
+{
+"password":"12345678",
+"newPassword":"123456789"
+}
