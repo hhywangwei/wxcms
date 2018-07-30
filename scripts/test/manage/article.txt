@@ -2,6 +2,7 @@
 POST
 {
   "channelId":"b99a81a3220b4c1b9cd6e3346152f049",
+  "author":"test",
   "title":"测试1",
   "shortTitle":"测试一",
   "subTitle":"测试111",
@@ -28,5 +29,25 @@ PUT
 --http://localhost:8080/manage/article/2affcf43b64a49308230ea83cbb253bb
 GET
 
---http://localhost:8080/manage/goods/9118780a3ca24985b98e565e8b06a19b
+--http://localhost:8080/manage/article/2affcf43b64a49308230ea83cbb253bb/release
+PUT
+
+--http://localhost:8080/manage/article/2affcf43b64a49308230ea83cbb253bb/close
+PUT
+
+
+--http://localhost:8080/manage/article/move
+POST
+{
+"id":"0ff19dd77c3e49aab0397a8f4710c3f9",
+"toChannelId":"65a01b532b944d4298abc5fe017ecc3a"
+}
+
+--http://localhost:8080/manage/article/copy
+{
+"id":"0ff19dd77c3e49aab0397a8f4710c3f9",
+"toChannelId":"65a01b532b944d4298abc5fe017ecc3a"
+}
+
+--http://localhost:8080/manage/article/2affcf43b64a49308230ea83cbb253bb
 DELETE

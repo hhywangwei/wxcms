@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS base_sys (
 
 --初始化系统管理员
 INSERT INTO base_sys(id, username, password, name, roles, is_manager, is_enable, is_delete, update_time, create_time)
-VALUES ("1", "admin", "12345678", "admin", "ROLE_SYS", 1, 1, 0, now(), now());
+SELECT "1", "admin", "12345678", "admin", "ROLE_SYS", 1, 1, 0, now(), now() FROM DUAL
+WHERE NOT EXISTS (SELECT * FROM base_sys WHERE id = "1");
 
 --========================================================================
 --上传文件
@@ -255,6 +256,8 @@ CREATE TABLE IF NOT EXISTS site_article (
   state ENUM('REEDIT','RELEASE','CLOSE') COLLATE utf8_bin NOT NULL COMMENT '文章状态',
   show_order INTEGER DEFAULT 9999 COMMENT '显示排序',
   is_top  TINYINT DEFAULT 0 NOT NULL COMMENT '是否顶置',
+  read_count INTEGER DEFAULT 0 NOT NULL COMMENT '阅读次数',
+  good_count INTEGER DEFAULT 0 NOT NULL COMMENT '点赞次数',
   is_delete TINYINT DEFAULT 0 NOT NULL COMMENT '是否删除',
   update_time DATETIME NOT NULL COMMENT '修改时间',
   create_time DATETIME NOT NULL COMMENT '创建时间',
@@ -319,7 +322,8 @@ CREATE TABLE IF NOT EXISTS wx_small_domain (
 
 --初始配置信息
 INSERT INTO wx_small_domain (id, request_domain, wsrequest_domain, upload_domain, download_domain, web_view_domain)
-VALUES ('10000', 'https://api.tuoshecx.com', 'wss://api.tuoshecx.com', 'https://api.tuoshecx.com', 'https://api.tuoshecx.com', 'https://tuoshecx.com');
+SELECT '10000', 'https://api.tuoshecx.com', 'wss://api.tuoshecx.com', 'https://api.tuoshecx.com', 'https://api.tuoshecx.com', 'https://tuoshecx.com' FROM DUAL
+WHERE NOT EXISTS (SELECT * FROM wx_small_domain WHERE id = '10000');
 
 --=========================================================================
 --微信小程序模板配置
@@ -341,7 +345,8 @@ CREATE TABLE IF NOT EXISTS wx_small_configure (
 
 --初始缺省配置
 INSERT INTO wx_small_configure (id, template_id, ext, ext_pages, pages, window, tab_bar, debug, create_time)
-VALUES ('1000', -1, '', '', '', '', '', 0, now());
+SELECT '1000', -1, '', '', '', '', '', 0, now() FROM DUAL
+WHERE NOT EXISTS (SELECT * FROM wx_small_configure WHERE id = '1000');
 
 --=========================================================================
 --微信小程序发布
@@ -399,4 +404,5 @@ CREATE TABLE IF NOT EXISTS wx_small_audit_configure (
 
 --初始审核缺省信息
 INSERT INTO wx_small_audit_configure (id, site_id, appid, title, address, tag, first_id, first_class, second_id, second_class, create_time)
-VALUES ('1', '*', '*', '首页', 'pages/index/index', '营销', 150, '生活服务', '666', '休闲娱乐', now());
+SELECT '1', '*', '*', '首页', 'pages/index/index', '营销', 150, '生活服务', '666', '休闲娱乐', now()
+WHERE NOT EXISTS (SELECT * FROM wx_small_audit_configure WHERE id = '1');

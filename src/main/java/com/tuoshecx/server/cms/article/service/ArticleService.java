@@ -50,6 +50,8 @@ public class ArticleService {
     public Article save(Article t){
         t.setId(IdGenerators.uuid());
         t.setState(Article.State.REEDIT);
+        t.setReadCount(0);
+        t.setGoodCount(0);
         if(t.getTop() == null){
             t.setTop(Boolean.FALSE);
         }
@@ -105,9 +107,10 @@ public class ArticleService {
         if(StringUtils.equals(t.getSiteId(), toChannelId)){
             throw new BaseException("不能移动到文章所在频道");
         }
-        Article o = save(t);
+        t.setId(IdGenerators.uuid());
+        dao.insert(t);
         dao.delete(id);
-        return o;
+        return get(t.getId());
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -116,7 +119,10 @@ public class ArticleService {
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("文章不存在");
         }
-        if(dao.updateState(id, Article.State.RELEASE)){
+        if(t.getState() == Article.State.RELEASE){
+            throw new BaseException("文章已经发布");
+        }
+        if(!dao.updateState(id, Article.State.RELEASE)){
             throw new BaseException("发布文章失败");
         }
         return get(id);
@@ -128,7 +134,10 @@ public class ArticleService {
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("文章不存在");
         }
-        if(dao.updateState(id, Article.State.CLOSE)){
+        if(t.getState() == Article.State.CLOSE){
+            throw new BaseException("文章已经关闭");
+        }
+        if(!dao.updateState(id, Article.State.CLOSE)){
             throw new BaseException("文章关闭失败");
         }
         return get(id);
