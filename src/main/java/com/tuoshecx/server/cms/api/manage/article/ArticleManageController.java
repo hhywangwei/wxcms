@@ -24,6 +24,11 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
+/**
+ * 文章管理API接口
+ *
+ * @author <a href="mailto:hhywangwei@gmail.com">WangWei</a>
+ */
 @RestController
 @RequestMapping("/manage/article")
 @Api(value = "/manage/article", tags = "M-文章管理")

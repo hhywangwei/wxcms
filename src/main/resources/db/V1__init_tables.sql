@@ -203,12 +203,12 @@ CREATE TABLE IF NOT EXISTS site_user (
 --===========================================================================
 CREATE TABLE IF NOT EXISTS site_channel (
   id CHAR(32) COLLATE utf8_bin NOT NULL,
-  parent_id CHAR(32) COLLATE utf8_bin NOT NULL COMMENT '',
-  site_id CHAR(32) COLLATE utf8_bin NOT NULL COMMENT '',
-  name VARCHAR(20) COLLATE utf8_bin NOT NULL COMMENT '',
-  icon VARCHAR(200) COLLATE utf8_bin COMMENT '',
-  template VARCHAR(50) COLLATE utf8_bin NOT NULL COMMENT '',
-  show_order INTEGER DEFAULT 9999,
+  parent_id CHAR(32) COLLATE utf8_bin NOT NULL COMMENT '上级编号',
+  site_id CHAR(32) COLLATE utf8_bin NOT NULL COMMENT '站点编号',
+  name VARCHAR(20) COLLATE utf8_bin NOT NULL COMMENT '频道名称',
+  icon VARCHAR(200) COLLATE utf8_bin COMMENT '频道图标',
+  template VARCHAR(50) COLLATE utf8_bin NOT NULL COMMENT '显示模板',
+  show_order INTEGER DEFAULT 9999 COMMENT '显示排序',
   state ENUM('WAIT','OPEN','CLOSE') COLLATE utf8_bin NOT NULL COMMENT '频道状态',
   is_delete TINYINT DEFAULT 0 NOT NULL COMMENT '是否删除',
   update_time DATETIME NOT NULL COMMENT '修改时间',

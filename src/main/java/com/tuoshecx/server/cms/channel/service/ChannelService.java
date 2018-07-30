@@ -46,10 +46,8 @@ public class ChannelService {
     public Channel save(Channel t){
         if(isRoot(t.getParentId())){
             t.setParentId(ROOT_ID);
-        }else{
-            if(!dao.has(t.getParentId())){
-                throw new BaseException("上级频道不存在");
-            }
+        }else if(!dao.has(t.getParentId())){
+            throw new BaseException("上级频道不存在");
         }
 
         t.setId(IdGenerators.uuid());
@@ -60,13 +58,21 @@ public class ChannelService {
 
     private boolean isRoot(String id){
         return StringUtils.isBlank(id) ||
-                StringUtils.endsWithIgnoreCase(id, ROOT_ID);
+                StringUtils.equalsIgnoreCase(id, ROOT_ID);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Channel update(Channel t){
         Channel o = get(t.getId());
 
+        if(!StringUtils.equals(o.getParentId(), t.getParentId())){
+            if(isRoot(t.getParentId())){
+                t.setParentId(ROOT_ID);
+            }else if(!dao.has(t.getParentId())){
+                throw new BaseException("上级频道不存在");
+            }
+        }
+        o.setParentId(t.getParentId());
         o.setName(t.getName());
         o.setIcon(t.getIcon());
         o.setShowOrder(t.getShowOrder());
