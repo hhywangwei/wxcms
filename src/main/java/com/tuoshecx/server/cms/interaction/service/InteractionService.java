@@ -66,17 +66,19 @@ public class InteractionService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Interaction updateOrgan(String id, String organId, String siteId){
-        Interaction t = get(id);
-        if(!StringUtils.equals(t.getSiteId(), siteId)){
+    public Interaction update(Interaction t){
+        Interaction o = get(t.getId());
+        if(!StringUtils.equals(t.getSiteId(), o.getSiteId())){
             throw new BaseException("互动不存在");
         }
 
-        Organization o = organService.get(organId);
-        if(dao.updateOrgan(id, o.getId(), o.getName())){
-            return get(id);
+        Organization organ= organService.get(t.getOrganId());
+        t.setOrganId(organ.getId());
+        t.setOrganName(organ.getName());
+        if(dao.update(t)){
+            return get(t.getId());
         }else{
-            throw new BaseException("修改组织错误");
+            throw new BaseException("修改政民错误");
         }
     }
 

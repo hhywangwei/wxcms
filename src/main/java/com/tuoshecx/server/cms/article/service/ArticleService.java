@@ -79,6 +79,32 @@ public class ArticleService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
+    public Article top(String id, Boolean isTop, String siteId){
+        Article o = get(id);
+        if(!StringUtils.equals(siteId, o.getSiteId())){
+            throw new BaseException("文章不存在");
+        }
+        if(dao.top(id, isTop)){
+            return get(id);
+        }else{
+            throw new BaseException("设置文章置顶失败");
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Article showOrder(String id, Integer showOrder, String siteId){
+        Article o = get(id);
+        if(!StringUtils.equals(siteId, o.getSiteId())){
+            throw new BaseException("文章不存在");
+        }
+        if(dao.showOrder(id, showOrder)){
+            return get(id);
+        }else{
+            throw new BaseException("设置文章显示顺序失败");
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
     public Article copy(String id, String toChannelId, String siteId){
         Article t = get(id);
         if(!StringUtils.equals(t.getSiteId(), siteId)){

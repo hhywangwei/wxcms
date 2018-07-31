@@ -109,6 +109,16 @@ public class ArticleDao {
         return jdbcTemplate.update(sql, state.name(), DaoUtils.timestamp(new Date()), id) > 0;
     }
 
+    public boolean showOrder(String id, Integer showOrder){
+        final String sql = "UPDATE site_article SET show_order = ?, update_time = ? WHERE id = ? AND is_delete = false";
+        return jdbcTemplate.update(sql, showOrder, DaoUtils.timestamp(new Date()), id) > 0;
+    }
+
+    public boolean top(String id, boolean isTop){
+        final String sql = "UPDATE site_article SET is_top = ?, update_time = ? WHERE id = ? AND is_delete = false";
+        return jdbcTemplate.update(sql, isTop, DaoUtils.timestamp(new Date()), id) > 0;
+    }
+
     public Article findOne(String id){
         final String sql = "SELECT * FROM site_article WHERE id = ? AND is_delete = false";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, mapper);

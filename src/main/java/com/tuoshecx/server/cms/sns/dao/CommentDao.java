@@ -47,7 +47,7 @@ public class CommentDao {
     }
 
     public void insert(Comment t){
-        final String sql = "INSERT INTO site_comment (id, site_id, user_id, nickname, head_img, ref_id, ref_detail, " +
+        final String sql = "INSERT INTO sns_comment (id, site_id, user_id, nickname, head_img, ref_id, ref_detail, " +
                 "content, images, state, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getUserId(), t.getNickname(), t.getHeadImg(), t.getRefId(),
                 t.getRefDetail(), t.getContent(), DaoUtils.join(t.getImages()), Comment.State.WAIT.name(),
@@ -55,23 +55,23 @@ public class CommentDao {
     }
 
     public boolean updateState(String id, Comment.State state){
-        final String sql = "UPDATE site_comment SET state = ? WHERE id = ?";
+        final String sql = "UPDATE sns_comment SET state = ? WHERE id = ?";
         return jdbcTemplate.update(sql, state.name(), id) > 0;
     }
 
     public Comment findOne(String id){
-        final String sql = "SELECT * FROM site_comment WHERE = id";
+        final String sql = "SELECT * FROM sns_comment WHERE = id";
         return jdbcTemplate.queryForObject(sql, new Object[]{id},mapper);
     }
 
     public List<Comment> find(String refId, int offset, int limit){
-        final String sql = "SELECT * FROM site_comment WHERE ref_id = ? ORDER BY create_time DESC LIMIT ? OFFSET ?";
+        final String sql = "SELECT * FROM sns_comment WHERE ref_id = ? ORDER BY create_time DESC LIMIT ? OFFSET ?";
         return jdbcTemplate.query(sql, new Object[]{refId, limit, offset}, mapper);
     }
 
     public Long count(String nickname, String refDetail, Comment.State state){
         final StringBuilder sql = new StringBuilder(100);
-        sql.append("SELECT COUNT(id) FROM site_comment ");
+        sql.append("SELECT COUNT(id) FROM sns_comment ");
         buildWhere(sql, nickname, refDetail, state);
 
         return jdbcTemplate.queryForObject(sql.toString(), params(nickname, refDetail, state), Long.class);
@@ -106,7 +106,7 @@ public class CommentDao {
 
     public List<Comment> find(String nickname, String refDetail, Comment.State state, int offset, int limit){
         final StringBuilder sql = new StringBuilder(100);
-        sql.append("SELECT * FROM site_comment ");
+        sql.append("SELECT * FROM sns_comment ");
         buildWhere(sql, nickname, refDetail, state);
         sql.append(" ORDER BY create_time DESC LIMIT ? OFFSET ?");
 

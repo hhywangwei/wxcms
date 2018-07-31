@@ -62,7 +62,14 @@ public class InteractionDao {
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getUserId(), t.getNickname(), t.getHeadImg(),
                 t.getOrganId(), t.getOrganName(), t.getTitle(), t.getAction().name(), t.getContent(), DaoUtils.join(t.getImages()),
                 t.getOpen(), t.getTop(), t.getShowOrder(), DaoUtils.timestamp(new Date()));
-    };
+    }
+
+    public boolean update(Interaction t){
+        final String sql = "UPDATE site_interaction SET organ_id = ?, organ_name = ?, title = ?, action = ?, content = ?," +
+                "images = ?, is_open = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, t.getOrganId(), t.getOrganName(), t.getTitle(), t.getAction().name(), t.getContent(),
+                DaoUtils.join(t.getImages()), t.getOpen(), t.getId()) > 0;
+    }
 
     public boolean updateOrgan(String id, String organId, String organName){
         final String sql = "UPDATE site_interaction WHERE SET organ_id = ? AND organ_name = ? WHERE id = ?";
