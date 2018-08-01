@@ -100,17 +100,17 @@ public class ArticleManageController {
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询文章")
     public ResultPageVo<Article> query(@RequestParam(required = false) @ApiParam("站点编号") String siteId,
+                                       @RequestParam(required = false) @ApiParam("频道编号") String channelId,
                                        @RequestParam(required = false) @ApiParam("状态") String state,
                                        @RequestParam(required = false) @ApiParam("标题") String title,
-                                       @RequestParam(required = false) @ApiParam("是否顶置") Boolean top,
                                        @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                        @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
 
         try{
             Article.State stateObj = Article.State.valueOf(state);
-            List<Article> data = service.query(siteId, stateObj, title, top, page * rows, rows);
+            List<Article> data = service.query(siteId, channelId, stateObj, title, page * rows, rows);
             return new ResultPageVo.Builder<>(page, rows, data)
-                    .count(true, () -> service.count(siteId, stateObj, title, top))
+                    .count(true, () -> service.count(siteId, channelId, stateObj, title))
                     .build();
         }catch (Exception e){
             throw new BaseException("文章状态错误");

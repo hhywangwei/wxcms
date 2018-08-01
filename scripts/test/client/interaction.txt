@@ -1,10 +1,33 @@
 --创建政民互动
-
 POST
 http://localhost:8080/client/interaction
 {
+ "organId":"ab571873a3504693bc32fc8d267f2986",
+ "title":"测试",
+ "action":"CONSULT",
+ "content":"sdfdsfsdfafdasfsdfsdfsfsdfa"
+ }
+
+ --修改政民互动
+ PUT
+ http://localhost:8080/client/interaction
+{
+"id":"6c6e29a1f37c4ba3a5deb8c0ae454acf",
 "organId":"ab571873a3504693bc32fc8d267f2986",
 "title":"测试",
 "action":"CONSULT",
-"content":"sdfdsfsdfafdasfsdfsdfsfsdfa"
+"content":"xxxxxxxxxxxxxxxxddddddddddddewwwwwwwwddddddddddddddddddddddd",
+"open":false
 }
+
+--得到政民互动
+GET
+http://localhost:8080/client/interaction/6c6e29a1f37c4ba3a5deb8c0ae454acf
+
+--评论
+http://localhost:8080/client/interaction/comment
+{
+"id":"6c6e29a1f37c4ba3a5deb8c0ae454acf",
+"content":"oooooooooooooooooooooooooooo"
+}
+

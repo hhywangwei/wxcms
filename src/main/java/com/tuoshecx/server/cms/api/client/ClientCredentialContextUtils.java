@@ -64,7 +64,7 @@ public class ClientCredentialContextUtils {
         Credential credential = getCredential();
 
         if(!isWxEnter(credential.getEnter())){
-            throw new BaseException("非微信登陆，无微信openid");
+            return "-1";
         }
 
         return attacheValue(credential, OPENID_KEY)

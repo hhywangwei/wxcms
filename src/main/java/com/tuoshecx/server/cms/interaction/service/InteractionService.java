@@ -65,6 +65,7 @@ public class InteractionService {
         t.setNickname(u.getNickname());
         t.setHeadImg(u.getHeadImg());
         t.setTop(false);
+        t.setShowOrder(9999);
 
         if(StringUtils.isNotBlank(t.getOrganId())){
             Organization o = organService.get(t.getOrganId());
@@ -84,9 +85,6 @@ public class InteractionService {
     @Transactional(propagation = Propagation.REQUIRED)
     public Interaction update(Interaction t){
         Interaction o = get(t.getId());
-        if(!StringUtils.equals(t.getSiteId(), o.getSiteId())){
-            throw new BaseException("互动不存在");
-        }
         if(!StringUtils.equals(t.getUserId(), o.getUserId())){
             throw new BaseException("互动不存在");
         }
@@ -133,7 +131,7 @@ public class InteractionService {
             throw new BaseException("互动不存在");
         }
 
-        if(dao.updateState(id, Interaction.State.REPLAY)){
+        if(dao.updateState(id, Interaction.State.REPLY)){
             dao.reply(id, replay);
             return get(id);
             //TODO 操作日志
@@ -200,8 +198,11 @@ public class InteractionService {
         return goodService.good(userId, id);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<Interaction> query(String siteId, String title, int offset, int limit){
         return dao.find(siteId, title, offset, limit);
+    }
+
+    public List<Interaction> queryByUserId(String userId, int offset, int limit){
+        return dao.findByUserId(userId, offset, limit);
     }
 }

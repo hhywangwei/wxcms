@@ -25,7 +25,7 @@ public class ReadService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public boolean save(String openid, String refId){
+    public boolean read(String openid, String refId){
         if(has(openid, refId)){
             return false;
         }

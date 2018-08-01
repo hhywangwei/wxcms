@@ -67,10 +67,10 @@ public class ChannelManageController {
         return ResultVo.success(new OkVo(service.delete(id, currentSiteId())));
     }
 
-    @GetMapping(value = "{parentId}/children", produces = APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "{id}/children", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询子频道")
-    public ResultVo<Collection<Channel>> queryChildren(@PathVariable("parentId")String parentId){
-        Collection<Channel> children = service.queryChildren(parentId, null);
+    public ResultVo<Collection<Channel>> queryChildren(@PathVariable("id")String id){
+        Collection<Channel> children = service.queryChildren(currentSiteId(), id, null);
         return ResultVo.success(children);
     }
 

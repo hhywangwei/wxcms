@@ -79,9 +79,11 @@ public class ChannelDao {
         return count != null && count > 0;
     }
 
-    public List<Channel> findChildren(String parentId, Channel.State state){
-        final String sql = "SELECT * FROM site_channel WHERE parent_id = ? AND state LIKE ? Order By show_order ASC, create_time ASC";
+    public List<Channel> findChildren(String siteId, String parentId, Channel.State state){
+        final String sql = "SELECT * FROM site_channel WHERE site_id = ? AND  parent_id = ? " +
+                "AND state LIKE ? Order By show_order ASC, create_time ASC";
+
         String stateLike = state == null? "%" : state.name();
-        return jdbcTemplate.query(sql, new Object[]{parentId, stateLike}, mapper);
+        return jdbcTemplate.query(sql, new Object[]{siteId, parentId, stateLike}, mapper);
     }
 }

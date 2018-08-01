@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS site_interaction (
   is_top TINYINT DEFAULT 0 NOT NULL COMMENT '1:置顶',
   show_order INTEGER DEFAULT 9999 COMMENT '显示排序',
   reply VARCHAR(1000) COLLATE utf8_bin COMMENT '回复',
-  state ENUM('WAIT', 'HANDING', 'REPLAY', 'REFUSE') COLLATE utf8_bin NOT NULL COMMENT '状态',
+  state ENUM('WAIT', 'HANDING', 'REPLY', 'REFUSE') COLLATE utf8_bin NOT NULL COMMENT '状态',
   reply_time DATETIME COMMENT '回复时间',
   create_time DATETIME NOT NULL COMMENT '创建时间',
   PRIMARY KEY (id),

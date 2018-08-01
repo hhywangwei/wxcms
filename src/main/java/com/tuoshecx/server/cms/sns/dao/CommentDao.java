@@ -60,7 +60,7 @@ public class CommentDao {
     }
 
     public Comment findOne(String id){
-        final String sql = "SELECT * FROM sns_comment WHERE = id";
+        final String sql = "SELECT * FROM sns_comment WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id},mapper);
     }
 

@@ -130,7 +130,7 @@ public class ChannelService {
         }
     }
 
-    public List<Channel> queryChildren(String parentId, Channel.State state){
-        return dao.findChildren(parentId, state);
+    public List<Channel> queryChildren(String siteId, String parentId, Channel.State state){
+        return dao.findChildren(siteId, parentId, state);
     }
 }

@@ -5,6 +5,7 @@ import com.tuoshecx.server.cms.api.client.ClientCredentialContextUtils;
 import com.tuoshecx.server.cms.api.client.interaction.form.InteractionCommentForm;
 import com.tuoshecx.server.cms.api.client.interaction.form.InteractionSaveForm;
 import com.tuoshecx.server.cms.api.client.interaction.form.InteractionUpdateForm;
+import com.tuoshecx.server.cms.api.client.interaction.vo.InteractionVo;
 import com.tuoshecx.server.cms.api.vo.OkVo;
 import com.tuoshecx.server.cms.api.vo.ResultPageVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
@@ -12,6 +13,9 @@ import com.tuoshecx.server.cms.interaction.domain.Interaction;
 import com.tuoshecx.server.cms.interaction.service.InteractionService;
 import com.tuoshecx.server.cms.security.Credential;
 import com.tuoshecx.server.cms.sns.domain.Comment;
+import com.tuoshecx.server.cms.sns.domain.Counter;
+import com.tuoshecx.server.cms.sns.service.CounterService;
+import com.tuoshecx.server.cms.sns.service.ReadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -22,8 +26,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 /**
@@ -38,6 +42,12 @@ public class InteractionController {
 
     @Autowired
     private InteractionService service;
+
+    @Autowired
+    private CounterService counterService;
+
+    @Autowired
+    private ReadService readService;
 
     @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("新增政民活动")
@@ -59,8 +69,13 @@ public class InteractionController {
 
     @GetMapping(value = "{id}", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("得到政民互动")
-    public ResultVo<Interaction> get(@PathVariable("id")String id){
-        return ResultVo.success(service.get(id));
+    public ResultVo<InteractionVo> get(@PathVariable("id")String id){
+        Optional<Counter> optional = counterService.getOptional(id);
+        Interaction t = service.get(id);
+        readService.read(getOpenid(), id);
+        return ResultVo.success(optional
+                .map(e -> new InteractionVo(t, e.getReadCount(), e.getGoodCount()))
+                .orElseGet(() -> new InteractionVo(t, 0, 0)));
     }
 
     @PostMapping(value = "comment", consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
@@ -94,5 +109,9 @@ public class InteractionController {
 
     private Credential getCredential(){
         return ClientCredentialContextUtils.getCredential();
+    }
+
+    private String getOpenid(){
+        return ClientCredentialContextUtils.currentOpenid();
     }
 }

@@ -59,22 +59,22 @@ public class CounterDao {
     }
 
     public void incRead(String refId, int count){
-        final String sql = "UPDATE sns_counter SET read_count = read_count + 1, update_time = now() WHERE ref_id = ?";
+        final String sql = "UPDATE sns_counter SET read_count = read_count + ?, update_time = now() WHERE ref_id = ?";
         jdbcTemplate.update(sql, count, refId);
     }
 
     public void incGood(String refId, int count){
-        final String sql = "UPDATE sns_counter SET good_count = good_count + 1, update_time = now() WHERE ref_id = ?";
+        final String sql = "UPDATE sns_counter SET good_count = good_count + ?, update_time = now() WHERE ref_id = ?";
         jdbcTemplate.update(sql, count, refId);
     }
 
     public void incComment(String refId, int count){
-        final String sql = "UPDATE sns_counter SET comment_count = comment_count + 1, update_time = now() WHERE ref_id =?";
+        final String sql = "UPDATE sns_counter SET comment_count = comment_count + ?, update_time = now() WHERE ref_id =?";
         jdbcTemplate.update(sql, count, refId);
     }
 
     public void incShare(String refId, int count){
-        final String sql = "UPDATE sns_counter SET share_count = share_count + 1, update_time = now() WHERE ref_id =?";
+        final String sql = "UPDATE sns_counter SET share_count = share_count + ?, update_time = now() WHERE ref_id =?";
         jdbcTemplate.update(sql, count, refId);
     }
 

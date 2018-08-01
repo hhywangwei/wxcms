@@ -151,7 +151,7 @@ public class InteractionDao {
     }
 
     public List<Interaction> find(String siteId, String title, int offset, int limit){
-        final String sql = "SELECT * FROM site_interaction WHERE site_id = ? AND state IN ('HANDING', 'REPLAY') AND open = true " +
+        final String sql = "SELECT * FROM site_interaction WHERE site_id = ? AND state IN ('HANDING', 'REPLY') AND is_open = true " +
                 "AND title LIKE ? ORDER BY is_top DESC, show_order ASC, create_time DESC LIMIT ? OFFSET ?";
 
         return jdbcTemplate.query(sql, new Object[]{siteId, DaoUtils.like(title), limit, offset}, mapper);

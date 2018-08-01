@@ -51,7 +51,7 @@ public class Interaction {
     private Date createTime;
 
     public enum  State {
-        WAIT, HANDING, REPLAY, REFUSE
+        WAIT, HANDING, REPLY, REFUSE
     }
 
     public enum Action {
