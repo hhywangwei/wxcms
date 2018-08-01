@@ -20,11 +20,13 @@ public class GoodService {
 
     private final GoodDao dao;
     private final UserService userService;
+    private final CounterService counterService;
 
     @Autowired
-    public GoodService(GoodDao dao, UserService userService) {
+    public GoodService(GoodDao dao, UserService userService, CounterService counterService) {
         this.dao = dao;
         this.userService = userService;
+        this.counterService = counterService;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -42,6 +44,9 @@ public class GoodService {
             t.setHeadImg(u.getHeadImg());
             t.setRefId(refId);
             dao.insert(t);
+
+            counterService.incGood(refId, 1);
+
             return true;
         }catch (DataAccessException e){
             LOGGER.error("Good fail, error is {}", e.getMessage());
@@ -55,6 +60,10 @@ public class GoodService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public boolean unGood(String userId, String refId){
-        return dao.delete(userId, refId);
+        boolean ok = dao.delete(userId, refId);
+        if(ok){
+            counterService.incGood(refId, -1);
+        }
+        return ok;
     }
 }

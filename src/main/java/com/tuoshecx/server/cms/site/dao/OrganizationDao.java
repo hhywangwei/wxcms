@@ -41,41 +41,41 @@ public class OrganizationDao {
     }
 
     public void insert(Organization t){
-        final String sql = "INSERT INTO base_organization (id, site_id, name, icon, show_order, remark, parent_id, create_time) " +
+        final String sql = "INSERT INTO site_organization (id, site_id, name, icon, show_order, remark, parent_id, create_time) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getName(), t.getIcon(), t.getShowOrder(), t.getRemark(),
                 t.getParentId(), DaoUtils.timestamp(new Date()));
     }
 
     public boolean update(Organization t){
-        final String sql = "UPDATE base_organization SET name = ?, icon = ?, show_order = ?, remark = ?, parent_id = ? WHERE id = ?";
+        final String sql = "UPDATE site_organization SET name = ?, icon = ?, show_order = ?, remark = ?, parent_id = ? WHERE id = ?";
         return jdbcTemplate.update(sql, t.getName(), t.getIcon(), t.getShowOrder(), t.getRemark(), t.getParentId(), t.getId()) > 0;
     }
 
     public boolean delete(String id){
-        final String sql = "DELETE FROM base_organization WHERE id = ?";
+        final String sql = "DELETE FROM site_organization WHERE id = ?";
         return jdbcTemplate.update(sql, id) > 0;
     }
 
     public Organization findOne(String id){
-        final String sql = "SELECT * FROM base_organization WHERE id = ?";
+        final String sql = "SELECT * FROM site_organization WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, mapper);
     }
 
     public boolean has(String id){
-        final String sql= "SELECT COUNT(id) FROM base_organization WHERE id = ?";
+        final String sql= "SELECT COUNT(id) FROM site_organization WHERE id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, new Object[]{id}, Integer.class);
         return count != null && count > 0;
     }
 
     public boolean hasChildren(String parentId){
-        final String sql = "SELECT COUNT(id) FROM base_organization WHERE parent_id = ?";
+        final String sql = "SELECT COUNT(id) FROM site_organization WHERE parent_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, new Object[]{parentId}, Integer.class);
         return count != null && count > 0;
     }
 
     public List<Organization> findChildren(String parentId){
-        final String sql = "SELECT * FROM base_organization WHERE parent_id = ? ORDER BY  show_order ASC, create_time ASC";
+        final String sql = "SELECT * FROM site_organization WHERE parent_id = ? ORDER BY  show_order ASC, create_time ASC";
         return jdbcTemplate.query(sql, new Object[]{parentId}, mapper);
     }
 }

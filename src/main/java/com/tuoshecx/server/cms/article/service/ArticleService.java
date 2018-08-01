@@ -7,6 +7,7 @@ import com.tuoshecx.server.cms.channel.domain.Channel;
 import com.tuoshecx.server.cms.channel.service.ChannelService;
 import com.tuoshecx.server.cms.common.id.IdGenerators;
 import com.tuoshecx.server.cms.common.utils.HtmlUtils;
+import com.tuoshecx.server.cms.sns.service.CounterService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +31,14 @@ public class ArticleService {
 
     private final ArticleDao dao;
     private final ChannelService channelService;
+    private final CounterService counterService;
 
     @Autowired
-    public ArticleService(ArticleDao dao, ChannelService channelService) {
+    public ArticleService(ArticleDao dao, ChannelService channelService,
+                          CounterService counterService) {
         this.dao = dao;
         this.channelService = channelService;
+        this.counterService = counterService;
     }
 
     public Article get(String id){
@@ -50,8 +54,6 @@ public class ArticleService {
     public Article save(Article t){
         t.setId(IdGenerators.uuid());
         t.setState(Article.State.REEDIT);
-        t.setReadCount(0);
-        t.setGoodCount(0);
         if(t.getTop() == null){
             t.setTop(Boolean.FALSE);
         }
@@ -62,7 +64,14 @@ public class ArticleService {
             t.setSummary(HtmlUtils.text(t.getContent(), 150));
         }
         dao.insert(t);
+
+        counterService.newEmpty(t.getId(), refDetail(t.getTitle()));
+
         return dao.findOne(t.getId());
+    }
+
+    private String refDetail(String title){
+        return "[文章] " + title;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -75,6 +84,9 @@ public class ArticleService {
             t.setSummary(HtmlUtils.text(t.getContent(), 150));
         }
         dao.update(t);
+
+        counterService.updateDetail(t.getId(), refDetail(t.getTitle()));
+
         return get(t.getId());
     }
 

@@ -25,11 +25,13 @@ import java.util.List;
 public class CommentService {
     private final CommentDao dao;
     private final UserService userService;
+    private final CounterService counterService;
 
     @Autowired
-    public CommentService(CommentDao dao, UserService userService) {
+    public CommentService(CommentDao dao, UserService userService, CounterService counterService) {
         this.dao = dao;
         this.userService = userService;
+        this.counterService = counterService;
     }
 
     public Comment get(String id){
@@ -58,6 +60,7 @@ public class CommentService {
         t.setImages(images);
 
         dao.insert(t);
+        counterService.incComment(t.getRefId(), 1);
 
         return get(t.getId());
     }

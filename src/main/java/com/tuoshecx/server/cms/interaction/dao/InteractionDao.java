@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,14 +36,12 @@ public class InteractionDao {
         t.setAction(Interaction.Action.valueOf(r.getString("action")));
         t.setContent(r.getString("content"));
         t.setImages(DaoUtils.toArray(r.getString("images")));
-        t.setReadCount(r.getInt("read_count"));
-        t.setGoodCount(r.getInt("good_count"));
-        t.setCommentCount(r.getInt("comment_count"));
         t.setOpen(r.getBoolean("is_open"));
+        t.setState(Interaction.State.valueOf(r.getString("state")));
         t.setTop(r.getBoolean("is_top"));
         t.setShowOrder(r.getInt("show_order"));
-        t.setReplay(r.getString("replay"));
-        t.setReplayTime(r.getTimestamp("reply_time"));
+        t.setReply(r.getString("reply"));
+        t.setReplyTime(r.getTimestamp("reply_time"));
         t.setCreateTime(r.getTimestamp("create_time"));
 
         return t;
@@ -57,11 +54,11 @@ public class InteractionDao {
 
     public void insert(Interaction t){
         final String sql = "INSERT INTO site_interaction (id, site_id, user_id, nickname, head_img, organ_id, organ_name," +
-                " title, action, content, images, is_open, is_top, show_order, create_time) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " title, action, content, images, is_open, is_top, show_order, state, create_time) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getUserId(), t.getNickname(), t.getHeadImg(),
                 t.getOrganId(), t.getOrganName(), t.getTitle(), t.getAction().name(), t.getContent(), DaoUtils.join(t.getImages()),
-                t.getOpen(), t.getTop(), t.getShowOrder(), DaoUtils.timestamp(new Date()));
+                t.getOpen(), t.getTop(), t.getShowOrder(), Interaction.State.WAIT.name(), DaoUtils.timestamp(new Date()));
     }
 
     public boolean update(Interaction t){
@@ -70,12 +67,6 @@ public class InteractionDao {
         return jdbcTemplate.update(sql, t.getOrganId(), t.getOrganName(), t.getTitle(), t.getAction().name(), t.getContent(),
                 DaoUtils.join(t.getImages()), t.getOpen(), t.getId()) > 0;
     }
-
-    public boolean updateOrgan(String id, String organId, String organName){
-        final String sql = "UPDATE site_interaction WHERE SET organ_id = ? AND organ_name = ? WHERE id = ?";
-        return jdbcTemplate.update(sql, organId, organName, id) > 0;
-    }
-
 
     public boolean updateState(String id, Interaction.State state){
         final String sql ="UPDATE site_interaction SET state = ? WHERE id = ?";
@@ -92,24 +83,9 @@ public class InteractionDao {
         return jdbcTemplate.update(sql, showOrder, id) > 0;
     }
 
-    public boolean replay(String id, String replay){
-        final String sql = "UPDATE site_interaction SET replay = ? WHERE id = ?";
-        return jdbcTemplate.update(sql, replay, id) > 0;
-    }
-
-    public boolean incReadCount(String id, int count){
-        final String sql = "UPDATE site_interaction SET read_count = read_count + ? WHERE id = ?";
-        return jdbcTemplate.update(sql, count, id) > 0;
-    }
-
-    public boolean incGoodCount(String id, int count){
-        final String sql = "UPDATE site_interaction SET good_count = good_count + ? WHERE id = ?";
-        return jdbcTemplate.update(sql, count, id) > 0;
-    }
-
-    public boolean incCommentCount(String id, int count){
-        final String sql = "UPDATE set_interaction SET comment_count = comment_count + 1 WHERE id = ?";
-        return jdbcTemplate.update(sql, count, id) > 0;
+    public boolean reply(String id, String reply){
+        final String sql = "UPDATE site_interaction SET reply = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, reply, id) > 0;
     }
 
     public Interaction findOne(String id){
@@ -174,11 +150,11 @@ public class InteractionDao {
         return jdbcTemplate.query(sql.toString(), params, mapper);
     }
 
-    public List<Interaction> find(String title, int offset, int limit){
-        final String sql = "SELECT * FROM site_interaction WHERE state IN ('HANDING', 'REPLAY') AND open = true " +
+    public List<Interaction> find(String siteId, String title, int offset, int limit){
+        final String sql = "SELECT * FROM site_interaction WHERE site_id = ? AND state IN ('HANDING', 'REPLAY') AND open = true " +
                 "AND title LIKE ? ORDER BY is_top DESC, show_order ASC, create_time DESC LIMIT ? OFFSET ?";
 
-        return jdbcTemplate.query(sql, new Object[]{DaoUtils.like(title), limit, offset}, mapper);
+        return jdbcTemplate.query(sql, new Object[]{siteId, DaoUtils.like(title), limit, offset}, mapper);
     }
 
     public List<Interaction> findByUserId(String userId, int offset, int limit){

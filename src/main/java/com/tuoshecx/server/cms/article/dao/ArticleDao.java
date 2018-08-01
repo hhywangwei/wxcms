@@ -43,8 +43,6 @@ public class ArticleDao {
         t.setComment(r.getBoolean("is_comment"));
         t.setShowOrder(r.getInt("show_order"));
         t.setTop(r.getBoolean("is_top"));
-        t.setReadCount(r.getInt("read_count"));
-        t.setGoodCount(r.getInt("good_count"));
         t.setUpdateTime(r.getTimestamp("update_time"));
         t.setCreateTime(r.getTimestamp("create_time"));
 
@@ -81,12 +79,12 @@ public class ArticleDao {
         Date now = new Date();
         final String sql = "INSERT INTO site_article (id, site_id, channel_id, title, short_title, sub_title, " +
                 "author, origin, keywords, catalogs, tag, summary, content, image, is_comment, template, state, " +
-                "show_order, is_top, read_count, good_count, update_time, create_time) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "show_order, is_top, update_time, create_time) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getChannelId(), t.getTitle(), t.getShortTitle(), t.getSubTitle(),
                 t.getAuthor(), t.getOrigin(), DaoUtils.join(t.getKeywords()), DaoUtils.join(t.getCatalogs()),  t.getTag(),
                 t.getSummary(), t.getContent(), t.getImage(), t.getComment(), t.getTemplate(), t.getState().name(),
-                t.getShowOrder(), t.getTop(), t.getReadCount(), t.getGoodCount(), now, now);
+                t.getShowOrder(), t.getTop(), now, now);
     }
 
     public boolean update(Article t){
@@ -122,16 +120,6 @@ public class ArticleDao {
     public Article findOne(String id){
         final String sql = "SELECT * FROM site_article WHERE id = ? AND is_delete = false";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, mapper);
-    }
-
-    public void incReadCount(String id, int count){
-        final String sql = "UPDATE site_article SET read_count = read_count + ? WHERE id = ? AND is_delete = false";
-        jdbcTemplate.update(sql, count, id);
-    }
-
-    public void incGoodsCount(String id, int count){
-        final String sql = "UPDATE site_article SET good_count = good_count + ? WHERE id =? AND is_delete = false";
-        jdbcTemplate.update(sql, count, id);
     }
 
     public Long count(String siteId, Article.State state, String title, Boolean isTop){

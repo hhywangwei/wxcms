@@ -1,0 +1,5 @@
+http://localhost:8080/manage/organization
+method: POST
+{
+"name":"财政局"
+}

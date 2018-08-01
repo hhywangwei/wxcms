@@ -53,10 +53,6 @@ public class Article {
     private Boolean comment;
     @ApiModelProperty("是否顶置")
     private Boolean top;
-    @ApiModelProperty("阅读数")
-    private Integer readCount;
-    @ApiModelProperty("点赞数")
-    private Integer goodCount;
     @ApiModelProperty("修改时间")
     private Date updateTime;
     @ApiModelProperty("创建时间")
@@ -218,22 +214,6 @@ public class Article {
         this.top = top;
     }
 
-    public Integer getReadCount() {
-        return readCount;
-    }
-
-    public void setReadCount(Integer readCount) {
-        this.readCount = readCount;
-    }
-
-    public Integer getGoodCount() {
-        return goodCount;
-    }
-
-    public void setGoodCount(Integer goodCount) {
-        this.goodCount = goodCount;
-    }
-
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -274,8 +254,6 @@ public class Article {
                 Objects.equals(showOrder, article.showOrder) &&
                 Objects.equals(comment, article.comment) &&
                 Objects.equals(top, article.top) &&
-                Objects.equals(readCount, article.readCount) &&
-                Objects.equals(goodCount, article.goodCount) &&
                 Objects.equals(updateTime, article.updateTime) &&
                 Objects.equals(createTime, article.createTime);
     }
@@ -283,7 +261,7 @@ public class Article {
     @Override
     public int hashCode() {
         int result = Objects.hash(id, siteId, channelId, title, shortTitle, subTitle, author, origin, tag, summary,
-                content, image, template, state, showOrder, comment, top, readCount, goodCount, updateTime, createTime);
+                content, image, template, state, showOrder, comment, top, updateTime, createTime);
         result = 31 * result + Arrays.hashCode(keywords);
         result = 31 * result + Arrays.hashCode(catalogs);
         return result;
@@ -311,8 +289,6 @@ public class Article {
                 .append("showOrder", showOrder)
                 .append("comment", comment)
                 .append("top", top)
-                .append("readCount", readCount)
-                .append("goodCount", goodCount)
                 .append("updateTime", updateTime)
                 .append("createTime", createTime)
                 .toString();

@@ -36,21 +36,17 @@ public class Interaction {
     @ApiModelProperty("互动图片")
     private String[] images;
     @ApiModelProperty("回复")
-    private String replay;
+    private String reply;
     @ApiModelProperty("是否公开互动")
     private Boolean open;
-    @ApiModelProperty("阅读人数")
-    private Integer readCount;
-    @ApiModelProperty("点赞人数")
-    private Integer goodCount;
-    @ApiModelProperty("评论人数")
-    private Integer commentCount;
+    @ApiModelProperty("互动状态")
+    private State state;
     @ApiModelProperty("是否置顶")
     private Boolean top;
     @ApiModelProperty("显示顺序")
     private Integer showOrder;
     @ApiModelProperty("回复时间")
-    private Date replayTime;
+    private Date replyTime;
     @ApiModelProperty("创建时间")
     private Date createTime;
 
@@ -150,12 +146,12 @@ public class Interaction {
         this.images = images;
     }
 
-    public String getReplay() {
-        return replay;
+    public String getReply() {
+        return reply;
     }
 
-    public void setReplay(String replay) {
-        this.replay = replay;
+    public void setReply(String reply) {
+        this.reply = reply;
     }
 
     public Boolean getOpen() {
@@ -166,28 +162,12 @@ public class Interaction {
         this.open = open;
     }
 
-    public Integer getReadCount() {
-        return readCount;
+    public State getState() {
+        return state;
     }
 
-    public void setReadCount(Integer readCount) {
-        this.readCount = readCount;
-    }
-
-    public Integer getGoodCount() {
-        return goodCount;
-    }
-
-    public void setGoodCount(Integer goodCount) {
-        this.goodCount = goodCount;
-    }
-
-    public Integer getCommentCount() {
-        return commentCount;
-    }
-
-    public void setCommentCount(Integer commentCount) {
-        this.commentCount = commentCount;
+    public void setState(State state) {
+        this.state = state;
     }
 
     public Boolean getTop() {
@@ -206,12 +186,12 @@ public class Interaction {
         this.showOrder = showOrder;
     }
 
-    public Date getReplayTime() {
-        return replayTime;
+    public Date getReplyTime() {
+        return replyTime;
     }
 
-    public void setReplayTime(Date replayTime) {
-        this.replayTime = replayTime;
+    public void setReplyTime(Date replyTime) {
+        this.replyTime = replyTime;
     }
 
     public Date getCreateTime() {
@@ -238,20 +218,19 @@ public class Interaction {
                 action == that.action &&
                 Objects.equals(content, that.content) &&
                 Arrays.equals(images, that.images) &&
-                Objects.equals(replay, that.replay) &&
+                Objects.equals(reply, that.reply) &&
                 Objects.equals(open, that.open) &&
-                Objects.equals(readCount, that.readCount) &&
-                Objects.equals(goodCount, that.goodCount) &&
-                Objects.equals(commentCount, that.commentCount) &&
+                state == that.state &&
                 Objects.equals(top, that.top) &&
                 Objects.equals(showOrder, that.showOrder) &&
-                Objects.equals(replayTime, that.replayTime) &&
+                Objects.equals(replyTime, that.replyTime) &&
                 Objects.equals(createTime, that.createTime);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, siteId, userId, nickname, headImg, organId, organName, title, action, content, replay, open, readCount, goodCount, commentCount, top, showOrder, replayTime, createTime);
+        int result = Objects.hash(id, siteId, userId, nickname, headImg, organId, organName, title, action, content,
+                reply, open, state, top, showOrder, replyTime, createTime);
         result = 31 * result + Arrays.hashCode(images);
         return result;
     }
@@ -270,14 +249,12 @@ public class Interaction {
                 .append("action", action)
                 .append("content", content)
                 .append("images", images)
-                .append("replay", replay)
+                .append("reply", reply)
                 .append("open", open)
-                .append("readCount", readCount)
-                .append("goodCount", goodCount)
-                .append("commentCount", commentCount)
+                .append("state", state)
                 .append("top", top)
                 .append("showOrder", showOrder)
-                .append("replayTime", replayTime)
+                .append("replyTime", replyTime)
                 .append("createTime", createTime)
                 .toString();
     }

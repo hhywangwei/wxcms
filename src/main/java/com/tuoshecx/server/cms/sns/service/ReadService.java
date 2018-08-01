@@ -16,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReadService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReadService.class);
     private final ReadDao dao;
+    private final CounterService counterService;
 
     @Autowired
-    public ReadService(ReadDao dao) {
+    public ReadService(ReadDao dao, CounterService counterService) {
         this.dao = dao;
+        this.counterService = counterService;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -34,6 +36,9 @@ public class ReadService {
             t.setOpenid(openid);
             t.setRefId(refId);
             dao.insert(t);
+
+            counterService.incRead(refId, 1);
+
             return true;
         }catch (DataAccessException e){
             LOGGER.error("Save read fail, error is {}", e.getMessage());
