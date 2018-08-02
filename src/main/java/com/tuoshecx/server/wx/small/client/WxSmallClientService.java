@@ -296,6 +296,30 @@ public class WxSmallClientService {
      }
 
     /**
+     * 绑定小程序测试员
+     *
+     * @param appid     appid
+     * @param wechatid 微信编号
+     * @return
+     */
+     public BindTesterResponse bindTester(String appid, String wechatid){
+         BindTesterRequest request = new BindTesterRequest(getAccessToken(appid), wechatid);
+         return clients.bindTesterClient().request(request);
+     }
+
+    /**
+     * 解绑小程序测试员
+     *
+     * @param appid     appid
+     * @param wechatid  微信号
+     * @return
+     */
+     public WxSmallResponse unbindTester(String appid, String wechatid){
+         BindTesterRequest request = new BindTesterRequest(appid, wechatid);
+         return clients.unbindTesterClient().request(request);
+     }
+
+    /**
      * 删除微信用户登陆session_key
      *
      * @param openid 用户openid

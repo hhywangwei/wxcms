@@ -27,6 +27,8 @@ public class WxSmallClients {
     private final HttpClient<MessageTemplateDelRequest, WxSmallResponse> messageTemplateDelClient;
     private final HttpClient<MessageTemplateQueryRequest, MessageTemplateQueryResponse> messageTemplateQueryClient;
     private final HttpClient<GetQrcodeRequest, GetQrcodeResponse> getQrcodeClient;
+    private final HttpClient<BindTesterRequest, BindTesterResponse> bindTesterClient;
+    private final HttpClient<BindTesterRequest, WxSmallResponse> unbindTesterClient;
 
     public WxSmallClients(RestTemplate restTemplate) {
         ObjectMapper objectMapper = initObjectMapper();
@@ -44,6 +46,8 @@ public class WxSmallClients {
         this.messageTemplateDelClient = new MessageTemplateDelClient(restTemplate, objectMapper);
         this.messageTemplateQueryClient = new MessageTemplateQueryClient(restTemplate, objectMapper);
         this.getQrcodeClient = new GetQrcodeClient(restTemplate, objectMapper);
+        this.bindTesterClient = new BindTesterClient(restTemplate, objectMapper);
+        this.unbindTesterClient = new UnbindTesterClient(restTemplate, objectMapper);
     }
 
     private ObjectMapper initObjectMapper(){
@@ -121,5 +125,13 @@ public class WxSmallClients {
 
     public HttpClient<GetQrcodeRequest, GetQrcodeResponse> getQrcodeClient(){
         return getQrcodeClient;
+    }
+
+    public HttpClient<BindTesterRequest, BindTesterResponse> bindTesterClient(){
+        return bindTesterClient;
+    }
+
+    public HttpClient<BindTesterRequest, WxSmallResponse> unbindTesterClient(){
+        return unbindTesterClient;
     }
 }
