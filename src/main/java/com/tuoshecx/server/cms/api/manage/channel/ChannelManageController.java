@@ -7,6 +7,7 @@ import com.tuoshecx.server.cms.api.vo.OkVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
 import com.tuoshecx.server.cms.channel.domain.Channel;
 import com.tuoshecx.server.cms.channel.service.ChannelService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -18,8 +19,14 @@ import java.util.Collection;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
+/**
+ * 频道管理API接口
+ *
+ * @author <a href="mailto:hhywangwei@gmail.com">WangWei</a>
+ */
 @RestController
 @RequestMapping("/manage/channel")
+@Api(value = "/manage/channel", tags = "M-频道管理API接口")
 public class ChannelManageController {
 
     @Autowired

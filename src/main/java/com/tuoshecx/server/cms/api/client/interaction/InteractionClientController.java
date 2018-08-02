@@ -37,7 +37,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
  */
 @RestController
 @RequestMapping("/client/interaction")
-@Api(value = "/client/interaction", tags = "M-政民互动API接口")
+@Api(value = "/client/interaction", tags = "C-政民互动API接口")
 public class InteractionClientController {
 
     @Autowired

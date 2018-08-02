@@ -23,13 +23,13 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 /**
- * 政民互动业务服务
+ * 政民互动管理API接口
  *
  * @author <a href="mailto:hhywangwei@gmail.com">WangWei</a>
  */
 @RestController
 @RequestMapping("/manage/interaction")
-@Api(value = "/manage/interaction", tags = "M-政民互动关联API接口")
+@Api(value = "/manage/interaction", tags = "M-政民互动管理API接口")
 public class InteractionManageController {
 
     @Autowired

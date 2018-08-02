@@ -10,6 +10,7 @@ import com.tuoshecx.server.cms.site.domain.Manager;
 import com.tuoshecx.server.cms.site.domain.Site;
 import com.tuoshecx.server.cms.site.service.ManagerService;
 import com.tuoshecx.server.cms.site.service.SiteService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
  */
 @RestController
 @RequestMapping("/sys/site")
+@Api(value = "sys/site", tags = "S-站点管理API接口")
 public class SiteSysController {
 
     @Autowired
