@@ -41,6 +41,7 @@ public class InteractionDao {
         t.setTop(r.getBoolean("is_top"));
         t.setShowOrder(r.getInt("show_order"));
         t.setReply(r.getString("reply"));
+        t.setFormId(r.getString("form_id"));
         t.setReplyTime(r.getTimestamp("reply_time"));
         t.setCreateTime(r.getTimestamp("create_time"));
 
@@ -54,11 +55,11 @@ public class InteractionDao {
 
     public void insert(Interaction t){
         final String sql = "INSERT INTO site_interaction (id, site_id, user_id, nickname, head_img, organ_id, organ_name," +
-                " title, action, content, images, is_open, is_top, show_order, state, create_time) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " title, action, content, images, is_open, is_top, show_order, state, form_id, create_time) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getUserId(), t.getNickname(), t.getHeadImg(),
                 t.getOrganId(), t.getOrganName(), t.getTitle(), t.getAction().name(), t.getContent(), DaoUtils.join(t.getImages()),
-                t.getOpen(), t.getTop(), t.getShowOrder(), Interaction.State.WAIT.name(), DaoUtils.timestamp(new Date()));
+                t.getOpen(), t.getTop(), t.getShowOrder(), Interaction.State.WAIT.name(), t.getFormId(), DaoUtils.timestamp(new Date()));
     }
 
     public boolean update(Interaction t){
@@ -111,10 +112,10 @@ public class InteractionDao {
             sql.append(" AND title LIKE ? ");
         }
         if(StringUtils.isNotBlank(nickname)){
-            sql.append(" AND nickname = ? ");
+            sql.append(" AND nickname LIKE ? ");
         }
         if(StringUtils.isNotBlank(mobile)){
-            sql.append(" AND mobiles = ? ");
+            sql.append(" AND mobile LIKE ? ");
         }
         if(state != null){
             sql.append(" AND state = ? ");
@@ -124,7 +125,7 @@ public class InteractionDao {
     private Object[] params(String siteId, String title, String nickname, String mobile, Interaction.State state){
         List<Object> params = new ArrayList<>(5);
         if(StringUtils.isNotBlank(siteId)){
-            params.add(state);
+            params.add(siteId);
         }
         if(StringUtils.isNotBlank(title)){
             params.add(DaoUtils.like(title));
@@ -133,7 +134,7 @@ public class InteractionDao {
             params.add(DaoUtils.like(nickname));
         }
         if(StringUtils.isNotBlank(mobile)){
-            params.add(mobile);
+            params.add(DaoUtils.like(mobile));
         }
         if(state != null){
             params.add(state);
@@ -145,8 +146,8 @@ public class InteractionDao {
         final StringBuilder sql = new StringBuilder();
         sql.append("SELECT * FROM site_interaction ");
         buildWhere(sql, siteId, title, nickname, mobile, state);
-        sql.append(" ORDER BY create_time DESC LIMIT ? OFFSET");
-        Object[] params = DaoUtils.appendOffsetLimit(params(title, siteId, nickname, mobile, state), offset, limit);
+        sql.append(" ORDER BY create_time DESC LIMIT ? OFFSET ?");
+        Object[] params = DaoUtils.appendOffsetLimit(params(siteId, title, nickname, mobile, state), offset, limit);
         return jdbcTemplate.query(sql.toString(), params, mapper);
     }
 

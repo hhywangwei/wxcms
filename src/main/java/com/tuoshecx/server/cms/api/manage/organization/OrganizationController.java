@@ -63,9 +63,9 @@ public class OrganizationController {
         return ResultVo.success(new OkVo(service.delete(id, currentSiteId())));
     }
 
-    @GetMapping(value = "{parentId}/children", produces = APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "{id}/children", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询子组织机构")
-    public ResultVo<List<Organization>> queryChildren(@PathVariable("parentId")String parentId){
+    public ResultVo<List<Organization>> queryChildren(@PathVariable("id")String parentId){
         return ResultVo.success(service.queryChildren(parentId));
     }
 

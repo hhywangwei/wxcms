@@ -122,6 +122,12 @@ public class ArticleDao {
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, mapper);
     }
 
+    public boolean hasOfChannel(String channelId){
+        final String sql = "SELECT COUNT(id) FROM site_article WHERE channel_id = ? AND is_delete = false";
+        Integer count = jdbcTemplate.queryForObject(sql, new Object[]{channelId}, Integer.class);
+        return count != 0 && count > 0;
+    }
+
     public Long count(String siteId, String channelId, Article.State state, String title){
         StringBuilder sql = new StringBuilder(100);
         sql.append("SELECT COUNT(id) FROM site_article ");
@@ -155,7 +161,7 @@ public class ArticleDao {
             params.add(channelId);
         }
         if(state != null){
-            params.add(state);
+            params.add(state.name());
         }
         if(StringUtils.isNotBlank(title)){
             params.add(DaoUtils.like(title));
@@ -165,7 +171,7 @@ public class ArticleDao {
 
     public List<Article> find(String siteId, String channelId, Article.State state, String title, int offset, int limit){
         StringBuilder sql= new StringBuilder(100);
-        sql.append("SELECT id, site_id, title, short_title, sub_title, tag, summary, image, template, state, " +
+        sql.append("SELECT id, site_id, channel_id, title, short_title, sub_title, tag, summary, image, template, state, " +
                 "is_top, show_order, update_time, create_time FROM site_article ");
         buildWhere(sql, siteId, channelId, state, title);
         sql.append(" ORDER BY is_top DESC, show_order ASC, update_time DESC LIMIT ? OFFSET ?");

@@ -45,6 +45,8 @@ public class Interaction {
     private Boolean top;
     @ApiModelProperty("显示顺序")
     private Integer showOrder;
+    @ApiModelProperty("微信form_id")
+    private String formId;
     @ApiModelProperty("回复时间")
     private Date replyTime;
     @ApiModelProperty("创建时间")
@@ -186,6 +188,14 @@ public class Interaction {
         this.showOrder = showOrder;
     }
 
+    public String getFormId() {
+        return formId;
+    }
+
+    public void setFormId(String formId) {
+        this.formId = formId;
+    }
+
     public Date getReplyTime() {
         return replyTime;
     }
@@ -224,13 +234,13 @@ public class Interaction {
                 Objects.equals(top, that.top) &&
                 Objects.equals(showOrder, that.showOrder) &&
                 Objects.equals(replyTime, that.replyTime) &&
+                Objects.equals(formId, that.formId) &&
                 Objects.equals(createTime, that.createTime);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, siteId, userId, nickname, headImg, organId, organName, title, action, content,
-                reply, open, state, top, showOrder, replyTime, createTime);
+        int result = Objects.hash(id, siteId, userId, nickname, headImg, organId, organName, title, action, content, reply, open, state, top, showOrder, replyTime, formId, createTime);
         result = 31 * result + Arrays.hashCode(images);
         return result;
     }
@@ -255,6 +265,7 @@ public class Interaction {
                 .append("top", top)
                 .append("showOrder", showOrder)
                 .append("replyTime", replyTime)
+                .append("formId", formId)
                 .append("createTime", createTime)
                 .toString();
     }

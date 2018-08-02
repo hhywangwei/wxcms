@@ -1,6 +1,7 @@
 package com.tuoshecx.server.cms.channel.service;
 
 import com.tuoshecx.server.BaseException;
+import com.tuoshecx.server.cms.article.dao.ArticleDao;
 import com.tuoshecx.server.cms.channel.dao.ChannelDao;
 import com.tuoshecx.server.cms.channel.domain.Channel;
 import com.tuoshecx.server.cms.common.id.IdGenerators;
@@ -27,10 +28,12 @@ public class ChannelService {
     private static final String ROOT_ID = "root";
 
     private final ChannelDao dao;
+    private final ArticleDao articleDao;
 
     @Autowired
-    public ChannelService(ChannelDao dao){
+    public ChannelService(ChannelDao dao, ArticleDao articleDao){
         this.dao = dao;
+        this.articleDao = articleDao;
     }
 
     public Channel get(String id){
@@ -90,6 +93,9 @@ public class ChannelService {
         Channel o = get(id);
         if(!StringUtils.equals(siteId, o.getSiteId())){
             throw new BaseException("频道不存在");
+        }
+        if(articleDao.hasOfChannel(o.getId())){
+            throw new BaseException("频道有文章不能删除");
         }
         return dao.delete(id);
     }

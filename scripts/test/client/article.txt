@@ -1,0 +1,3 @@
+--查询文件
+GET
+http://localhost:8080/client/article

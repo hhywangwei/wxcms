@@ -2,10 +2,7 @@ package com.tuoshecx.server.cms.api.manage.article;
 
 import com.tuoshecx.server.BaseException;
 import com.tuoshecx.server.cms.api.manage.ManageCredentialContextUtils;
-import com.tuoshecx.server.cms.api.manage.article.form.ArticleCopyForm;
-import com.tuoshecx.server.cms.api.manage.article.form.ArticleMoveForm;
-import com.tuoshecx.server.cms.api.manage.article.form.ArticleSaveForm;
-import com.tuoshecx.server.cms.api.manage.article.form.ArticleUpdateForm;
+import com.tuoshecx.server.cms.api.manage.article.form.*;
 import com.tuoshecx.server.cms.api.vo.OkVo;
 import com.tuoshecx.server.cms.api.vo.ResultPageVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
@@ -14,6 +11,7 @@ import com.tuoshecx.server.cms.article.service.ArticleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -97,6 +95,26 @@ public class ArticleManageController {
         return ResultVo.success(service.move(form.getId(), form.getToChannelId(), currentSiteId()));
     }
 
+    @PutMapping(value = "top", consumes = APPLICATION_JSON_UTF8_VALUE, produces =  APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation("置顶文章")
+    public ResultVo<Article> top(@Valid @RequestBody ArticleTopForm form, BindingResult result){
+        if(result.hasErrors()){
+            return ResultVo.error(result.getAllErrors());
+        }
+
+        return ResultVo.success(service.top(form.getId(), form.getTop(), currentSiteId()));
+    }
+
+    @PutMapping(value = "showOrder", consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation("设置文章显示排序")
+    public ResultVo<Article> showOrder(@Valid @RequestBody ArticleShowOrderForm form, BindingResult result){
+        if(result.hasErrors()){
+            return ResultVo.error(result.getAllErrors());
+        }
+
+        return ResultVo.success(service.showOrder(form.getId(), form.getShowOrder(), currentSiteId()));
+    }
+
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询文章")
     public ResultPageVo<Article> query(@RequestParam(required = false) @ApiParam("站点编号") String siteId,
@@ -107,7 +125,7 @@ public class ArticleManageController {
                                        @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
 
         try{
-            Article.State stateObj = Article.State.valueOf(state);
+            Article.State stateObj = StringUtils.isBlank(state)? null: Article.State.valueOf(state);
             List<Article> data = service.query(siteId, channelId, stateObj, title, page * rows, rows);
             return new ResultPageVo.Builder<>(page, rows, data)
                     .count(true, () -> service.count(siteId, channelId, stateObj, title))

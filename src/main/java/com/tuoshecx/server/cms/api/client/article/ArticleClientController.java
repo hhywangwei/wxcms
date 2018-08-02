@@ -11,6 +11,7 @@ import com.tuoshecx.server.cms.security.Credential;
 import com.tuoshecx.server.cms.sns.domain.Counter;
 import com.tuoshecx.server.cms.sns.service.CounterService;
 import com.tuoshecx.server.cms.sns.service.GoodService;
+import com.tuoshecx.server.cms.sns.service.ReadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,7 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 @RestController
 @RequestMapping("/client/article")
 @Api(value = "/client/article", tags = "C-文章查询接口")
-public class ArticleController {
+public class ArticleClientController {
 
     @Autowired
     private ArticleService service;
@@ -39,6 +40,9 @@ public class ArticleController {
 
     @Autowired
     private GoodService goodService;
+
+    @Autowired
+    private ReadService readService;
 
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询文章")
@@ -54,10 +58,14 @@ public class ArticleController {
     @GetMapping(value = "{id}", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("文章")
     public ResultVo<ArticleVo> get(@PathVariable("id")String id){
+        readService.read(getOpenid(), id);
+
         Article t = service.get(id);
-        return ResultVo.success(counterService.getOptional(id)
+        ArticleVo vo = counterService.getOptional(id)
                 .map(e -> new ArticleVo(t, e.getReadCount(), e.getGoodCount()))
-                .orElseGet(() -> new ArticleVo(t, 0, 0)));
+                .orElseGet(() -> new ArticleVo(t, 0, 0));
+
+        return ResultVo.success(vo);
     }
 
     @PostMapping(value = "{id}/good", produces = APPLICATION_JSON_UTF8_VALUE)
@@ -73,4 +81,9 @@ public class ArticleController {
     private String getSiteId(){
         return ClientCredentialContextUtils.currentSiteId();
     }
+
+    private String getOpenid(){
+        return ClientCredentialContextUtils.currentOpenid();
+    }
+
 }

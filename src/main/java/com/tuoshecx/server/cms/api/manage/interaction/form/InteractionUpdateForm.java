@@ -1,19 +1,21 @@
-package com.tuoshecx.server.cms.api.client.interaction.form;
+package com.tuoshecx.server.cms.api.manage.interaction.form;
 
 import com.tuoshecx.server.cms.interaction.domain.Interaction;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
- * 新增政民互动
+ * 修改政民互动
  *
  * @author <a href="mailto:hhywangwei@gmail.com">WangWei</a>
  */
-public class InteractionSaveForm {
+public class InteractionUpdateForm {
+    @NotBlank
+    @ApiModelProperty(value = "编号", required = true)
+    private String id;
     @ApiModelProperty("互动机构编号")
     private String organId;
     @NotBlank
@@ -30,12 +32,14 @@ public class InteractionSaveForm {
     private String content;
     @ApiModelProperty("互动图片")
     private String[] images;
-    @NotNull
-    @ApiModelProperty("是否公开互动")
-    private Boolean open = true;
-    @NotBlank
-    @ApiModelProperty("微信小程序form_id")
-    private String formId;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getOrganId() {
         return organId;
@@ -77,33 +81,16 @@ public class InteractionSaveForm {
         this.images = images;
     }
 
-    public Boolean getOpen() {
-        return open;
-    }
-
-    public void setOpen(Boolean open) {
-        this.open = open;
-    }
-
-    public String getFormId() {
-        return formId;
-    }
-
-    public void setFormId(String formId) {
-        this.formId = formId;
-    }
-
-    public Interaction toDomain(String userId){
+    public Interaction toDomain(String userId) {
         Interaction t = new Interaction();
 
+        t.setId(id);
         t.setUserId(userId);
         t.setOrganId(organId);
         t.setTitle(title);
         t.setAction(Interaction.Action.valueOf(action));
         t.setContent(content);
         t.setImages(images);
-        t.setOpen(open);
-        t.setFormId(formId);
 
         return t;
     }

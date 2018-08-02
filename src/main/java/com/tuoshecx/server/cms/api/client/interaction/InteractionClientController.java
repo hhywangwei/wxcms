@@ -38,7 +38,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 @RestController
 @RequestMapping("/client/interaction")
 @Api(value = "/client/interaction", tags = "M-政民互动API接口")
-public class InteractionController {
+public class InteractionClientController {
 
     @Autowired
     private InteractionService service;
@@ -70,9 +70,9 @@ public class InteractionController {
     @GetMapping(value = "{id}", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("得到政民互动")
     public ResultVo<InteractionVo> get(@PathVariable("id")String id){
+        readService.read(getOpenid(), id);
         Optional<Counter> optional = counterService.getOptional(id);
         Interaction t = service.get(id);
-        readService.read(getOpenid(), id);
         return ResultVo.success(optional
                 .map(e -> new InteractionVo(t, e.getReadCount(), e.getGoodCount()))
                 .orElseGet(() -> new InteractionVo(t, 0, 0)));

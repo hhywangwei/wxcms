@@ -25,7 +25,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 @RestController
 @RequestMapping("/client/comment")
 @Api(value = "/client/comment", tags = "C-查看评论API接口")
-public class CommentController {
+public class CommentClientController {
 
     @Autowired
     private CommentService service;

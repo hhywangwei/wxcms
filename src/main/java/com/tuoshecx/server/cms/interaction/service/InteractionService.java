@@ -100,7 +100,9 @@ public class InteractionService {
         o.setTitle(t.getTitle());
         o.setContent(t.getContent());
         o.setImages(t.getImages());
-        o.setOpen(t.getOpen());
+        if(t.getOpen() != null){
+            o.setOpen(t.getOpen());
+        }
 
         if(dao.update(o)){
             counterService.updateDetail(o.getId(), refDetail(o.getTitle()));
@@ -116,7 +118,9 @@ public class InteractionService {
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("互动不存在");
         }
-
+        if(t.getState() == Interaction.State.HANDING){
+            throw new BaseException("已经在处理");
+        }
         if(dao.updateState(id, Interaction.State.HANDING)){
             return get(id);
         }else{
@@ -125,7 +129,7 @@ public class InteractionService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Interaction replay(String id, String replay, String siteId, String operator){
+    public Interaction reply(String id, String replay, String siteId, String operator){
         Interaction t = get(id);
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("互动不存在");
@@ -141,7 +145,7 @@ public class InteractionService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Interaction refuse(String id, String siteId, String operator){
+    public Interaction refuse(String id, String reason, String siteId, String operator){
         Interaction t = get(id);
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("互动不存在");
@@ -204,5 +208,13 @@ public class InteractionService {
 
     public List<Interaction> queryByUserId(String userId, int offset, int limit){
         return dao.findByUserId(userId, offset, limit);
+    }
+
+    public Long count(String siteId, String title, String nickname, String mobile, Interaction.State state){
+        return dao.count(siteId, title, nickname, mobile, state);
+    }
+
+    public List<Interaction> query(String siteId, String title, String nickname, String mobile, Interaction.State state, int offset, int limit){
+        return dao.find(siteId, title, nickname, mobile, state, offset, limit);
     }
 }

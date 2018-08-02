@@ -35,6 +35,18 @@ PUT
 --http://localhost:8080/manage/article/2affcf43b64a49308230ea83cbb253bb/close
 PUT
 
+--http://localhost:8080/manage/article/top
+PUT
+{
+"id":"b785b035fa8d4663a70b6e1ca537a6f0",
+"top":true
+}
+
+--http://localhost:8080/manage/article/showOrder
+{
+"id":"b785b035fa8d4663a70b6e1ca537a6f0",
+"showOrder": 567
+}
 
 --http://localhost:8080/manage/article/move
 POST

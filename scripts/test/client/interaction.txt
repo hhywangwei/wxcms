@@ -5,7 +5,8 @@ http://localhost:8080/client/interaction
  "organId":"ab571873a3504693bc32fc8d267f2986",
  "title":"测试",
  "action":"CONSULT",
- "content":"sdfdsfsdfafdasfsdfsdfsfsdfa"
+ "content":"sdfdsfsdfafdasfsdfsdfsfsdfa",
+ "formId":"3333234324324"
  }
 
  --修改政民互动

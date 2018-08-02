@@ -254,7 +254,7 @@ CREATE TABLE IF NOT EXISTS site_article (
   is_comment TINYINT DEFAULT 0 NOT NULL COMMENT '是否可以评论',
   template VARCHAR(30) COLLATE utf8_bin DEFAULT 'default' COMMENT '显示模板',
   state ENUM('REEDIT','RELEASE','CLOSE') COLLATE utf8_bin NOT NULL COMMENT '文章状态',
-  show_order INTEGER DEFAULT 9999 COMMENT '显示排序',
+  show_order INTEGER DEFAULT 9999 NOT NULL COMMENT '显示排序',
   is_top  TINYINT DEFAULT 0 NOT NULL COMMENT '是否顶置',
   read_count INTEGER DEFAULT 0 NOT NULL COMMENT '阅读次数',
   good_count INTEGER DEFAULT 0 NOT NULL COMMENT '点赞次数',

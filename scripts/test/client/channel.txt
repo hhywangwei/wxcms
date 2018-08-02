@@ -1,0 +1,3 @@
+--查询子频道
+
+http://localhost:8080/client/channel/root/children
