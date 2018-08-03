@@ -27,7 +27,7 @@ import java.util.Optional;
 public class DeployService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeployService.class);
 
-    private final SiteWxService shopWxService;
+    private final SiteWxService siteWxService;
     private final SmallDeployService smallDeployService;
     private final SmallDeployLogService smallDeployLogService;
     private final DomainConfigureService domainConfigureService;
@@ -36,12 +36,12 @@ public class DeployService {
     private final SmallAuditConfigureService auditConfigureService;
 
     @Autowired
-    public DeployService(SiteWxService shopWxService, SmallDeployService smallDeployService,
+    public DeployService(SiteWxService siteWxService, SmallDeployService smallDeployService,
                          SmallDeployLogService smallDeployLogService, DomainConfigureService domainConfigureService,
                          SmallExtConfigureService smallExtConfigureService, WxSmallClientService smallClientService,
                          SmallAuditConfigureService auditConfigureService) {
 
-        this.shopWxService = shopWxService;
+        this.siteWxService = siteWxService;
         this.smallDeployService = smallDeployService;
         this.smallDeployLogService = smallDeployLogService;
         this.domainConfigureService = domainConfigureService;
@@ -50,21 +50,33 @@ public class DeployService {
         this.auditConfigureService = auditConfigureService;
     }
 
-    public SmallDeploy deploy(String shopId, Integer templateId){
-        String appid = getAppid(shopId);
+    public SmallDeploy deploy(String siteId, Integer templateId){
+        String appid = getAppid(siteId);
+        Optional<SmallDeploy> optional = smallDeployService.get(appid, templateId);
 
-        SmallDeploy t = new SmallDeploy();
-        t.setSiteId(shopId);
-        t.setAppid(appid);
-        t.setTemplateId(templateId);
-        t.setState("WAIT");
-        t.setSetDomain(false);
+        SmallDeploy deploy = optional.orElseGet(()-> {
+            SmallDeploy t = new SmallDeploy();
+            t.setSiteId(siteId);
+            t.setAppid(appid);
+            t.setTemplateId(templateId);
+            t.setState("WAIT");
+            t.setSetDomain(false);
+            return smallDeployService.save(t);
+        });
 
-        return smallDeployService.save(t);
+        if(isRefuse(deploy.getState())){
+            smallDeployService.reset(deploy.getId());
+            return smallDeployService.get(deploy.getId());
+        }
+
+        return deploy;
     }
 
-    private String getAppid(String shopId){
-        Optional<String> optional = shopWxService.getAppid(shopId);
+    private boolean isRefuse(String state){
+        return StringUtils.equals(state, "REFUSE");
+    }
+    private String getAppid(String siteId){
+        Optional<String> optional = siteWxService.getAppid(siteId);
         if(!optional.isPresent()){
             throw new BaseException("站点还未托管小程序公众号");
         }
@@ -195,29 +207,6 @@ public class DeployService {
         return StringUtils.equals(state, "AUDIT");
     }
 
-    public SmallDeploy release(String id){
-        SmallDeploy t = smallDeployService.get(id);
-
-        if(!isAuditPass(t.getState())){
-            LOGGER.error("Site {} appid {} state {}", t.getSiteId(), t.getAppid(), t.getState());
-            throw new BaseException("小程序未审核通过");
-        }
-
-        WxSmallResponse response = smallClientService.promgramRelease(t.getAppid());
-        if(response.isOk()){
-            smallDeployService.release(id);
-            saveDeployLog(id, "RELEASE", "发布成功");
-        }else{
-            saveDeployLog(id, "RELEASE", String.format("%d-%s", response.getCode(), response.getMessage()));
-        }
-
-        return smallDeployService.get(id);
-    }
-
-    private boolean isAuditPass(String state){
-        return StringUtils.equals(state, "PASS");
-    }
-
     public void getAuditStatus(){
         List<String> ids = smallDeployService.queryAudit();
         for(String id: ids){
@@ -237,7 +226,6 @@ public class DeployService {
 
             if(response.getStatus() == 0){
                 smallDeployService.auditPass(id);
-                //审核通过发布小程序
                 release(id);
             }else{
                 smallDeployService.auditRefuse(id, response.getReason());
@@ -245,13 +233,24 @@ public class DeployService {
         }
     }
 
-    public GetCategoryResponse getCategory(String shopId){
-        String appid = getAppid(shopId);
+    private void release(String id){
+        SmallDeploy t = smallDeployService.get(id);
+        WxSmallResponse response = smallClientService.promgramRelease(t.getAppid());
+        if(response.isOk()){
+            smallDeployService.release(id);
+            saveDeployLog(id, "RELEASE", "发布成功");
+        }else{
+            saveDeployLog(id, "RELEASE", String.format("%d-%s", response.getCode(), response.getMessage()));
+        }
+    }
+
+    public GetCategoryResponse getCategory(String siteId){
+        String appid = getAppid(siteId);
         return smallClientService.getCategory(appid);
     }
 
-    public GetQrcodeResponse getQrcode(String shopId, String path){
-       String appid = getAppid(shopId);
+    public GetQrcodeResponse getQrcode(String siteId, String path){
+       String appid = getAppid(siteId);
        return smallClientService.getQrocde(appid, path);
     }
 }

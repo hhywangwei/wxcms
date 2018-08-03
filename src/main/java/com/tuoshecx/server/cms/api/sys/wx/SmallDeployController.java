@@ -2,24 +2,15 @@ package com.tuoshecx.server.cms.api.sys.wx;
 
 import com.tuoshecx.server.BaseException;
 import com.tuoshecx.server.cms.api.sys.wx.form.SmallDeployForm;
-import com.tuoshecx.server.cms.api.sys.wx.vo.ProgramCategoryVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
-import com.tuoshecx.server.wx.small.client.response.GetCategoryResponse;
-import com.tuoshecx.server.wx.small.client.response.GetQrcodeResponse;
 import com.tuoshecx.server.wx.small.devops.domain.SmallDeploy;
 import com.tuoshecx.server.wx.small.devops.service.DeployService;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
@@ -43,43 +34,20 @@ public class SmallDeployController {
             return ResultVo.error(result.getAllErrors());
         }
 
-        SmallDeploy t = service.deploy(form.getShopId(), form.getTemplateId());
+        SmallDeploy t = service.deploy(form.getSiteId(), form.getTemplateId());
+        if(isAudit(t.getState())){
+            throw new BaseException("小程序正在等待审核");
+        }
+
         service.setDomain(t.getId());
-        service.programCommit(t.getId());
-        return ResultVo.success(service.submitAudit(t.getId()));
+        t = service.programCommit(t.getId());
+        if(form.getCommit()){
+            t = service.submitAudit(t.getId());
+        }
+        return ResultVo.success(t);
     }
 
-    @GetMapping(value = "{shopId}/category", produces = APPLICATION_JSON_UTF8_VALUE)
-    @ApiOperation(value = "得到小程序目录")
-    public ResultVo<Collection<ProgramCategoryVo>> getCategory(@PathVariable("shopId")String shopId){
-        GetCategoryResponse response = service.getCategory(shopId);
-
-        if(!response.isOk()){
-            throw new BaseException("得到小程序目录失败");
-        }
-        Collection<ProgramCategoryVo> data = response.getCategories().stream()
-                .map(ProgramCategoryVo::new).collect(Collectors.toList());
-
-        return ResultVo.success(data);
-    }
-
-    @GetMapping(value = "{shopId}/getQrcode", produces = APPLICATION_JSON_UTF8_VALUE)
-    @ApiOperation(value = "得到小程序体验二维码")
-    public ResponseEntity<byte[]> getQrcode(@PathVariable("shopId")String shopId,
-                                            @RequestParam(value = "path", required = false)String path){
-        GetQrcodeResponse response = service.getQrcode(shopId, "");
-
-        if(response.isOk()){
-            return ResponseEntity.status(HttpStatus.OK)
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .contentLength(response.getContent().length)
-                    .body(response.getContent());
-        }else{
-            byte[] content = String.format("{\"code\":%d, \"message\": \"%s\"}", 1000, "获取体验二维吗失败")
-                    .getBytes(Charset.forName("UTF-8"));
-            return ResponseEntity.status(HttpStatus.OK)
-                    .contentType(MediaType.APPLICATION_JSON_UTF8)
-                    .body(content);
-        }
+    private boolean isAudit(String state){
+        return StringUtils.equals(state, "AUDIT");
     }
 }

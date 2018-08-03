@@ -1,6 +1,10 @@
 package com.tuoshecx.server.cms.api.sys.wx.form;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * 发布小程序提交数据
@@ -9,15 +13,21 @@ import javax.validation.constraints.NotBlank;
  */
 public class SmallDeployForm {
     @NotBlank
+    @ApiModelProperty(value = "站点编号", required = true)
     private String siteId;
+    @NotNull
+    @ApiModelProperty(value = "发布程序模板编号", required = true)
     private Integer templateId;
+    @NotNull
+    @ApiModelProperty(value = "是否提交审核")
+    private Boolean commit = Boolean.FALSE;
 
-    public String getShopId() {
+    public String getSiteId() {
         return siteId;
     }
 
-    public void setShopId(String shopId) {
-        this.siteId = shopId;
+    public void setSiteId(String siteId) {
+        this.siteId = siteId;
     }
 
     public Integer getTemplateId() {
@@ -26,5 +36,13 @@ public class SmallDeployForm {
 
     public void setTemplateId(Integer templateId) {
         this.templateId = templateId;
+    }
+
+    public Boolean getCommit() {
+        return commit;
+    }
+
+    public void setCommit(Boolean commit) {
+        this.commit = commit;
     }
 }

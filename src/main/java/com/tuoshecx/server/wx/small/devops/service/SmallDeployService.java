@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 小程序发布业务服务
@@ -127,6 +128,15 @@ public class SmallDeployService {
 
     public List<String> queryAudit(){
         return dao.findAudit();
+    }
+
+    public Optional<SmallDeploy> get(String appid, Integer templateId){
+        try{
+            return Optional.of(dao.findOne(appid, templateId));
+        }catch (DataAccessException e){
+            LOGGER.error("Get small deploy error is {}", e.getMessage());
+            return Optional.empty();
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
