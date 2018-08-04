@@ -35,17 +35,20 @@ public class InteractionService {
     private final CommentService commentService;
     private final GoodService goodService;
     private final CounterService counterService;
+    private final InteractionMessageService messageService;
 
 
     @Autowired
     public InteractionService(InteractionDao dao, UserService userService, OrganizationService organService,
-                              CommentService commentService, GoodService goodService, CounterService counterService) {
+                              CommentService commentService, GoodService goodService, CounterService counterService,
+                              InteractionMessageService messageService) {
         this.dao = dao;
         this.userService = userService;
         this.organService = organService;
         this.commentService = commentService;
         this.goodService = goodService;
         this.counterService = counterService;
+        this.messageService = messageService;
     }
 
     public Interaction get(String id){
@@ -137,8 +140,9 @@ public class InteractionService {
 
         if(dao.updateState(id, Interaction.State.REPLY)){
             dao.reply(id, replay);
-            return get(id);
-            //TODO 操作日志
+            Interaction o = get(id);
+            messageService.send(o);
+            return o;
         }else{
             throw new BaseException("修改状态失败");
         }
@@ -152,7 +156,10 @@ public class InteractionService {
         }
 
         if(dao.updateState(id, Interaction.State.REFUSE)){
-            return get(id);
+            dao.reply(id, reason);
+            Interaction o = get(id);
+            messageService.send(o);
+            return o;
         } else{
             throw new BaseException("修改状态失败");
         }
