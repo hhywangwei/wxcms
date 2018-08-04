@@ -182,7 +182,7 @@ public class WxComponentController {
         t.setAccessToken(response.getAuthorizerAccessToken());
         Date now = new Date();
         t.setUpdateTime(now);
-        Long expireTime = System.currentTimeMillis() + (response.getExpiresIn() - 10 * 60)* 1000L;
+        long expireTime = System.currentTimeMillis() + (response.getExpiresIn() - 10 * 60)* 1000L;
         t.setExpiresTime(new Date(expireTime));
         shopWxService.saveToken(t);
     }

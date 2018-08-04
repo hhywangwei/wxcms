@@ -82,10 +82,10 @@ wx:
     fail_uri: http://manage.tuoshecx.com/wx/auth_fail.html
   small:
     msg_templates:
-    - id: AT0009
-      call_key: order_pay_success
-      keyword_ids: [45, 47, 2, 3]
-      remark: 订单支付成功通知
+    - id: AT0125
+      call_key: interaction_notify
+      keyword_ids: [2, 3, 4]
+      remark: 政民互动通知
 
 tencent:
   map_key: L2XBZ-L7LWD-GAV46-H23SI-KAGJF-KRFUN

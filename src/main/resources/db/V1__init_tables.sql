@@ -34,7 +34,7 @@ WHERE NOT EXISTS (SELECT * FROM base_sys WHERE id = "1");
 CREATE TABLE IF NOT EXISTS base_upload (
   id CHAR(32) COLLATE utf8_bin NOT NULL,
   user_id CHAR(32) COLLATE utf8_bin NOT NULL COMMENT '上传用户编号',
-  user_type ENUM('CLIENT','MANAGE','SYS') COLLATE utf8_bin NOT NULL COMMENT '用类型',
+  user_type VARCHAR(20) COLLATE utf8_bin NOT NULL COMMENT '用类型',
   url VARCHAR(500) COLLATE utf8_bin NOT NULL COMMENT '图片访问URL',
   path VARCHAR(300) COLLATE utf8_bin NOT NULL COMMENT '保持路径',
   create_time DATETIME NOT NULL COMMENT '创建时间',

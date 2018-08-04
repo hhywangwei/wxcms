@@ -101,9 +101,9 @@ public class SiteSysController {
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询站点")
     public ResultPageVo<Site> query(@RequestParam(required = false) @ApiParam("站点名称") String name,
-                                       @RequestParam(required = false) @ApiParam("联系电话") String phone,
-                                       @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
-                                       @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
+                                    @RequestParam(required = false) @ApiParam("联系电话") String phone,
+                                    @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
+                                    @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
 
         List<Site> data = service.query(name, phone, page * rows, rows);
         return new ResultPageVo.Builder<>(page, rows, data)
