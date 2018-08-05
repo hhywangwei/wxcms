@@ -35,7 +35,6 @@ public class SiteWxAuthorized {
     private String qrcodeUrl;
     @ApiModelProperty(value = "授权信息")
     private String authorizationInfo;
-    private Boolean authorization;
     @ApiModelProperty(value = "小程序配置信息")
     private String miniProgramInfo;
     @ApiModelProperty(value = "修改时间")
@@ -139,14 +138,6 @@ public class SiteWxAuthorized {
         this.authorizationInfo = authorizationInfo;
     }
 
-    public Boolean getAuthorization() {
-        return authorization;
-    }
-
-    public void setAuthorization(Boolean authorization) {
-        this.authorization = authorization;
-    }
-
     public String getMiniProgramInfo() {
         return miniProgramInfo;
     }
@@ -188,7 +179,6 @@ public class SiteWxAuthorized {
                 Objects.equals(businessInfo, that.businessInfo) &&
                 Objects.equals(qrcodeUrl, that.qrcodeUrl) &&
                 Objects.equals(authorizationInfo, that.authorizationInfo) &&
-                Objects.equals(authorization, that.authorization) &&
                 Objects.equals(miniProgramInfo, that.miniProgramInfo) &&
                 Objects.equals(updateTime, that.updateTime) &&
                 Objects.equals(createTime, that.createTime);
@@ -197,7 +187,7 @@ public class SiteWxAuthorized {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, siteId, appid, nickname, headImg, serviceTypeInfo, verifyTypeInfo, username, name, businessInfo, qrcodeUrl, authorizationInfo, authorization, miniProgramInfo, updateTime, createTime);
+        return Objects.hash(id, siteId, appid, nickname, headImg, serviceTypeInfo, verifyTypeInfo, username, name, businessInfo, qrcodeUrl, authorizationInfo, miniProgramInfo, updateTime, createTime);
     }
 
     @Override
@@ -215,7 +205,6 @@ public class SiteWxAuthorized {
                 .append("businessInfo", businessInfo)
                 .append("qrcodeUrl", qrcodeUrl)
                 .append("authorizationInfo", authorizationInfo)
-                .append("authorization", authorization)
                 .append("miniProgramInfo", miniProgramInfo)
                 .append("updateTime", updateTime)
                 .append("createTime", createTime)

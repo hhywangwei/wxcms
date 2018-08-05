@@ -40,8 +40,8 @@ public class SmallTesterDao {
     }
 
     public void insert(SmallTester t){
-        final String sql = "INSERT INTO wx_small_tester (id, site_id, appid, wechatid, user_str, remark create_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getWechatid(), t.getUserstr(), t.getRemark(), DaoUtils.timestamp(new Date()));
+        final String sql = "INSERT INTO wx_small_tester (id, site_id, appid, wechatid, user_str, remark, create_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getAppid(), t.getWechatid(), t.getUserstr(), t.getRemark(), DaoUtils.timestamp(new Date()));
     }
 
     public SmallTester findOne(String id){

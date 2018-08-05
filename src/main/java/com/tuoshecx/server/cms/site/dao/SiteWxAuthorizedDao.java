@@ -35,7 +35,6 @@ public class SiteWxAuthorizedDao {
         t.setBusinessInfo(r.getString("business_info"));
         t.setQrcodeUrl(r.getString("qrcode_url"));
         t.setAuthorizationInfo(r.getString("authorization_info"));
-        t.setAuthorization(r.getBoolean("authorization"));
         t.setMiniProgramInfo(r.getString("mini_program_info"));
         t.setUpdateTime(r.getTimestamp("update_time"));
         t.setCreateTime(r.getTimestamp("create_time"));
@@ -50,23 +49,23 @@ public class SiteWxAuthorizedDao {
 
     public void insert(SiteWxAuthorized t){
         final String sql = "INSERT INTO site_wx_authorized (id, site_id, appid, nickname, head_img, service_type_info," +
-                "verify_type_info, username, name, business_info, mini_program_info, qrcode_url, authorization_info, authorization, update_time, create_time) VALUES " +
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "verify_type_info, username, name, business_info, mini_program_info, qrcode_url, authorization_info, update_time, create_time) " +
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         Date now = new Date();
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getAppid(), t.getNickname(), t.getHeadImg(), t.getServiceTypeInfo(),
                 t.getVerifyTypeInfo(), t.getUsername(), t.getName(), t.getBusinessInfo(), t.getMiniProgramInfo(), t.getQrcodeUrl(),
-                t.getAuthorizationInfo(), t.getAuthorization(), DaoUtils.timestamp(now), DaoUtils.timestamp(now));
+                t.getAuthorizationInfo(), DaoUtils.timestamp(now), DaoUtils.timestamp(now));
     }
 
     public boolean update(SiteWxAuthorized t) {
         final String sql = "UPDATE site_wx_authorized SET nickname = ?, head_img = ?, service_type_info = ?," +
                 "verify_type_info = ?, username = ?, name = ?, business_info = ?, mini_program_info = ?, qrcode_url = ?," +
-                "authorization_info = ?, authorization = ?, update_time = ? WHERE appid = ? ";
+                "authorization_info = ?, update_time = ? WHERE appid = ? ";
 
         return jdbcTemplate.update(sql, t.getNickname(), t.getHeadImg(), t.getServiceTypeInfo(), t.getVerifyTypeInfo(),
                 t.getUsername(), t.getName(), t.getBusinessInfo(), t.getMiniProgramInfo(), t.getQrcodeUrl(), t.getAuthorizationInfo(),
-                t.getAuthorization(), DaoUtils.timestamp(new Date()), t.getAppid()) > 0;
+                DaoUtils.timestamp(new Date()), t.getAppid()) > 0;
     }
 
     public boolean delete(String appid){
@@ -75,8 +74,8 @@ public class SiteWxAuthorizedDao {
     }
 
     public boolean hasAppid(String appid){
-        return jdbcTemplate.queryForObject("SELECT COUNT(id) FROM site_wx_authorized WHERE appid = ?",
-                new Object[]{appid}, Integer.class) > 0;
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(id) FROM site_wx_authorized WHERE appid = ?", new Object[]{appid}, Integer.class);
+        return count != null && count > 0;
     }
 
     public SiteWxAuthorized findOne(String id){

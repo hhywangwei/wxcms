@@ -49,8 +49,8 @@ public class WxComponentController {
     private WxComponentProperties properties;
     private final ComponentEventHandlers eventHandlers;
     private final ComponentClientService clientService;
-    private final SiteService shopService;
-    private final SiteWxService shopWxService;
+    private final SiteService siteService;
+    private final SiteWxService siteWxService;
     private final ApplicationContext applicationContext;
     private final ObjectMapper objectMapper;
     private final WxEncrypt encrypt;
@@ -60,8 +60,8 @@ public class WxComponentController {
     public WxComponentController(WxComponentProperties properties,
                                  ComponentEventHandlers eventHandlers,
                                  ComponentClientService clientService,
-                                 SiteService shopService,
-                                 SiteWxService shopWxService,
+                                 SiteService siteService,
+                                 SiteWxService siteWxService,
                                  ApplicationContext applicationContext,
                                  ObjectMapper objectMapper,
                                  WxEncrypt encrypt,
@@ -70,8 +70,8 @@ public class WxComponentController {
         this.properties = properties;
         this.eventHandlers = eventHandlers;
         this.clientService = clientService;
-        this.shopService = shopService;
-        this.shopWxService = shopWxService;
+        this.siteService = siteService;
+        this.siteWxService = siteWxService;
         this.applicationContext = applicationContext;
         this.objectMapper = objectMapper;
         this.encrypt = encrypt;
@@ -100,9 +100,9 @@ public class WxComponentController {
     }
 
     @GetMapping(value = "preAuthorizer", produces = APPLICATION_JSON_UTF8_VALUE)
-    public ResultVo<String> preAuthorizer(@RequestParam(required = false) String shopId){
+    public ResultVo<String> preAuthorizer(@RequestParam(required = false) String siteId){
         String redirectUri = properties.getRedirectUri() +
-                "?shop_id=" + (StringUtils.isBlank(shopId)? "wx10000001" : shopId);
+                "?site_id=" + (StringUtils.isBlank(siteId)? "wx10000001" : siteId);
 
         ObtainPreAuthCodeResponse response =clientService.obtainPreAuthCode();
 
@@ -129,17 +129,17 @@ public class WxComponentController {
     public ResponseEntity<String> authorizer(
             @RequestParam(value="auth_code") String authCode,
             @RequestParam(value="expires_in") Integer expiresIn,
-            @RequestParam(value = "shop_id", required = false)String shopId){
+            @RequestParam(value = "site_id", required = false)String siteId){
 
-        LOGGER.info("Start shop {} authorizer auth code {} expire in {}", shopId, authCode, expiresIn);
+        LOGGER.info("Start site {} authorizer auth code {} expire in {}", siteId, authCode, expiresIn);
 
-        Site s = shopService.get(shopId);
+        Site s = siteService.get(siteId);
         if(isClose(s.getState())){
             throw new BaseException("站点已经关闭");
         }
 
         ObtainQueryAuthResponse response = clientService.obtainQueryAuth(authCode);
-        int validateCode = validateAppid(shopId, response.getAuthorizerAppid());
+        int validateCode = validateAppid(siteId, response.getAuthorizerAppid());
         if(validateCode != 0){
             String uri = properties.getFailUri() + "?code=" + validateCode;
             return redirectUri(uri);
@@ -148,14 +148,14 @@ public class WxComponentController {
         LOGGER.debug("Validate appid {} code is {}", response.getAuthorizerAppid(), validateCode);
 
         if(!isSuccess(response.getCode())){
-            LOGGER.error("Obtain token fail, shopId {} code {} message {}", shopId, response.getCode(), response.getMessage());
+            LOGGER.error("Obtain token fail, siteId {} code {} message {}", siteId, response.getCode(), response.getMessage());
             String uri = properties.getFailUri() + "?code=" + 20000;
             return redirectUri(uri);
         }
 
         try {
-            saveAuthorizerToken(shopId, response);
-            saveAuthorizerConfigure(shopId, response.getAuthorizerAppid());
+            saveAuthorizerToken(siteId, response);
+            saveAuthorizerConfigure(siteId, response.getAuthorizerAppid());
             noticeInitMessageTemplate(response.getAuthorizerAppid());
             String uri = properties.getSuccessUri() + "?appid=" + response.getAuthorizerAppid();
             return redirectUri(uri);
@@ -174,9 +174,9 @@ public class WxComponentController {
         return code == 0;
     }
 
-    private void saveAuthorizerToken(String shopId, ObtainQueryAuthResponse response){
+    private void saveAuthorizerToken(String siteId, ObtainQueryAuthResponse response){
         SiteWxToken t = new SiteWxToken();
-        t.setSiteId(shopId);
+        t.setSiteId(siteId);
         t.setAppid(response.getAuthorizerAppid());
         t.setRefreshToken(response.getAuthorizerRefreshToken());
         t.setAccessToken(response.getAuthorizerAccessToken());
@@ -184,33 +184,32 @@ public class WxComponentController {
         t.setUpdateTime(now);
         long expireTime = System.currentTimeMillis() + (response.getExpiresIn() - 10 * 60)* 1000L;
         t.setExpiresTime(new Date(expireTime));
-        shopWxService.saveToken(t);
+        siteWxService.saveToken(t);
     }
 
-    private int validateAppid(String shopId, String appid){
-        Optional<SiteWxAuthorized> optional = shopWxService.getAuthorized(appid);
+    private int validateAppid(String siteId, String appid){
+        Optional<SiteWxAuthorized> optional = siteWxService.getAuthorized(appid);
         if(!optional.isPresent()){
             return 0;
         }
 
-        if(!StringUtils.equals(shopId, optional.get().getSiteId())){
+        if(!StringUtils.equals(siteId, optional.get().getSiteId())){
             return 20001;
         }
 
-        if(shopWxService.queryAuthorized(shopId).size() > 1){
+        if(siteWxService.queryAuthorized(siteId).size() > 1){
             return 20002;
         }
 
         return 0;
     }
 
-    private void saveAuthorizerConfigure(String shopId, String authorizerAppid){
+    private void saveAuthorizerConfigure(String siteId, String authorizerAppid){
         ObtainAuthorizerInfoResponse response = clientService.obtainAuthorizerInfo(authorizerAppid);
         if(isSuccess(response.getCode())){
             SiteWxAuthorized t = new SiteWxAuthorized();
             t.setAppid(authorizerAppid);
-            t.setSiteId(shopId);
-            t.setAuthorization(true);
+            t.setSiteId(siteId);
             t.setQrcodeUrl(response.getQrcodeUrl());
             t.setName(response.getPrincipalName());
             t.setNickname(response.getNickname());
@@ -221,7 +220,7 @@ public class WxComponentController {
             t.setAuthorizationInfo(toJson(response.getAuthorizationInfo()));
             t.setMiniProgramInfo(toJson(response.getMiniProgramInfo()));
             t.setBusinessInfo(toJson(response.getBusinessInfo()));
-            shopWxService.saveAuthorized(t);
+            siteWxService.saveAuthorized(t);
         }else {
             LOGGER.error("Save authorizer info fail, appid {} errCode {}", authorizerAppid, response.getCode());
         }
