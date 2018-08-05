@@ -143,4 +143,12 @@ public class SmallDeployService {
     public boolean reset(String id){
         return dao.updateState(id, "WAIT", "重新发布小程序");
     }
+
+    public Long count(String siteId, String appid, Integer templateId, String state){
+        return dao.count(siteId, appid, templateId, state);
+    }
+
+    public List<SmallDeploy> query(String siteId, String appid, Integer templateId, String state, int offset, int limit){
+        return dao.find(siteId, appid, templateId, state, offset, limit);
+    }
 }

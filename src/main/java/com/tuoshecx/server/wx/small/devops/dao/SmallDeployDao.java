@@ -88,18 +88,18 @@ public class SmallDeployDao {
         return jdbcTemplate.queryForList(sql, new Object[]{"AUDIT"}, String.class);
     }
 
-    public Long count(String shopId, String appid, Integer templateId, String state){
+    public Long count(String siteId, String appid, Integer templateId, String state){
         StringBuilder sql = new StringBuilder(200);
         sql.append("SELECT COUNT(id) FROM wx_small_deploy ");
-        buildWhere(sql, shopId, appid, templateId, state);
+        buildWhere(sql, siteId, appid, templateId, state);
 
-        return jdbcTemplate.queryForObject(sql.toString(), params(shopId, appid, templateId, state), Long.class);
+        return jdbcTemplate.queryForObject(sql.toString(), params(siteId, appid, templateId, state), Long.class);
     }
 
-    private void buildWhere(StringBuilder sql, String shopId, String appid, Integer templateId, String state){
+    private void buildWhere(StringBuilder sql, String siteId, String appid, Integer templateId, String state){
         sql.append(" WHERE 1 = 1 ");
-        if(StringUtils.isNotBlank(shopId)){
-            sql.append(" AND　shop_id = ? ");
+        if(StringUtils.isNotBlank(siteId)){
+            sql.append(" AND　site_id = ? ");
         }
         if(StringUtils.isNotBlank(appid)){
             sql.append(" AND appid = ? ");
@@ -112,10 +112,10 @@ public class SmallDeployDao {
         }
     }
 
-    private Object[] params(String shopId, String appid, Integer templateId, String state){
+    private Object[] params(String siteId, String appid, Integer templateId, String state){
         List<Object> params = new ArrayList<>();
-        if(StringUtils.isNotBlank(shopId)){
-            params.add(shopId);
+        if(StringUtils.isNotBlank(siteId)){
+            params.add(siteId);
         }
         if(StringUtils.isNotBlank(appid)){
             params.add(appid);
@@ -129,12 +129,12 @@ public class SmallDeployDao {
         return params.toArray();
     }
 
-    public List<SmallDeploy> find(String shopId, String appid, Integer templateId, String state, int offset, int limit){
+    public List<SmallDeploy> find(String siteId, String appid, Integer templateId, String state, int offset, int limit){
         StringBuilder sql = new StringBuilder(200);
         sql.append("SELECT * FROM wx_small_deploy ");
-        buildWhere(sql, shopId, appid, templateId, state);
+        buildWhere(sql, siteId, appid, templateId, state);
         sql.append(" ORDER BY update_time DESC LIMIT ? OFFSET ?");
-        Object[] params = DaoUtils.appendOffsetLimit(params(shopId, appid, templateId, state), offset, limit);
+        Object[] params = DaoUtils.appendOffsetLimit(params(siteId, appid, templateId, state), offset, limit);
         return jdbcTemplate.query(sql.toString(), params, mapper);
     }
 }

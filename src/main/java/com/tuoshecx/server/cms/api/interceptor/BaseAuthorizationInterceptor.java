@@ -55,6 +55,13 @@ public class BaseAuthorizationInterceptor extends HandlerInterceptorAdapter {
         if(optional.isPresent()){
             return optional;
         }
+
+        optional = Optional.ofNullable(request.getParameter("token"));
+        if(optional.isPresent()){
+            LOGGER.error("Request parameter token is {}", optional.get());
+            return optional;
+        }
+
         return Optional.ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
                 .map(e -> StringUtils.removeStart(e, "Bearer"))
                 .map(StringUtils::trim);

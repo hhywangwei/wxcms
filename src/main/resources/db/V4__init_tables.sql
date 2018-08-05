@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS wx_small_tester (
   remark VARCHAR(128) COLLATE utf8_bin COMMENT '测试者微信用户标识',
   create_time DATETIME NOT NULL COMMENT '创建时间',
   PRIMARY KEY (id),
-  UNIQUE KEY unq_site_id (site_id)
+  INDEX idx_site_id (site_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
