@@ -31,6 +31,7 @@ public class ArticleDao {
         t.setTitle(r.getString("title"));
         t.setShortTitle(r.getString("short_title"));
         t.setSubTitle(r.getString("sub_title"));
+        t.setImage(r.getString("image"));
         t.setAuthor(r.getString("author"));
         t.setOrigin(r.getString("origin"));
         t.setKeywords(DaoUtils.toArray(r.getString("keywords")));
@@ -58,6 +59,7 @@ public class ArticleDao {
         t.setTitle(r.getString("title"));
         t.setShortTitle(r.getString("short_title"));
         t.setSubTitle(r.getString("sub_title"));
+        t.setImage(r.getString("image"));
         t.setTag(r.getString("tag"));
         t.setSummary(r.getString("summary"));
         t.setTemplate(r.getString("template"));

@@ -89,3 +89,53 @@ wx:
 
 tencent:
   map_key: L2XBZ-L7LWD-GAV46-H23SI-KAGJF-KRFUN
+
+security:
+  matcher: ant
+  authentications:
+  - roles:
+    - ROLE_AUTHENTICATION
+    patterns:
+    - /district/*
+    - /upload/*
+    - /*/account/**/*
+  - roles:
+    - ROLE_SITE_ARTICLE
+    - ROLE_SITE_ADMIN
+    - ROLE_SITE_MANAGE
+    patterns:
+    - /manage/channel/**/*
+    - /manage/article/**/*
+  - roles:
+    - ROLE_SITE_INTERACTION
+    - ROLE_SITE_ADMIN
+    - ROLE_SITE_MANAGE
+    patterns:
+    - /manage/interaction/**/*
+    - /manage/comment/**/*
+    - /manage/organization/queryChildren
+  - roles:
+    - ROLE_SITE_MANAGE
+    - ROLE_SITE_ADMIN
+    patterns:
+    - /manage/site/**/*
+    - /manage/manager/**/*
+    - /manage/organization/**/*
+    - /manage/user/**/*
+  - roles:
+    - ROLE_SITE_ADMIN
+    patterns:
+    - /manage/**/*
+  - roles:
+    - ROLE_SYS_SITE
+    - ROLE_SYS
+    patterns:
+    - /sys/site/**/*
+  - roles:
+    - ROLE_SYS
+    patterns:
+    - /sys/**/*
+  - roles:
+    - ROL_USER
+    patterns:
+    - /client/**/*

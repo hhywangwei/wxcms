@@ -4,6 +4,7 @@ import com.tuoshecx.server.cms.api.form.LoginForm;
 import com.tuoshecx.server.cms.api.vo.LoginVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
 import com.tuoshecx.server.cms.security.Credential;
+import com.tuoshecx.server.cms.security.authenticate.GlobalRole;
 import com.tuoshecx.server.cms.security.token.TokenService;
 import com.tuoshecx.server.cms.base.domain.Sys;
 import com.tuoshecx.server.cms.base.service.SysService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -54,9 +56,15 @@ public class MainSysController {
     }
 
     private String createToken(Sys t){
-        List<String> roles = Collections.unmodifiableList(Arrays.asList(t.getRoles()));
         List<Credential.Attach> attaches = Collections.emptyList();
-        Credential c = new Credential(t.getId(), "base", "sys", roles, attaches);
+        Credential c = new Credential(t.getId(), "base", "sys", initRoles(t.getRoles()), attaches);
         return tokenService.generate(c);
+    }
+
+    private List<String> initRoles(String[] roles){
+        List<String> list = new ArrayList<>(Arrays.asList(roles));
+        list.add(GlobalRole.ROLE_ANONYMOUS.name());
+        list.add(GlobalRole.ROLE_AUTHENTICATION.name());
+        return Collections.unmodifiableList(list);
     }
 }

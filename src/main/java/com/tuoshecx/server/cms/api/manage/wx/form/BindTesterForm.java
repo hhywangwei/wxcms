@@ -1,5 +1,6 @@
 package com.tuoshecx.server.cms.api.manage.wx.form;
 
+import com.tuoshecx.server.wx.small.devops.domain.SmallTester;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
@@ -11,8 +12,10 @@ import javax.validation.constraints.NotBlank;
  */
 public class BindTesterForm {
     @NotBlank
-    @ApiModelProperty("微信编号")
+    @ApiModelProperty(value = "微信编号", required = true)
     private String wechatid;
+    @ApiModelProperty("备注")
+    private String remark;
 
     public String getWechatid() {
         return wechatid;
@@ -20,5 +23,23 @@ public class BindTesterForm {
 
     public void setWechatid(String wechatid) {
         this.wechatid = wechatid;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public SmallTester toDomain(String siteId){
+        SmallTester t = new SmallTester();
+
+        t.setSiteId(siteId);
+        t.setWechatid(wechatid);
+        t.setRemark(remark);
+
+        return t;
     }
 }

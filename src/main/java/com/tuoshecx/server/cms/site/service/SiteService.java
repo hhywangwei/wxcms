@@ -69,7 +69,7 @@ public class SiteService {
         t.setPhone("");
         t.setEnable(true);
         t.setManager(true);
-        t.setRoles(new String[]{"ROLE_SHOP_ADMIN"});
+        t.setRoles(new String[]{"ROLE_SITE_ADMIN"});
         managerService.save(t);
     }
 

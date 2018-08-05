@@ -41,7 +41,7 @@ public class BaseAuthorizationInterceptor extends HandlerInterceptorAdapter {
         }
 
         Optional<Credential> credential = validateAndGet(optional.get());
-        if(!credential.isPresent() || !authorization(credential.get())){
+        if(!credential.isPresent() || !authorization(request, credential.get())){
             responseForbid(request, response);
             return  false;
         }
@@ -64,7 +64,7 @@ public class BaseAuthorizationInterceptor extends HandlerInterceptorAdapter {
         return Optional.ofNullable(service.validateAndGet(token));
     }
 
-    protected boolean authorization(Credential credential){
+    protected boolean authorization(HttpServletRequest request, Credential credential){
         return true;
     }
 

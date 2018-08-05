@@ -1,12 +1,11 @@
 package com.tuoshecx.server.configure;
 
+import com.tuoshecx.server.configure.properties.SecurityProperties;
 import com.tuoshecx.server.configure.properties.TokenProperties;
 import com.tuoshecx.server.configure.properties.UploadProperties;
 import com.tuoshecx.server.cms.security.token.TokenService;
 import com.tuoshecx.server.cms.security.token.simple.SimpleTokenService;
 import com.tuoshecx.server.cms.security.token.simple.repository.RedisTokenRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,9 +21,8 @@ import org.springframework.web.client.RestTemplate;
  * @author <a href="hhywangwei@gmail.com">WangWei</a>
  */
 @Configuration
-@EnableConfigurationProperties({TokenProperties.class, UploadProperties.class})
+@EnableConfigurationProperties({TokenProperties.class, UploadProperties.class, SecurityProperties.class})
 public class CmsConfigure {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CmsConfigure.class);
 
     @Autowired
     @Bean

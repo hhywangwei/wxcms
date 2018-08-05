@@ -29,6 +29,7 @@ public class SmallTesterDao {
         t.setAppid(r.getString("appid"));
         t.setWechatid(r.getString("wechatid"));
         t.setUserstr(r.getString("user_str"));
+        t.setRemark(r.getString("remark"));
         t.setCreateTime(r.getTimestamp("create_time"));
         return t;
     };
@@ -39,8 +40,8 @@ public class SmallTesterDao {
     }
 
     public void insert(SmallTester t){
-        final String sql = "INSERT INTO wx_small_tester (id, site_id, appid, wechatid, user_str, create_time) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getWechatid(), t.getUserstr(), DaoUtils.timestamp(new Date()));
+        final String sql = "INSERT INTO wx_small_tester (id, site_id, appid, wechatid, user_str, remark create_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getWechatid(), t.getUserstr(), t.getRemark(), DaoUtils.timestamp(new Date()));
     }
 
     public SmallTester findOne(String id){
@@ -64,8 +65,13 @@ public class SmallTesterDao {
         return jdbcTemplate.update(sql, id) > 0;
     }
 
-    public List<SmallTester> find(String siteId){
-        final String sql = "SELECT * FROM wx_small_tester WHERE site_id = ?";
-        return jdbcTemplate.query(sql, new Object[]{siteId}, mapper);
+    public Long count(String siteId, String wechatid){
+        final String sql = "SELECT COUNT(id) FROM wx_small_tester WHERE site_id = ? AND wechatid LIKE ?";
+        return jdbcTemplate.queryForObject(sql, new String[]{siteId, DaoUtils.like(wechatid)}, Long.class);
+    }
+
+    public List<SmallTester> find(String siteId, String wechatid, int offset, int limit){
+        final String sql = "SELECT * FROM wx_small_tester WHERE site_id = ? AND wechatid LIKE ? ORDER BY create_time ASC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(sql, new Object[]{siteId, DaoUtils.like(wechatid), limit, offset}, mapper);
     }
 }

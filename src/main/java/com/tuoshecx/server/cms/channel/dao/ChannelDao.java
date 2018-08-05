@@ -63,7 +63,7 @@ public class ChannelDao {
     }
 
     public Channel findOne(String id){
-        final String sql = "SELECT * FROM site_channel WHERE id = ?";
+        final String sql = "SELECT * FROM site_channel WHERE id = ? AND is_delete = false";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, mapper);
     }
 
@@ -81,7 +81,7 @@ public class ChannelDao {
 
     public List<Channel> findChildren(String siteId, String parentId, Channel.State state){
         final String sql = "SELECT * FROM site_channel WHERE site_id = ? AND  parent_id = ? " +
-                "AND state LIKE ? Order By show_order ASC, create_time ASC";
+                "AND state LIKE ? AND is_delete = false Order By show_order ASC, create_time ASC";
 
         String stateLike = state == null? "%" : state.name();
         return jdbcTemplate.query(sql, new Object[]{siteId, parentId, stateLike}, mapper);

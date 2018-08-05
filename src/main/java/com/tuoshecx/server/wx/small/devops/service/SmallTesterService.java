@@ -50,28 +50,24 @@ public class SmallTesterService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public SmallTester bindTest(String siteId, String wechatid){
-        if (dao.has(siteId, wechatid)) {
+    public SmallTester bindTest(SmallTester t){
+        if (dao.has(t.getSiteId(), t.getWechatid())) {
             throw new BaseException("已经绑定了测试");
         }
 
-        Optional<String> optional = wxService.getAppid(siteId);
+        Optional<String> optional = wxService.getAppid(t.getSiteId());
         if(!optional.isPresent()){
             throw new BaseException("还未绑定小程序公众号");
         }
 
         String appid = optional.get();
-        BindTesterResponse response = clientService.bindTester(appid, wechatid);
+        BindTesterResponse response = clientService.bindTester(appid, t.getWechatid());
         if(!response.isOk()){
             LOGGER.error("Bind small tester fail, error is {}-{}", response.getCode(), response.getMessage());
             throw new BaseException("绑定测试失败");
         }
 
-        SmallTester t = new SmallTester();
-
         t.setId(IdGenerators.uuid());
-        t.setWechatid(wechatid);
-        t.setSiteId(siteId);
         t.setAppid(appid);
         t.setUserstr(response.getUserstr());
 
@@ -97,7 +93,11 @@ public class SmallTesterService {
         }
     }
 
-    public List<SmallTester> query(String siteId){
-        return dao.find(siteId);
+    public Long count(String siteId, String wechatid){
+        return dao.count(siteId, wechatid);
+    }
+
+    public List<SmallTester> query(String siteId, String wechatid, int offset, int limit){
+        return dao.find(siteId, wechatid, offset, limit);
     }
 }

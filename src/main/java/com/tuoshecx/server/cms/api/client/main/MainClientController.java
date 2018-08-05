@@ -7,6 +7,7 @@ import com.tuoshecx.server.cms.api.form.LoginForm;
 import com.tuoshecx.server.cms.api.vo.LoginVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
 import com.tuoshecx.server.cms.security.Credential;
+import com.tuoshecx.server.cms.security.authenticate.GlobalRole;
 import com.tuoshecx.server.cms.security.token.TokenService;
 import com.tuoshecx.server.cms.site.domain.SiteWxAuthorized;
 import com.tuoshecx.server.cms.site.service.SiteWxService;
@@ -26,10 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
@@ -78,16 +76,23 @@ public class MainClientController {
     }
 
     private String createToken(User t, String enter, String type){
-        final List<String> roles = Collections.singletonList("ROLE_USER");
-        final List<Credential.Attach> attaches = new ArrayList<>(3);
+        return tokenService.generate(new Credential(t.getId(), enter, type, initRoles(), initAttaches(t, enter)));
+    }
 
+    private List<String> initRoles(){
+        return Collections.unmodifiableList(Arrays.asList(GlobalRole.ROLE_ANONYMOUS.name(),
+                GlobalRole.ROLE_AUTHENTICATION.name(), "ROLE_USER"));
+    }
+
+    private List<Credential.Attach> initAttaches(User t, String enter){
+        final List<Credential.Attach> attaches = new ArrayList<>(3);
         attaches.add(new Credential.Attach(ClientCredentialContextUtils.SITE_ID_KEY, t.getSiteId()));
         if(isWxEnter(enter)){
             attaches.add(new Credential.Attach(ClientCredentialContextUtils.OPENID_KEY, t.getOpenid()));
         }
-        return tokenService.generate(new Credential(t.getId(),
-                enter, type, roles, Collections.unmodifiableList(attaches)));
+        return Collections.unmodifiableList(attaches);
     }
+
 
     private boolean isWxEnter(String enter){
         return StringUtils.equals("wx", enter);

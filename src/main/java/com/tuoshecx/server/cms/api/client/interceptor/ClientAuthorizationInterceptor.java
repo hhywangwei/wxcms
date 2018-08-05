@@ -5,6 +5,8 @@ import com.tuoshecx.server.cms.security.Credential;
 import com.tuoshecx.server.cms.security.token.TokenService;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 小程序端权限认证拦截器
  *
@@ -17,7 +19,7 @@ public class ClientAuthorizationInterceptor extends BaseAuthorizationInterceptor
     }
 
     @Override
-    protected boolean authorization(Credential credential){
+    protected boolean authorization(HttpServletRequest request, Credential credential){
         return StringUtils.equals(credential.getType(), "user") ||
                 StringUtils.equals(credential.getType(), "temp");
     }

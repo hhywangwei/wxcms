@@ -9,6 +9,7 @@ import com.tuoshecx.server.cms.channel.domain.Channel;
 import com.tuoshecx.server.cms.channel.service.ChannelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
@@ -77,8 +79,19 @@ public class ChannelManageController {
     @GetMapping(value = "{id}/children", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询子频道")
     public ResultVo<Collection<Channel>> queryChildren(@PathVariable("id")String id){
-        Collection<Channel> children = service.queryChildren(currentSiteId(), id, null);
+
+        Collection<Channel> children = StringUtils.equals(id, "0")?
+                Collections.singletonList(buildRootChannel())
+                : service.queryChildren(currentSiteId(), id, null);
+
         return ResultVo.success(children);
+    }
+
+    private Channel buildRootChannel(){
+        Channel channel = new Channel();
+        channel.setId("root");
+        channel.setName("频道");
+        return channel;
     }
 
     private String currentSiteId(){
