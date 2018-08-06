@@ -190,11 +190,12 @@ public class ArticleService {
         return dao.delete(id);
     }
 
-    public Long count(String siteId, String channelId, Article.State state, String title){
-        return dao.count(siteId, channelId, state, title);
+    public Long count(String siteId, String channelId, String path, Article.State state, String title){
+        return dao.count(siteId, channelId, path, state, title);
     }
 
-    public List<Article> query(String siteId, String channelId, Article.State state, String title, int offset, int limit){
-        return dao.find(siteId, channelId, state, title, offset, limit);
+    public List<Article> query(String siteId,  String channelId, String path, Article.State state, String title, int offset, int limit){
+        return dao.find(siteId, channelId, path, state, title, offset, limit);
     }
 }
+

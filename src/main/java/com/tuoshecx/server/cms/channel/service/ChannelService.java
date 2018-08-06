@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -53,10 +55,33 @@ public class ChannelService {
             throw new BaseException("上级频道不存在");
         }
 
+        if(dao.hasPath(t.getParentId(), t.getPath())){
+            throw new BaseException("频道路径已经存在");
+        }
+
         t.setId(IdGenerators.uuid());
+        String full = pathFull(t);
+        LOGGER.debug("Channel full path is {}", full);
+        t.setPathFull(full);
         dao.insert(t);
 
         return get(t.getId());
+    }
+
+    private String pathFull(Channel t){
+        List<String> paths = new ArrayList<>();
+       Channel parent = t;
+        for(int i = 0; i < 20; i++){
+           paths.add(parent.getPath());
+           if(isRoot(parent.getParentId())){
+               break;
+           }
+            parent = get(parent.getParentId());
+        }
+
+        Collections.reverse(paths);
+        return "/" + StringUtils.join(paths, "/");
+
     }
 
     private boolean isRoot(String id){
@@ -75,9 +100,18 @@ public class ChannelService {
                 throw new BaseException("上级频道不存在");
             }
         }
+
+        if(!StringUtils.equals(o.getPath(), t.getParentId()) && dao.hasPath(t.getParentId(), t.getPath())){
+            throw new BaseException("频道路径已经存在");
+        }
         o.setParentId(t.getParentId());
         o.setName(t.getName());
         o.setIcon(t.getIcon());
+        o.setTemplate(t.getTemplate());
+        o.setPath(t.getPath());
+        String full = pathFull(o);
+        LOGGER.debug("Channel full path is {}", full);
+        o.setPathFull(full);
         o.setShowOrder(t.getShowOrder());
 
         dao.update(o);
@@ -136,7 +170,15 @@ public class ChannelService {
         }
     }
 
-    public List<Channel> queryChildren(String siteId, String parentId, Channel.State state){
-        return dao.findChildren(siteId, parentId, state);
+    public List<Channel> queryChildren(String siteId, String parentId, Channel.State state, String name){
+        return dao.findChildren(siteId, parentId, state, name);
+    }
+
+    public Long count(String siteId, String parentId, Channel.State state, String name){
+        return dao.count(siteId, parentId, state, name);
+    }
+
+    public List<Channel> query(String siteId, String parentId, Channel.State state, String name, int offset, int limit) {
+        return dao.find(siteId, parentId, state, name, offset, limit);
     }
 }

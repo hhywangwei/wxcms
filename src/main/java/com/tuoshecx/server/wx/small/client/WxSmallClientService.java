@@ -315,7 +315,7 @@ public class WxSmallClientService {
      * @return
      */
      public WxSmallResponse unbindTester(String appid, String wechatid){
-         BindTesterRequest request = new BindTesterRequest(appid, wechatid);
+         BindTesterRequest request = new BindTesterRequest(getAccessToken(appid), wechatid);
          return clients.unbindTesterClient().request(request);
      }
 

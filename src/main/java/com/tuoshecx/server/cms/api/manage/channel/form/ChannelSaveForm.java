@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * 新增频道
@@ -22,6 +23,9 @@ public class ChannelSaveForm {
     private String name;
     @ApiModelProperty(value = "频道图标")
     private String icon;
+    @NotBlank @Size(max = 20)
+    @ApiModelProperty(value = "频道路径")
+    private String path;
     @NotBlank
     @ApiModelProperty(value = "频道模板")
     private String template = "default";
@@ -53,6 +57,14 @@ public class ChannelSaveForm {
         this.icon = icon;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public String getTemplate() {
         return template;
     }
@@ -78,6 +90,7 @@ public class ChannelSaveForm {
         t.setParentId(parentId);
         t.setShowOrder(showOrder);
         t.setTemplate(template);
+        t.setPath(path);
 
         return t;
     }

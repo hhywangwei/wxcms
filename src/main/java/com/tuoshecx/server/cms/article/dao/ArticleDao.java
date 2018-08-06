@@ -130,21 +130,24 @@ public class ArticleDao {
         return count != 0 && count > 0;
     }
 
-    public Long count(String siteId, String channelId, Article.State state, String title){
+    public Long count(String siteId, String channelId, String path, Article.State state, String title){
         StringBuilder sql = new StringBuilder(100);
         sql.append("SELECT COUNT(id) FROM site_article ");
-        buildWhere(sql, siteId, channelId, state, title);
-        Object[] params = params(siteId, channelId, state, title);
+        buildWhere(sql, siteId, channelId, path, state, title);
+        Object[] params = params(siteId, channelId, path, state, title);
         return jdbcTemplate.queryForObject(sql.toString(), params, Long.class);
     }
 
-    private void buildWhere(StringBuilder sql, String siteId, String channelId, Article.State state, String title){
+    private void buildWhere(StringBuilder sql, String siteId, String channelId, String path, Article.State state, String title){
         sql.append(" WHERE is_delete = false ");
         if(StringUtils.isNotBlank(siteId)){
             sql.append(" AND site_id = ? ");
         }
         if (StringUtils.isNotBlank(channelId)) {
             sql.append(" AND channel_id = ? ");
+        }
+        if(StringUtils.isNotBlank(path)){
+            sql.append(" AND path_full = ? ");
         }
         if(state != null){
             sql.append(" AND state = ? ");
@@ -154,13 +157,16 @@ public class ArticleDao {
         }
     }
 
-    private Object[] params(String siteId, String channelId, Article.State state, String title){
+    private Object[] params(String siteId, String channelId, String path, Article.State state, String title){
         List<Object>  params = new ArrayList<>(4);
         if(StringUtils.isNotBlank(siteId)){
             params.add(siteId);
         }
         if(StringUtils.isNotBlank(channelId)){
             params.add(channelId);
+        }
+        if(StringUtils.isNotBlank(path)){
+            params.add(path);
         }
         if(state != null){
             params.add(state.name());
@@ -171,13 +177,13 @@ public class ArticleDao {
         return params.toArray();
     }
 
-    public List<Article> find(String siteId, String channelId, Article.State state, String title, int offset, int limit){
+    public List<Article> find(String siteId, String channelId, String path,  Article.State state, String title, int offset, int limit){
         StringBuilder sql= new StringBuilder(100);
         sql.append("SELECT id, site_id, channel_id, title, short_title, sub_title, tag, summary, image, template, state, " +
                 "is_top, show_order, update_time, create_time FROM site_article ");
-        buildWhere(sql, siteId, channelId, state, title);
+        buildWhere(sql, siteId, channelId, path, state, title);
         sql.append(" ORDER BY is_top DESC, show_order ASC, update_time DESC LIMIT ? OFFSET ?");
-        Object[] params = DaoUtils.appendOffsetLimit(params(siteId, channelId, state, title), offset, limit);
+        Object[] params = DaoUtils.appendOffsetLimit(params(siteId, channelId, path, state, title), offset, limit);
         return jdbcTemplate.query(sql.toString(), params, notContentMapper);
     }
 }

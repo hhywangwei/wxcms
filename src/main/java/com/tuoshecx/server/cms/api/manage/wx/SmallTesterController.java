@@ -45,7 +45,7 @@ public class SmallTesterController {
         return ResultVo.success(service.bindTest(form.toDomain(currentSiteId())));
     }
 
-    @PutMapping(value = "{id}/unbind", consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(value = "{id}/unbind", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("解绑微信小程序测试账号")
     public ResultVo<OkVo> unbind(@PathVariable("id")String id){
         SmallTester o = service.get(id);

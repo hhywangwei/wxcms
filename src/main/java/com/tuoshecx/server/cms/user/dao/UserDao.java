@@ -89,12 +89,14 @@ public class UserDao {
     public boolean hasOpenid(String openid){
         final String sql = "SELECT COUNT(id) FROM site_user WHERE openid = ?";
         DaoUtils.setUtf8mb4(jdbcTemplate);
-        return jdbcTemplate.queryForObject(sql, new Object[]{openid}, Integer.class) > 0;
+        Integer count = jdbcTemplate.queryForObject(sql, new Object[]{openid}, Integer.class);
+        return count != null && count > 0;
     }
 
     public boolean hasUsername(String username){
         final String sql = "SELECT COUNT(id) FROM site_user WHERE username = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{username}, Integer.class) > 0;
+        Integer count = jdbcTemplate.queryForObject(sql, new Object[]{username}, Integer.class);
+        return count != null && count > 0;
     }
 
     public boolean updatePassword(String id, String password){
@@ -102,12 +104,12 @@ public class UserDao {
         return jdbcTemplate.update(sql, password, id) > 0;
     }
 
-    public long count(String siteId, String name, String nickname, String phone){
+    public Long count(String siteId, String name, String nickname, String phone){
         final String sql = "SELECT COUNT(id) FROM site_user WHERE site_id = ? AND name LIKE ? " +
                 "AND nickname LIKE ? AND phone LIKE ?";
 
         final String nameLike = DaoUtils.like(name);
-        final String nicknameLike = DaoUtils.like(name);
+        final String nicknameLike = DaoUtils.like(nickname);
         final String phoneLike = DaoUtils.like(phone);
 
         return jdbcTemplate.queryForObject(sql, new Object[]{siteId, nameLike, nicknameLike, phoneLike}, Long.class);
@@ -119,7 +121,7 @@ public class UserDao {
                 "ORDER BY create_time DESC LIMIT ? OFFSET ?";
 
         final String nameLike = DaoUtils.like(name);
-        final String nicknameLike = DaoUtils.like(name);
+        final String nicknameLike = DaoUtils.like(nickname);
         final String phoneLike = DaoUtils.like(phone);
 
         DaoUtils.setUtf8mb4(jdbcTemplate);

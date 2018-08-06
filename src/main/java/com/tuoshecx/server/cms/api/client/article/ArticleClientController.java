@@ -47,11 +47,12 @@ public class ArticleClientController {
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询文章")
     public ResultPageVo<Article> query(@RequestParam @ApiParam("频道编号") String channelId,
+                                       @RequestParam @ApiParam("频道路径") String path,
                                        @RequestParam(required = false) @ApiParam("文章标题") String title,
                                        @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                        @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
 
-        List<Article> data = service.query(getSiteId(), channelId, Article.State.RELEASE, title, page * rows, rows);
+        List<Article> data = service.query(getSiteId(), channelId, path, Article.State.RELEASE, title, page * rows, rows);
         return new ResultPageVo.Builder<>(page, rows, data).build();
     }
 

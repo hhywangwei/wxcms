@@ -119,6 +119,7 @@ public class ArticleManageController {
     @ApiOperation("查询文章")
     public ResultPageVo<Article> query(@RequestParam(required = false) @ApiParam("站点编号") String siteId,
                                        @RequestParam(required = false) @ApiParam("频道编号") String channelId,
+                                       @RequestParam(required = false) @ApiParam("频道路径") String path,
                                        @RequestParam(required = false) @ApiParam("状态") String state,
                                        @RequestParam(required = false) @ApiParam("标题") String title,
                                        @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
@@ -126,9 +127,9 @@ public class ArticleManageController {
 
         try{
             Article.State stateObj = StringUtils.isBlank(state)? null: Article.State.valueOf(state);
-            List<Article> data = service.query(siteId, channelId, stateObj, title, page * rows, rows);
+            List<Article> data = service.query(siteId, channelId, path, stateObj, title, page * rows, rows);
             return new ResultPageVo.Builder<>(page, rows, data)
-                    .count(true, () -> service.count(siteId, channelId, stateObj, title))
+                    .count(true, () -> service.count(siteId, channelId, path, stateObj, title))
                     .build();
         }catch (Exception e){
             throw new BaseException("文章状态错误");

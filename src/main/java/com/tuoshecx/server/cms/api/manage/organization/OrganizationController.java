@@ -1,21 +1,28 @@
 package com.tuoshecx.server.cms.api.manage.organization;
 
 import com.sun.org.apache.xpath.internal.operations.Or;
+import com.tuoshecx.server.BaseException;
 import com.tuoshecx.server.cms.api.manage.ManageCredentialContextUtils;
 import com.tuoshecx.server.cms.api.manage.organization.form.OrganizationSaveForm;
 import com.tuoshecx.server.cms.api.manage.organization.form.OrganizationUpdateForm;
 import com.tuoshecx.server.cms.api.vo.OkVo;
+import com.tuoshecx.server.cms.api.vo.ResultPageVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
+import com.tuoshecx.server.cms.channel.domain.Channel;
 import com.tuoshecx.server.cms.site.domain.Organization;
 import com.tuoshecx.server.cms.site.service.OrganizationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -65,8 +72,33 @@ public class OrganizationController {
 
     @GetMapping(value = "{id}/children", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询子组织机构")
-    public ResultVo<List<Organization>> queryChildren(@PathVariable("id")String parentId){
-        return ResultVo.success(service.queryChildren(parentId));
+    public ResultVo<Collection<Organization>> queryChildren(@PathVariable("id")String parentId){
+        Collection<Organization> children = StringUtils.equals(parentId, "0")?
+                Collections.singletonList(buildRootChannel())
+                : service.queryChildren(currentSiteId(), parentId);
+        return ResultVo.success(children);
+    }
+
+    private Organization buildRootChannel(){
+        Organization organ = new Organization();
+        organ.setId("root");
+        organ.setName("组织机构");
+        return organ;
+    }
+
+    @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation("查询组织机构")
+    public ResultPageVo<Organization> query(@RequestParam(required = false) @ApiParam("频道机构名称") String name,
+                                       @RequestParam(required = false) @ApiParam("上级机构") String parentId,
+                                       @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
+                                       @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
+
+
+        String siteId = currentSiteId();
+        List<Organization> data = service.query(siteId, parentId, name, page * rows, rows);
+        return new ResultPageVo.Builder<>(page, rows, data)
+                .count(true, () -> service.count(siteId, parentId, name))
+                .build();
     }
 
     private String currentSiteId(){

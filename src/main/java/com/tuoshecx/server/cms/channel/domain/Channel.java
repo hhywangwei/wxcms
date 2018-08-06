@@ -26,6 +26,10 @@ public class Channel {
     private String icon;
     @ApiModelProperty(value = "频道模板")
     private String template;
+    @ApiModelProperty(value = "频道路径")
+    private String path;
+    @ApiModelProperty(value = "频道全路径")
+    private String pathFull;
     @ApiModelProperty(value = "频道状态")
     private State state;
     @ApiModelProperty(value = "显示顺序，按照正序显示")
@@ -87,6 +91,22 @@ public class Channel {
         this.template = template;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPathFull() {
+        return pathFull;
+    }
+
+    public void setPathFull(String pathFull) {
+        this.pathFull = pathFull;
+    }
+
     public State getState() {
         return state;
     }
@@ -130,6 +150,8 @@ public class Channel {
                 Objects.equals(name, channel.name) &&
                 Objects.equals(icon, channel.icon) &&
                 Objects.equals(template, channel.template) &&
+                Objects.equals(path, channel.path) &&
+                Objects.equals(pathFull, channel.pathFull) &&
                 state == channel.state &&
                 Objects.equals(showOrder, channel.showOrder) &&
                 Objects.equals(updateTime, channel.updateTime) &&
@@ -138,7 +160,7 @@ public class Channel {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, parentId, siteId, name, icon, template, state, showOrder, updateTime, createTime);
+        return Objects.hash(id, parentId, siteId, name, icon, template, path, pathFull, state, showOrder, updateTime, createTime);
     }
 
     @Override
@@ -150,6 +172,8 @@ public class Channel {
                 .append("name", name)
                 .append("icon", icon)
                 .append("template", template)
+                .append("path", path)
+                .append("pathFull", pathFull)
                 .append("state", state)
                 .append("showOrder", showOrder)
                 .append("updateTime", updateTime)

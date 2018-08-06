@@ -1,5 +1,6 @@
 package com.tuoshecx.server.cms.site.dao;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import com.tuoshecx.server.cms.site.domain.Organization;
 import com.tuoshecx.server.cms.common.utils.DaoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +75,19 @@ public class OrganizationDao {
         return count != null && count > 0;
     }
 
-    public List<Organization> findChildren(String parentId){
-        final String sql = "SELECT * FROM site_organization WHERE parent_id = ? ORDER BY  show_order ASC, create_time ASC";
-        return jdbcTemplate.query(sql, new Object[]{parentId}, mapper);
+    public List<Organization> findChildren(String siteId, String parentId){
+        final String sql = "SELECT * FROM site_organization WHERE site_id = ? AND  parent_id = ? ORDER BY  show_order ASC, create_time ASC";
+        return jdbcTemplate.query(sql, new Object[]{siteId, parentId}, mapper);
+    }
+
+    public Long count(String siteId, String parentId, String name){
+        final String sql = "SELECT COUNT(id)FROM site_organization WHERE site_id = ? AND parent_id = ? AND name LIKE ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{siteId, parentId, DaoUtils.like(name)}, Long.class);
+    }
+
+    public List<Organization> find(String siteId, String parentId, String name, int offset, int limit){
+        final String sql = "SELECT COUNT(id)FROM site_organization WHERE site_id = ? AND parent_id = ? AND name LIKE ? " +
+                "ORDER BY show_order ASC, create_time ASC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(sql, new Object[]{siteId, parentId, DaoUtils.like(name), limit, offset}, mapper);
     }
 }
