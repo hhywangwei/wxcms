@@ -52,8 +52,8 @@ public class ChannelDao {
     public boolean update(Channel t){
         final String sql = "UPDATE site_channel SET name = ?, icon = ?, template = ?, path = ?, path_full = ?, " +
                 "show_order = ?, parent_id = ?, update_time = ? WHERE id = ? AND is_delete = false";
-        return jdbcTemplate.update(sql, t.getName(), t.getIcon(), t.getTemplate(), t.getShowOrder(), t.getParentId(),
-                DaoUtils.timestamp(new Date()), t.getId()) > 0;
+        return jdbcTemplate.update(sql, t.getName(), t.getIcon(), t.getTemplate(), t.getPath(), t.getPathFull(),
+                t.getShowOrder(), t.getParentId(), DaoUtils.timestamp(new Date()), t.getId()) > 0;
     }
 
     public boolean updateState(String id, Channel.State state){
