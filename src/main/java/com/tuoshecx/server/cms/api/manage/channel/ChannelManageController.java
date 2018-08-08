@@ -103,7 +103,7 @@ public class ChannelManageController {
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询频道")
     public ResultPageVo<Channel> query(@RequestParam(required = false) @ApiParam("频道名称") String name,
-                                       @RequestParam(required = false) @ApiParam("上级频道") String parentId,
+                                       @RequestParam(defaultValue = "root") @ApiParam("上级频道") String parentId,
                                        @RequestParam(required = false) @ApiParam("状态") String state,
                                        @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                        @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){

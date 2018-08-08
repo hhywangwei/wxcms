@@ -25,7 +25,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 @RestController
 @RequestMapping("/manage/user")
 @Api(value = "/manage/user", tags = "M-站点会员查询API接口")
-public class UserController {
+public class UserManageController {
 
     @Autowired
     private UserService service;

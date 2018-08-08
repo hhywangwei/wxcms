@@ -81,12 +81,12 @@ public class OrganizationDao {
     }
 
     public Long count(String siteId, String parentId, String name){
-        final String sql = "SELECT COUNT(id)FROM site_organization WHERE site_id = ? AND parent_id = ? AND name LIKE ?";
+        final String sql = "SELECT COUNT(id) FROM site_organization WHERE site_id = ? AND parent_id = ? AND name LIKE ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{siteId, parentId, DaoUtils.like(name)}, Long.class);
     }
 
     public List<Organization> find(String siteId, String parentId, String name, int offset, int limit){
-        final String sql = "SELECT COUNT(id)FROM site_organization WHERE site_id = ? AND parent_id = ? AND name LIKE ? " +
+        final String sql = "SELECT * FROM site_organization WHERE site_id = ? AND parent_id = ? AND name LIKE ? " +
                 "ORDER BY show_order ASC, create_time ASC LIMIT ? OFFSET ?";
         return jdbcTemplate.query(sql, new Object[]{siteId, parentId, DaoUtils.like(name), limit, offset}, mapper);
     }

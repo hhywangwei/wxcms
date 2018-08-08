@@ -1,14 +1,11 @@
 package com.tuoshecx.server.cms.api.manage.organization;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
-import com.tuoshecx.server.BaseException;
 import com.tuoshecx.server.cms.api.manage.ManageCredentialContextUtils;
 import com.tuoshecx.server.cms.api.manage.organization.form.OrganizationSaveForm;
 import com.tuoshecx.server.cms.api.manage.organization.form.OrganizationUpdateForm;
 import com.tuoshecx.server.cms.api.vo.OkVo;
 import com.tuoshecx.server.cms.api.vo.ResultPageVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
-import com.tuoshecx.server.cms.channel.domain.Channel;
 import com.tuoshecx.server.cms.site.domain.Organization;
 import com.tuoshecx.server.cms.site.service.OrganizationService;
 import io.swagger.annotations.Api;
@@ -35,7 +32,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 @RestController
 @RequestMapping("/manage/organization")
 @Api(value = "/manage/organization", tags = "M-组织机构管理API接口")
-public class OrganizationController {
+public class OrganizationManageController {
 
     @Autowired
     private OrganizationService service;
@@ -89,7 +86,7 @@ public class OrganizationController {
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询组织机构")
     public ResultPageVo<Organization> query(@RequestParam(required = false) @ApiParam("频道机构名称") String name,
-                                       @RequestParam(required = false) @ApiParam("上级机构") String parentId,
+                                       @RequestParam(defaultValue = "root") @ApiParam("上级机构") String parentId,
                                        @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                        @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
 
