@@ -29,6 +29,12 @@ public class WxSmallClients {
     private final HttpClient<GetQrcodeRequest, GetQrcodeResponse> getQrcodeClient;
     private final HttpClient<BindTesterRequest, BindTesterResponse> bindTesterClient;
     private final HttpClient<BindTesterRequest, WxSmallResponse> unbindTesterClient;
+    private final HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> dailyVisitTrendAnalysisClient;
+    private final HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> weekVisitTrendAnalysisClient;
+    private final HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> monthVisitTrendAnalysisClient;
+    private final HttpClient<AnalysisRequest, SummaryTrendAnalysisResponse> summaryTrendAnalysisClient;
+    private final HttpClient<AnalysisRequest, VisitPageResponse> visitPageClient;
+
 
     public WxSmallClients(RestTemplate restTemplate) {
         ObjectMapper objectMapper = initObjectMapper();
@@ -48,6 +54,11 @@ public class WxSmallClients {
         this.getQrcodeClient = new GetQrcodeClient(restTemplate, objectMapper);
         this.bindTesterClient = new BindTesterClient(restTemplate, objectMapper);
         this.unbindTesterClient = new UnbindTesterClient(restTemplate, objectMapper);
+        this.dailyVisitTrendAnalysisClient = new DailyVisitTrendAnalysisClient(restTemplate, objectMapper);
+        this.weekVisitTrendAnalysisClient = new WeekVisitTrendAnalysisClient(restTemplate, objectMapper);
+        this.monthVisitTrendAnalysisClient = new MonthVisitTrendAnalysisClient(restTemplate, objectMapper);
+        this.summaryTrendAnalysisClient = new SummaryTrendAnalysisClient(restTemplate, objectMapper);
+        this.visitPageClient = new VisitPageAnalysisClient(restTemplate, objectMapper);
     }
 
     private ObjectMapper initObjectMapper(){
@@ -56,29 +67,14 @@ public class WxSmallClients {
         return mapper;
     }
 
-    /**
-     * 用户登陆请求客户端
-     *
-     * @return {@link LoginClient}
-     */
     public HttpClient<LoginRequest, LoginResponse> loginClient(){
         return loginClient;
     }
 
-    /**
-     * 发送模板消息
-     *
-     * @return {@link SendTemplateMsgClient}
-     */
     public HttpClient<SendTemplateMsgRequest, WxSmallResponse> sendTmpMsgClient(){
         return sendTmpMsgClient;
     }
 
-    /**
-     *  发送客户消息
-     *
-     * @return {@link SendCustomMsgClient}
-     */
     public HttpClient<SendCustomMsgRequest, WxSmallResponse> sendCustomMsgClient() {
         return sendCustomMsgClient;
     }
@@ -133,5 +129,25 @@ public class WxSmallClients {
 
     public HttpClient<BindTesterRequest, WxSmallResponse> unbindTesterClient(){
         return unbindTesterClient;
+    }
+
+    public HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> dailyVisitTrendAnalysisClient(){
+        return dailyVisitTrendAnalysisClient;
+    }
+
+    public HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> weekVisitTrendAnalysisClient(){
+        return weekVisitTrendAnalysisClient;
+    }
+
+    public HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> monthVisitTrendAnalysisClient(){
+        return monthVisitTrendAnalysisClient;
+    }
+
+    public HttpClient<AnalysisRequest, SummaryTrendAnalysisResponse> summaryTrendAnalysisHttpClient(){
+        return summaryTrendAnalysisClient;
+    }
+
+    public HttpClient<AnalysisRequest, VisitPageResponse> visitPageClient(){
+        return visitPageClient;
     }
 }

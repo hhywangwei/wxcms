@@ -1,6 +1,7 @@
 package com.tuoshecx.server.wx.small.client;
 
 import com.tuoshecx.server.BaseException;
+import com.tuoshecx.server.cms.common.utils.DateUtils;
 import com.tuoshecx.server.cms.site.domain.SiteWxToken;
 import com.tuoshecx.server.cms.site.service.SiteWxService;
 import com.tuoshecx.server.wx.component.token.ComponentTokenService;
@@ -18,6 +19,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -288,7 +290,7 @@ public class WxSmallClientService {
      *
      * @param appid appid
      * @param path  小程序访问页面路径
-     * @return
+     * @return {@link GetQrcodeResponse}
      */
      public GetQrcodeResponse getQrocde(String appid, String path){
          GetQrcodeRequest request = new GetQrcodeRequest(getAccessToken(appid), path);
@@ -300,7 +302,7 @@ public class WxSmallClientService {
      *
      * @param appid     appid
      * @param wechatid 微信编号
-     * @return
+     * @return {@link BindTesterResponse}
      */
      public BindTesterResponse bindTester(String appid, String wechatid){
          BindTesterRequest request = new BindTesterRequest(getAccessToken(appid), wechatid);
@@ -312,11 +314,78 @@ public class WxSmallClientService {
      *
      * @param appid     appid
      * @param wechatid  微信号
-     * @return
+     * @return {@link WxSmallResponse}
      */
      public WxSmallResponse unbindTester(String appid, String wechatid){
          BindTesterRequest request = new BindTesterRequest(getAccessToken(appid), wechatid);
          return clients.unbindTesterClient().request(request);
+     }
+
+    /**
+     * 日趋势
+     *
+     * @param appid appid
+     * @param day   日期
+     * @return {@link VisitTrendAnalysisResponse}
+     */
+     public VisitTrendAnalysisResponse dailyVisitTrendAnalysis(String appid, Date day){
+         String date = DateUtils.format("yyyyMMdd", day);
+         AnalysisRequest request = new AnalysisRequest(getAccessToken(appid), date, date);
+         return clients.dailyVisitTrendAnalysisClient().request(request);
+     }
+
+    /**
+     * 周趋势
+     *
+     * @param appid     appid
+     * @param beginDate 周开始日期
+     * @param endDate   周结束日期
+     * @return {@link VisitTrendAnalysisResponse}
+     */
+     public VisitTrendAnalysisResponse weekVisitTrendAnalysis(String appid, Date beginDate, Date endDate){
+         AnalysisRequest request = new AnalysisRequest(getAccessToken(appid),
+                 DateUtils.format("yyyyMMdd", beginDate), DateUtils.format("yyyyMMdd", endDate));
+         return clients.weekVisitTrendAnalysisClient().request(request);
+     }
+
+    /**
+     * 月趋势
+     *
+     * @param appid     appid
+     * @param beginDate 月开始日期
+     * @param endDate   月结束日期
+     * @return {@link VisitTrendAnalysisResponse}
+     */
+     public VisitTrendAnalysisResponse monthVisitTrendAnalysis(String appid, Date beginDate, Date endDate){
+         AnalysisRequest request = new AnalysisRequest(getAccessToken(appid),
+                 DateUtils.format("yyyyMMdd", beginDate), DateUtils.format("yyyyMMdd", endDate));
+         return clients.monthVisitTrendAnalysisClient().request(request);
+     }
+
+    /**
+     * 概况趋势
+     *
+     * @param appid appid
+     * @param day   日期
+     * @return {@link SummaryTrendAnalysisResponse}
+     */
+     public SummaryTrendAnalysisResponse summaryTrendAnalysis(String appid, Date day){
+         String date = DateUtils.format("yyyyMMdd", day);
+         AnalysisRequest request = new AnalysisRequest(getAccessToken(appid), date, date);
+         return clients.summaryTrendAnalysisHttpClient().request(request);
+     }
+
+    /**
+     * 访问页面
+     *
+     * @param appid appid
+     * @param day   日期
+     * @return {@link VisitPageResponse}
+     */
+     public VisitPageResponse visitPage(String appid, Date day){
+         String date = DateUtils.format("yyyyMMdd", day);
+         AnalysisRequest request = new AnalysisRequest(getAccessToken(appid), date, date);
+         return clients.visitPageClient().request(request);
      }
 
     /**
