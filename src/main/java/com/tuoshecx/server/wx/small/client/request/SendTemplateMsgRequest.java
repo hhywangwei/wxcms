@@ -1,7 +1,5 @@
 package com.tuoshecx.server.wx.small.client.request;
 
-import java.util.List;
-
 /**
  * 发送模板消息请求
  *

@@ -1,6 +1,6 @@
 package com.tuoshecx.server.cms.api.sys.wx.form;
 
-import com.tuoshecx.server.wx.small.devops.domain.DomainConfigure;
+import com.tuoshecx.server.wx.component.devops.domain.DomainConfigure;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

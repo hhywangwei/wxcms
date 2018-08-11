@@ -1,6 +1,6 @@
 package com.tuoshecx.server.cms.api.manage.wx.form;
 
-import com.tuoshecx.server.wx.small.devops.domain.SmallTester;
+import com.tuoshecx.server.wx.component.devops.domain.SmallTester;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;

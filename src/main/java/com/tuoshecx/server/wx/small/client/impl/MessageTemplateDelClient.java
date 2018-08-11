@@ -1,6 +1,7 @@
 package com.tuoshecx.server.wx.small.client.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tuoshecx.server.wx.small.client.impl.WxSmallClient;
 import com.tuoshecx.server.wx.small.client.request.MessageTemplateDelRequest;
 import com.tuoshecx.server.wx.small.client.response.WxSmallResponse;
 import org.springframework.web.client.RestTemplate;
@@ -12,7 +13,7 @@ import java.util.Map;
  *
  * @author <a href="mailto:hhywangwei@gmail.com">WangWei</a>
  */
-class MessageTemplateDelClient extends WxSmallClient<MessageTemplateDelRequest, WxSmallResponse>{
+class MessageTemplateDelClient extends WxSmallClient<MessageTemplateDelRequest, WxSmallResponse> {
 
     MessageTemplateDelClient(RestTemplate restTemplate, ObjectMapper objectMapper){
         super(restTemplate, objectMapper, "messageTemplateDel");

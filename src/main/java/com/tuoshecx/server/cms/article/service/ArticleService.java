@@ -65,6 +65,10 @@ public class ArticleService {
         if(StringUtils.isBlank(t.getSummary())){
             t.setSummary(HtmlUtils.text(t.getContent(), 150));
         }
+
+        Channel channel = channelService.get(t.getChannelId());
+        t.setChannelPath(channel.getPathFull());
+
         dao.insert(t);
 
         logService.save(t.getId(), t.getTitle(), managerId, "创建文章");
@@ -151,6 +155,7 @@ public class ArticleService {
             throw new BaseException("不能移动到文章所在频道");
         }
         t.setId(IdGenerators.uuid());
+        t.setChannelPath(channel.getPathFull());
         dao.insert(t);
         dao.delete(id);
         logService.save(t.getId(), t.getTitle(), manageId, "改变频道");
@@ -209,6 +214,10 @@ public class ArticleService {
 
     public List<Article> query(String siteId,  String channelId, String path, Article.State state, String title, int offset, int limit){
         return dao.find(siteId, channelId, path, state, title, offset, limit);
+    }
+
+    public List<Article> querydWhole(String siteId, String channelId, Article.State state, int limit){
+        return dao.findWhole(siteId, channelId, state, limit);
     }
 }
 

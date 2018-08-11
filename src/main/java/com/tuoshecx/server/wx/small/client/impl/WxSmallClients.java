@@ -16,19 +16,9 @@ public class WxSmallClients {
     private final HttpClient<LoginRequest, LoginResponse> loginClient;
     private final HttpClient<SendTemplateMsgRequest, WxSmallResponse> sendTmpMsgClient;
     private final HttpClient<SendCustomMsgRequest, WxSmallResponse> sendCustomMsgClient;
-    private final HttpClient<GetAuditStatusRequest, GetAuditStatusResponse> getAuditStatusClient;
-    private final HttpClient<WxSmallRequest, GetCategoryResponse> getCategoryClient;
-    private final HttpClient<ProgramCommitRequest, WxSmallResponse> programCommitClient;
-    private final HttpClient<WxSmallRequest, WxSmallResponse> programReleaseClient;
-    private final HttpClient<SetWebViewDomainRequest, WxSmallResponse> setWebViewDomainClient;
-    private final HttpClient<SubmitAuditRequest, SubmitAuditResponse> submitAuditClient;
-    private final HttpClient<UpdateDomainRequest, WxSmallResponse> updateDomainClient;
     private final HttpClient<MessageTemplateAddRequest, MessageTemplateAddResponse> messageTemplateAddClient;
     private final HttpClient<MessageTemplateDelRequest, WxSmallResponse> messageTemplateDelClient;
     private final HttpClient<MessageTemplateQueryRequest, MessageTemplateQueryResponse> messageTemplateQueryClient;
-    private final HttpClient<GetQrcodeRequest, GetQrcodeResponse> getQrcodeClient;
-    private final HttpClient<BindTesterRequest, BindTesterResponse> bindTesterClient;
-    private final HttpClient<BindTesterRequest, WxSmallResponse> unbindTesterClient;
     private final HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> dailyVisitTrendAnalysisClient;
     private final HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> weekVisitTrendAnalysisClient;
     private final HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> monthVisitTrendAnalysisClient;
@@ -41,19 +31,9 @@ public class WxSmallClients {
         this.loginClient = new LoginClient(restTemplate, objectMapper);
         this.sendTmpMsgClient = new SendTemplateMsgClient(restTemplate, objectMapper);
         this.sendCustomMsgClient = new SendCustomMsgClient(restTemplate, objectMapper);
-        this.getAuditStatusClient = new GetAuditStatusClient(restTemplate, objectMapper);
-        this.getCategoryClient = new GetCategoryClient(restTemplate, objectMapper);
-        this.programCommitClient = new ProgramCommitClient(restTemplate, objectMapper);
-        this.programReleaseClient = new ProgramReleaseClient(restTemplate, objectMapper);
-        this.setWebViewDomainClient = new SetWebViewDomainClient(restTemplate, objectMapper);
-        this.submitAuditClient = new SubmitAuditClient(restTemplate, objectMapper);
-        this.updateDomainClient = new UpdateDomainClient(restTemplate, objectMapper);
         this.messageTemplateAddClient = new MessageTemplateAddClient(restTemplate, objectMapper);
         this.messageTemplateDelClient = new MessageTemplateDelClient(restTemplate, objectMapper);
         this.messageTemplateQueryClient = new MessageTemplateQueryClient(restTemplate, objectMapper);
-        this.getQrcodeClient = new GetQrcodeClient(restTemplate, objectMapper);
-        this.bindTesterClient = new BindTesterClient(restTemplate, objectMapper);
-        this.unbindTesterClient = new UnbindTesterClient(restTemplate, objectMapper);
         this.dailyVisitTrendAnalysisClient = new DailyVisitTrendAnalysisClient(restTemplate, objectMapper);
         this.weekVisitTrendAnalysisClient = new WeekVisitTrendAnalysisClient(restTemplate, objectMapper);
         this.monthVisitTrendAnalysisClient = new MonthVisitTrendAnalysisClient(restTemplate, objectMapper);
@@ -79,34 +59,6 @@ public class WxSmallClients {
         return sendCustomMsgClient;
     }
 
-    public HttpClient<GetAuditStatusRequest, GetAuditStatusResponse> getAuditStatusClient() {
-        return getAuditStatusClient;
-    }
-
-    public HttpClient<WxSmallRequest, GetCategoryResponse> getCategoryClient() {
-        return getCategoryClient;
-    }
-
-    public HttpClient<ProgramCommitRequest, WxSmallResponse> programCommitClient() {
-        return programCommitClient;
-    }
-
-    public HttpClient<WxSmallRequest, WxSmallResponse> programReleaseClient() {
-        return programReleaseClient;
-    }
-
-    public HttpClient<SetWebViewDomainRequest, WxSmallResponse> setWebViewDomainClient() {
-        return setWebViewDomainClient;
-    }
-
-    public HttpClient<SubmitAuditRequest, SubmitAuditResponse> submitAuditClient() {
-        return submitAuditClient;
-    }
-
-    public HttpClient<UpdateDomainRequest, WxSmallResponse> updateDomainClient() {
-        return updateDomainClient;
-    }
-
     public HttpClient<MessageTemplateAddRequest, MessageTemplateAddResponse> messageTemplateAddClient(){
         return messageTemplateAddClient;
     }
@@ -117,18 +69,6 @@ public class WxSmallClients {
 
     public HttpClient<MessageTemplateQueryRequest, MessageTemplateQueryResponse> messageTemplateQueryClient(){
         return messageTemplateQueryClient;
-    }
-
-    public HttpClient<GetQrcodeRequest, GetQrcodeResponse> getQrcodeClient(){
-        return getQrcodeClient;
-    }
-
-    public HttpClient<BindTesterRequest, BindTesterResponse> bindTesterClient(){
-        return bindTesterClient;
-    }
-
-    public HttpClient<BindTesterRequest, WxSmallResponse> unbindTesterClient(){
-        return unbindTesterClient;
     }
 
     public HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> dailyVisitTrendAnalysisClient(){

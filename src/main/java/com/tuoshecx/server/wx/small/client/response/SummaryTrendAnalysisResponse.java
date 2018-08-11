@@ -1,8 +1,5 @@
 package com.tuoshecx.server.wx.small.client.response;
 
-import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
-import com.tuoshecx.server.wx.small.client.response.WxSmallResponse;
-
 import java.util.List;
 import java.util.Map;
 

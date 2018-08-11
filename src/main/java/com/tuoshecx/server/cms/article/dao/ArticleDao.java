@@ -28,6 +28,7 @@ public class ArticleDao {
         t.setId(r.getString("id"));
         t.setSiteId(r.getString("site_id"));
         t.setChannelId(r.getString("channel_id"));
+        t.setChannelPath(r.getString("channel_path"));
         t.setTitle(r.getString("title"));
         t.setShortTitle(r.getString("short_title"));
         t.setSubTitle(r.getString("sub_title"));
@@ -56,6 +57,7 @@ public class ArticleDao {
         t.setId(r.getString("id"));
         t.setSiteId(r.getString("site_id"));
         t.setChannelId(r.getString("channel_id"));
+        t.setChannelPath(r.getString("channel_path"));
         t.setTitle(r.getString("title"));
         t.setShortTitle(r.getString("short_title"));
         t.setSubTitle(r.getString("sub_title"));
@@ -65,6 +67,7 @@ public class ArticleDao {
         t.setTemplate(r.getString("template"));
         t.setState(Article.State.valueOf(r.getString("state")));
         t.setTop(r.getBoolean("is_top"));
+        t.setAuthor(r.getString("author"));
         t.setShowOrder(r.getInt("show_order"));
         t.setUpdateTime(r.getTimestamp("update_time"));
         t.setCreateTime(r.getTimestamp("create_time"));
@@ -79,11 +82,11 @@ public class ArticleDao {
 
     public void insert(Article t){
         Date now = new Date();
-        final String sql = "INSERT INTO site_article (id, site_id, channel_id, title, short_title, sub_title, " +
+        final String sql = "INSERT INTO site_article (id, site_id, channel_id, channel_path, title, short_title, sub_title, " +
                 "author, origin, keywords, catalogs, tag, summary, content, image, is_comment, template, state, " +
                 "show_order, is_top, update_time, create_time) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getChannelId(), t.getTitle(), t.getShortTitle(), t.getSubTitle(),
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getChannelId(), t.getChannelPath(), t.getTitle(), t.getShortTitle(), t.getSubTitle(),
                 t.getAuthor(), t.getOrigin(), DaoUtils.join(t.getKeywords()), DaoUtils.join(t.getCatalogs()),  t.getTag(),
                 t.getSummary(), t.getContent(), t.getImage(), t.getComment(), t.getTemplate(), t.getState().name(),
                 t.getShowOrder(), t.getTop(), now, now);
@@ -147,7 +150,7 @@ public class ArticleDao {
             sql.append(" AND channel_id = ? ");
         }
         if(StringUtils.isNotBlank(path)){
-            sql.append(" AND path_full = ? ");
+            sql.append(" AND channel_path LIKE ? ");
         }
         if(state != null){
             sql.append(" AND state = ? ");
@@ -166,7 +169,7 @@ public class ArticleDao {
             params.add(channelId);
         }
         if(StringUtils.isNotBlank(path)){
-            params.add(path);
+            params.add(path+"%");
         }
         if(state != null){
             params.add(state.name());
@@ -179,11 +182,18 @@ public class ArticleDao {
 
     public List<Article> find(String siteId, String channelId, String path,  Article.State state, String title, int offset, int limit){
         StringBuilder sql= new StringBuilder(100);
-        sql.append("SELECT id, site_id, channel_id, title, short_title, sub_title, tag, summary, image, template, state, " +
-                "is_top, show_order, update_time, create_time FROM site_article ");
+        sql.append("SELECT id, site_id, channel_id, channel_path, title, short_title, sub_title, tag, summary, image, " +
+                "author, template, state, is_top, show_order, update_time, create_time FROM site_article ");
         buildWhere(sql, siteId, channelId, path, state, title);
         sql.append(" ORDER BY is_top DESC, show_order ASC, update_time DESC LIMIT ? OFFSET ?");
         Object[] params = DaoUtils.appendOffsetLimit(params(siteId, channelId, path, state, title), offset, limit);
         return jdbcTemplate.query(sql.toString(), params, notContentMapper);
+    }
+
+    public List<Article> findWhole(String siteId, String channelId, Article.State state, int limit){
+        final String sql = "SELECT * FROM site_article WHERE is_delete = false AND site_id = ? AND channel_id = ? AND state = ? " +
+                " ORDER BY is_top DESC, show_order ASC, update_time DESC LIMIT ?";
+
+        return jdbcTemplate.query(sql, new Object[]{siteId, channelId, state.name(), limit}, mapper);
     }
 }

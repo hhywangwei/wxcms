@@ -15,11 +15,13 @@ import com.tuoshecx.server.cms.sns.service.ReadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 /**
@@ -46,14 +48,23 @@ public class ArticleClientController {
 
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询文章")
-    public ResultPageVo<Article> query(@RequestParam @ApiParam("频道编号") String channelId,
-                                       @RequestParam @ApiParam("频道路径") String path,
+    public ResultPageVo<Article> query(@RequestParam(required = false) @ApiParam(value = "频道编号") String channelId,
+                                       @RequestParam(required = false) @ApiParam(value = "频道路径") String path,
                                        @RequestParam(required = false) @ApiParam("文章标题") String title,
                                        @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                        @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
 
         List<Article> data = service.query(getSiteId(), channelId, path, Article.State.RELEASE, title, page * rows, rows);
         return new ResultPageVo.Builder<>(page, rows, data).build();
+    }
+
+    @GetMapping(value = "channel", produces = APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation("得到频道下数字文章")
+    public ResultVo<List<Article>> queryByChannel(@RequestParam("channelId") String channelId,
+                                                  @RequestParam(value = "rows", defaultValue = "1") Integer rows){
+
+        List<Article> data = service.querydWhole(getSiteId(), channelId, Article.State.RELEASE, rows);
+        return ResultVo.success(data);
     }
 
     @GetMapping(value = "{id}", produces = APPLICATION_JSON_UTF8_VALUE)

@@ -1,6 +1,6 @@
 package com.tuoshecx.server.cms.api.sys.wx.vo;
 
-import com.tuoshecx.server.wx.small.client.response.GetCategoryResponse;
+import com.tuoshecx.server.wx.component.client.response.GetCategoryResponse;
 import io.swagger.annotations.ApiModelProperty;
 
 /**

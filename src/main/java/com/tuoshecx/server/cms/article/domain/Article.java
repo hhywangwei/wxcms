@@ -2,6 +2,7 @@ package com.tuoshecx.server.cms.article.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Arrays;
@@ -20,6 +21,8 @@ public class Article {
     private String siteId;
     @ApiModelProperty("频道编号")
     private String channelId;
+    @ApiModelProperty("文章路径")
+    private String channelPath;
     @ApiModelProperty("标题")
     private String title;
     @ApiModelProperty("短标题")
@@ -84,6 +87,14 @@ public class Article {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
+    }
+
+    public String getChannelPath() {
+        return channelPath;
+    }
+
+    public void setChannelPath(String channelPath) {
+        this.channelPath = channelPath;
     }
 
     public String getTitle() {
@@ -238,6 +249,7 @@ public class Article {
         return Objects.equals(id, article.id) &&
                 Objects.equals(siteId, article.siteId) &&
                 Objects.equals(channelId, article.channelId) &&
+                Objects.equals(channelPath, article.channelPath) &&
                 Objects.equals(title, article.title) &&
                 Objects.equals(shortTitle, article.shortTitle) &&
                 Objects.equals(subTitle, article.subTitle) &&
@@ -260,8 +272,7 @@ public class Article {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, siteId, channelId, title, shortTitle, subTitle, author, origin, tag, summary,
-                content, image, template, state, showOrder, comment, top, updateTime, createTime);
+        int result = Objects.hash(id, siteId, channelId, channelPath, title, shortTitle, subTitle, author, origin, tag, summary, content, image, template, state, showOrder, comment, top, updateTime, createTime);
         result = 31 * result + Arrays.hashCode(keywords);
         result = 31 * result + Arrays.hashCode(catalogs);
         return result;
@@ -273,6 +284,7 @@ public class Article {
                 .append("id", id)
                 .append("siteId", siteId)
                 .append("channelId", channelId)
+                .append("channelPath", channelPath)
                 .append("title", title)
                 .append("shortTitle", shortTitle)
                 .append("subTitle", subTitle)

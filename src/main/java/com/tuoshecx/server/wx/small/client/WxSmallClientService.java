@@ -22,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -135,112 +134,6 @@ public class WxSmallClientService {
     }
 
     /**
-     * 得到小程序审核状态
-     *
-     * @param appid   小程序appid
-     * @param auditId 审核编号
-     * @return 小程序认证输出
-     */
-    public GetAuditStatusResponse getAuditStatus(String appid, Integer auditId){
-        String token = getAccessToken(appid);
-        GetAuditStatusRequest request = new GetAuditStatusRequest(token, auditId);
-
-        return clients.getAuditStatusClient().request(request);
-    }
-
-    /**
-     * 得到小程序目录分类
-     *
-     * @param appid 小程序appid
-     * @return 小程序目录输出
-     */
-    public GetCategoryResponse getCategory(String appid){
-        String token = getAccessToken(appid);
-        WxSmallRequest request = new WxSmallRequest(token);
-
-        return clients.getCategoryClient().request(request);
-    }
-
-    /**
-     * 上传小程序代码
-     *
-     * @param appid       微信appid
-     * @param templateId  模板编号
-     * @param userVersion 用户编号
-     * @param userDesc    用户描述
-     * @param extJson     模板配置
-     * @return {@link WxSmallResponse}
-     */
-     public WxSmallResponse programCommit(String appid, Integer templateId,
-                                          String userVersion, String userDesc, String extJson){
-        String token = getAccessToken(appid);
-         ProgramCommitRequest request  = new ProgramCommitRequest(token, templateId, userVersion, userDesc, extJson);
-
-         return clients.programCommitClient().request(request);
-     }
-
-    /**
-     * 发布微信小程序
-     *
-     * @param appid 微信appid
-     * @return {@link WxSmallResponse}
-     */
-     public WxSmallResponse promgramRelease(String appid){
-         String token = getAccessToken(appid);
-         WxSmallRequest request = new WxSmallRequest(token);
-
-         return clients.programReleaseClient().request(request);
-     }
-
-    /**
-     * 设置小程序业务域
-     *
-     * @param appid  微信appid
-     * @param webViewDomain 小程序业务域
-     * @return {@link WxSmallResponse}
-     */
-     public WxSmallResponse setWebViewDomain(String appid, String[] webViewDomain){
-         String token = getAccessToken(appid);
-         SetWebViewDomainRequest request = new SetWebViewDomainRequest(token, "set", webViewDomain);
-
-         return clients.setWebViewDomainClient().request(request);
-     }
-
-    /**
-     *  提交小程序审核
-     *
-     * @param appid 微信appid
-     * @param func  构建请求方法
-     * @return {@link SubmitAuditResponse}
-     */
-     public SubmitAuditResponse  submitAudit(String appid, Consumer<SubmitAuditRequest> consumer){
-         String token = getAccessToken(appid);
-         SubmitAuditRequest request = new SubmitAuditRequest(token);
-         consumer.accept(request);
-         return clients.submitAuditClient().request(request);
-     }
-
-    /**
-     * 更新小程序域名
-     *
-     * @param appid            微信appid
-     * @param requestDomain    http请求域
-     * @param wsRequestDomain  webSocket请求域
-     * @param uploadDomain     上传域
-     * @param downlandDomain   下载域
-     * @return {@link WxSmallResponse}
-     */
-     public WxSmallResponse updateDomain(String appid, String[] requestDomain, String[] wsRequestDomain,
-                                         String[] uploadDomain, String[] downlandDomain){
-
-         String token = getAccessToken(appid);
-         UpdateDomainRequest request = new UpdateDomainRequest(token, "add",
-                 requestDomain, wsRequestDomain, uploadDomain, downlandDomain);
-
-         return clients.updateDomainClient().request(request);
-     }
-
-    /**
      * 添加微信消息模板
      *
      * @param appid      微信appid
@@ -283,42 +176,6 @@ public class WxSmallClientService {
          MessageTemplateQueryRequest request = new MessageTemplateQueryRequest(token, offset, count);
 
          return clients.messageTemplateQueryClient().request(request);
-     }
-
-    /**
-     * 得到小程序体验二维码
-     *
-     * @param appid appid
-     * @param path  小程序访问页面路径
-     * @return {@link GetQrcodeResponse}
-     */
-     public GetQrcodeResponse getQrocde(String appid, String path){
-         GetQrcodeRequest request = new GetQrcodeRequest(getAccessToken(appid), path);
-         return clients.getQrcodeClient().request(request);
-     }
-
-    /**
-     * 绑定小程序测试员
-     *
-     * @param appid     appid
-     * @param wechatid 微信编号
-     * @return {@link BindTesterResponse}
-     */
-     public BindTesterResponse bindTester(String appid, String wechatid){
-         BindTesterRequest request = new BindTesterRequest(getAccessToken(appid), wechatid);
-         return clients.bindTesterClient().request(request);
-     }
-
-    /**
-     * 解绑小程序测试员
-     *
-     * @param appid     appid
-     * @param wechatid  微信号
-     * @return {@link WxSmallResponse}
-     */
-     public WxSmallResponse unbindTester(String appid, String wechatid){
-         BindTesterRequest request = new BindTesterRequest(getAccessToken(appid), wechatid);
-         return clients.unbindTesterClient().request(request);
      }
 
     /**

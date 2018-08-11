@@ -1,6 +1,7 @@
 package com.tuoshecx.server.wx.small.client.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tuoshecx.server.wx.small.client.impl.WxSmallClient;
 import com.tuoshecx.server.wx.small.client.request.MessageTemplateAddRequest;
 import com.tuoshecx.server.wx.small.client.response.MessageTemplateAddResponse;
 

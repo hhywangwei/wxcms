@@ -1,6 +1,6 @@
 package com.tuoshecx.server.cms.api.sys.wx.form;
 
-import com.tuoshecx.server.wx.small.devops.domain.SmallExtConfigure;
+import com.tuoshecx.server.wx.component.devops.domain.SmallExtConfigure;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;

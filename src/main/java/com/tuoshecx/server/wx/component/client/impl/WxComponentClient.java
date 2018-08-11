@@ -89,7 +89,7 @@ abstract class WxComponentClient<I extends ComponentRequest, O extends Component
      * @param response 输出对象
      * @return 输出对象
      */
-    private O doResponse(ResponseEntity<byte[]> response){
+    protected O doResponse(ResponseEntity<byte[]> response){
 
         if(!response.getStatusCode().is2xxSuccessful()){
             LOGGER.error("Wx component {} http request fail, status code {}", clientName, response.getStatusCodeValue());

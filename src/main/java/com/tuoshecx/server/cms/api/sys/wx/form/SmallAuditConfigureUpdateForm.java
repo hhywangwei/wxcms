@@ -1,6 +1,6 @@
 package com.tuoshecx.server.cms.api.sys.wx.form;
 
-import com.tuoshecx.server.wx.small.devops.domain.SmallAuditConfigure;
+import com.tuoshecx.server.wx.component.devops.domain.SmallAuditConfigure;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
