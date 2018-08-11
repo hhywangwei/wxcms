@@ -91,11 +91,11 @@ public class ArticleDao {
 
     public boolean update(Article t){
         final String sql = "UPDATE site_article SET title = ?, short_title = ?, sub_title = ?, author = ?, origin = ?, keywords = ?, catalogs = ?, " +
-                "tag = ?, summary = ?, content = ?, image = ?, comment = ?, template = ?, state = ?, show_order = ?, is_top = ?, update_time = ? " +
+                "tag = ?, summary = ?, content = ?, image = ?, is_comment = ?, template = ?, show_order = ?, is_top = ?, update_time = ? " +
                 "WHERE id = ? AND is_delete = false";
 
         return jdbcTemplate.update(sql, t.getTitle(), t.getShortTitle(), t.getSubTitle(), t.getAuthor(), t.getOrigin(), DaoUtils.join(t.getKeywords()),
-                DaoUtils.join(t.getCatalogs()), t.getTag(), t.getSummary(), t.getContent(), t.getImage(), t.getComment(), t.getTemplate(), t.getState().name(),
+                DaoUtils.join(t.getCatalogs()), t.getTag(), t.getSummary(), t.getContent(), t.getImage(), t.getComment(), t.getTemplate(),
                 t.getShowOrder(), t.getTop(), DaoUtils.timestamp(new Date()), t.getId()) > 0;
     }
 
@@ -127,7 +127,7 @@ public class ArticleDao {
     public boolean hasOfChannel(String channelId){
         final String sql = "SELECT COUNT(id) FROM site_article WHERE channel_id = ? AND is_delete = false";
         Integer count = jdbcTemplate.queryForObject(sql, new Object[]{channelId}, Integer.class);
-        return count != 0 && count > 0;
+        return count != null && count > 0;
     }
 
     public Long count(String siteId, String channelId, String path, Article.State state, String title){

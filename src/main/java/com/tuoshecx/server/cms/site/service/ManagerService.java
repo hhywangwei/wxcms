@@ -6,6 +6,8 @@ import com.tuoshecx.server.cms.site.dao.ManagerDao;
 import com.tuoshecx.server.cms.site.dao.SiteDao;
 import com.tuoshecx.server.cms.site.domain.Manager;
 import com.tuoshecx.server.cms.site.domain.Site;
+import com.tuoshecx.server.cms.user.domain.User;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 站点管理员业务服务
@@ -23,12 +26,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ManagerService {
     private final ManagerDao dao;
-    private final SiteDao shopDao;
+    private final SiteDao siteDao;
 
     @Autowired
-    public ManagerService(ManagerDao dao, SiteDao shopDao){
+    public ManagerService(ManagerDao dao, SiteDao siteDao){
         this.dao = dao;
-        this.shopDao = shopDao;
+        this.siteDao = siteDao;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -41,6 +44,7 @@ public class ManagerService {
         t.setId(IdGenerators.uuid());
         t.setEnable(true);
         t.setPassword(encodePassword(t.getPassword()));
+        t.setHeadImg("");
         dao.insert(t);
 
         return get(t.getId());
@@ -48,7 +52,7 @@ public class ManagerService {
 
     private void validateSite(String siteId){
         try{
-            Site t = shopDao.findOne(siteId);
+            Site t = siteDao.findOne(siteId);
             if(t.getState() == Site.State.CLOSE){
                 throw new BaseException("站点已经关闭");
             }
@@ -169,6 +173,52 @@ public class ManagerService {
             throw new BaseException("无操作权限");
         }
         return dao.delete(id);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Manager bindUser(String id, User user){
+        Manager manager = get(id);
+
+        if(StringUtils.isNotBlank(manager.getUserId()) && !StringUtils.equals(manager.getUserId(), user.getId())){
+            throw new BaseException("管理员已经绑定，请先解除绑定的用户");
+        }
+        if(!manager.getEnable()){
+            throw new BaseException("关联管理员以禁用");
+        }
+
+        if(!StringUtils.equals(manager.getSiteId(), user.getSiteId())){
+            throw new BaseException("关联管理员不存在");
+        }
+
+        if(!dao.updateUser(id, user.getId(), user.getNickname(), user.getHeadImg())){
+            throw new BaseException("绑定管理员失败");
+        }
+
+        return get(id);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Manager unbindUser(String id){
+        Manager manager = get(id);
+
+        if(StringUtils.isBlank(manager.getUserId())){
+            throw new BaseException("未绑定用户");
+        }
+
+        String empty = StringUtils.EMPTY;
+        if(!dao.updateUser(id, empty, empty, empty)){
+            throw new BaseException("解除绑定失败");
+        }
+
+        return get(id);
+    }
+
+    public Optional<Manager> getByBindUser(String userId, String siteId){
+        try{
+            return Optional.of(dao.findOneByBindUser(userId, siteId));
+        }catch (Exception e){
+            return Optional.empty();
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

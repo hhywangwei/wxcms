@@ -37,6 +37,10 @@ public class Manager {
     private Boolean manager;
     @ApiModelProperty(value = "true:可用,false:不可用", required = true)
     private Boolean enable;
+    @ApiModelProperty(value = "关联用户")
+    private String userId;
+    @ApiModelProperty(value = "昵称")
+    private String nickname;
     @ApiModelProperty(value = "创建时间", required = true)
     private Date createTime;
     @ApiModelProperty(value = "修改时间", required = true)
@@ -122,6 +126,22 @@ public class Manager {
         this.enable = isEnable;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -142,25 +162,26 @@ public class Manager {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Manager employee = (Manager) o;
-        return Objects.equals(id, employee.id) &&
-                Objects.equals(siteId, employee.siteId) &&
-                Objects.equals(username, employee.username) &&
-                Objects.equals(password, employee.password) &&
-                Objects.equals(name, employee.name) &&
-                Objects.equals(headImg, employee.headImg) &&
-                Objects.equals(phone, employee.phone) &&
-                Arrays.equals(roles, employee.roles) &&
-                Objects.equals(manager, employee.manager) &&
-                Objects.equals(enable, employee.enable) &&
-                Objects.equals(updateTime, employee.updateTime) &&
-                Objects.equals(createTime, employee.createTime);
+        Manager manager1 = (Manager) o;
+        return Objects.equals(id, manager1.id) &&
+                Objects.equals(siteId, manager1.siteId) &&
+                Objects.equals(username, manager1.username) &&
+                Objects.equals(password, manager1.password) &&
+                Objects.equals(name, manager1.name) &&
+                Objects.equals(headImg, manager1.headImg) &&
+                Objects.equals(phone, manager1.phone) &&
+                Arrays.equals(roles, manager1.roles) &&
+                Objects.equals(manager, manager1.manager) &&
+                Objects.equals(enable, manager1.enable) &&
+                Objects.equals(userId, manager1.userId) &&
+                Objects.equals(nickname, manager1.nickname) &&
+                Objects.equals(createTime, manager1.createTime) &&
+                Objects.equals(updateTime, manager1.updateTime);
     }
 
     @Override
     public int hashCode() {
-
-        int result = Objects.hash(id, siteId, username, password, name, headImg, phone, manager, enable, updateTime, createTime);
+        int result = Objects.hash(id, siteId, username, password, name, headImg, phone, manager, enable, userId, nickname, createTime, updateTime);
         result = 31 * result + Arrays.hashCode(roles);
         return result;
     }
@@ -178,8 +199,10 @@ public class Manager {
                 .append("roles", roles)
                 .append("manager", manager)
                 .append("enable", enable)
-                .append("updateTime", updateTime)
+                .append("userId", userId)
+                .append("nickname", nickname)
                 .append("createTime", createTime)
+                .append("updateTime", updateTime)
                 .toString();
     }
 }

@@ -88,7 +88,6 @@ public class UserDao {
 
     public boolean hasOpenid(String openid){
         final String sql = "SELECT COUNT(id) FROM site_user WHERE openid = ?";
-        DaoUtils.setUtf8mb4(jdbcTemplate);
         Integer count = jdbcTemplate.queryForObject(sql, new Object[]{openid}, Integer.class);
         return count != null && count > 0;
     }

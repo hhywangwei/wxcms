@@ -35,6 +35,8 @@ public class ManagerDao {
         t.setRoles(DaoUtils.toArray(r.getString("roles")));
         t.setManager(r.getBoolean("is_manager"));
         t.setEnable(r.getBoolean("is_enable"));
+        t.setUserId(r.getString("user_id"));
+        t.setNickname(r.getString("nickname"));
         t.setUpdateTime(r.getTimestamp("update_time"));
         t.setCreateTime(r.getTimestamp("create_time"));
 
@@ -83,19 +85,34 @@ public class ManagerDao {
         return jdbcTemplate.update(sql, password, DaoUtils.date(new Date()), id) > 0;
     }
 
+    public boolean updateUser(String id, String userId, String nickname, String headImg){
+        final String sql = "UPDATE site_manager SET user_id = ?, nickname = ?, head_img = ? WHERE id = ? ";
+        DaoUtils.setUtf8mb4(jdbcTemplate);
+        return jdbcTemplate.update(sql, userId, nickname, headImg, id) > 0;
+    }
+
     public boolean hasUsername(String username){
         final String sql = "SELECT COUNT(id) FROM site_manager WHERE username =?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{username}, Integer.class) > 0;
+        Integer count = jdbcTemplate.queryForObject(sql, new Object[]{username}, Integer.class);
+        return count != null && count > 0;
     }
 
     public Manager findOne(String id){
         final String sql = "SELECT * FROM site_manager WHERE id =? AND is_delete =false";
+        DaoUtils.setUtf8mb4(jdbcTemplate);
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, mapper);
     }
 
     public Manager findOneByUsername(String username){
         final String sql = "SELECT * FROM site_manager WHERE username = ? AND is_delete = false";
+        DaoUtils.setUtf8mb4(jdbcTemplate);
         return jdbcTemplate.queryForObject(sql, new Object[]{username}, mapper);
+    }
+
+    public Manager findOneByBindUser(String userId, String siteId){
+        final  String sql = "SELECT * FROM site_manager WHERE user_id = ? AND site_id = ? AND is_delete = false";
+        DaoUtils.setUtf8mb4(jdbcTemplate);
+        return jdbcTemplate.queryForObject(sql, new Object[]{userId, siteId}, mapper);
     }
 
     public Long count(String siteId, String username, String name, String phone){
@@ -114,11 +131,13 @@ public class ManagerDao {
                 "ORDER BY create_time DESC LIMIT ? OFFSET ?";
 
         Object[] params = DaoUtils.appendOffsetLimit(buildParameters(siteId, username, name, phone), offset, limit);
+        DaoUtils.setUtf8mb4(jdbcTemplate);
         return jdbcTemplate.query(sql, params, mapper);
     }
 
     public List<Manager> findBySite(String siteId){
         final String sql = "SELECT * FROM site_manager WHERE site_id = ? AND is_delete = false";
+        DaoUtils.setUtf8mb4(jdbcTemplate);
         return jdbcTemplate.query(sql, new Object[]{siteId}, mapper);
     }
 }

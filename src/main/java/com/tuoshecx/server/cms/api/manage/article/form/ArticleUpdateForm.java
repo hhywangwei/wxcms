@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
  * @author <a href="mailto:hhywangwei@gmail.com">WangWei</a>
  */
 @ApiModel("修改文章")
-public class ArticleUpdateForm extends ArticleSaveForm {
+public class ArticleUpdateForm {
     @NotBlank
     @ApiModelProperty("编号")
     private String id;

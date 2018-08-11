@@ -7,7 +7,10 @@ import com.tuoshecx.server.cms.api.vo.OkVo;
 import com.tuoshecx.server.cms.api.vo.ResultPageVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
 import com.tuoshecx.server.cms.article.domain.Article;
+import com.tuoshecx.server.cms.article.domain.ArticleLog;
+import com.tuoshecx.server.cms.article.service.ArticleLogService;
 import com.tuoshecx.server.cms.article.service.ArticleService;
+import com.tuoshecx.server.cms.security.Credential;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -35,13 +38,16 @@ public class ArticleManageController {
     @Autowired
     private ArticleService service;
 
+    @Autowired
+    private ArticleLogService logService;
+
     @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("新增文章")
     public ResultVo<Article> save(@Valid @RequestBody ArticleSaveForm form, BindingResult result){
         if(result.hasErrors()){
             return ResultVo.error(result.getAllErrors());
         }
-        return ResultVo.success(service.save(form.toDomain(currentSiteId())));
+        return ResultVo.success(service.save(form.toDomain(currentSiteId()), getCredential().getId()));
     }
 
     @PutMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
@@ -50,7 +56,7 @@ public class ArticleManageController {
         if(result.hasErrors()){
             return ResultVo.error(result.getAllErrors());
         }
-        return ResultVo.success(service.update(form.toDomain(currentSiteId())));
+        return ResultVo.success(service.update(form.toDomain(currentSiteId()), getCredential().getId()));
     }
 
     @GetMapping(value = "{id}", produces = APPLICATION_JSON_UTF8_VALUE)
@@ -62,19 +68,19 @@ public class ArticleManageController {
     @PutMapping(value = "{id}/release", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("发布文章")
     public ResultVo<Article> release(@PathVariable("id")String id){
-        return ResultVo.success(service.release(id, currentSiteId()));
+        return ResultVo.success(service.release(id, currentSiteId(), getCredential().getId()));
     }
 
     @PutMapping(value = "{id}/close", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("关闭文章")
     public ResultVo<Article> close(@PathVariable("id")String id){
-        return ResultVo.success(service.close(id, currentSiteId()));
+        return ResultVo.success(service.close(id, currentSiteId(), getCredential().getId()));
     }
 
     @DeleteMapping(value = "{id}", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("删除文章")
     public ResultVo<OkVo> delete(@PathVariable("id")String id){
-        return ResultVo.success(new OkVo(service.delete(id, currentSiteId())));
+        return ResultVo.success(new OkVo(service.delete(id, currentSiteId(), getCredential().getId())));
     }
 
     @PostMapping(value = "copy", consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
@@ -83,7 +89,7 @@ public class ArticleManageController {
         if(result.hasErrors()){
             return ResultVo.error(result.getAllErrors());
         }
-        return ResultVo.success(service.copy(form.getId(), form.getToChannelId(), currentSiteId()));
+        return ResultVo.success(service.copy(form.getId(), form.getToChannelId(), currentSiteId(), getCredential().getId()));
     }
 
     @PostMapping(value = "move", consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
@@ -92,7 +98,7 @@ public class ArticleManageController {
         if(result.hasErrors()){
             return ResultVo.error(result.getAllErrors());
         }
-        return ResultVo.success(service.move(form.getId(), form.getToChannelId(), currentSiteId()));
+        return ResultVo.success(service.move(form.getId(), form.getToChannelId(), currentSiteId(), getCredential().getId()));
     }
 
     @PutMapping(value = "top", consumes = APPLICATION_JSON_UTF8_VALUE, produces =  APPLICATION_JSON_UTF8_VALUE)
@@ -136,7 +142,24 @@ public class ArticleManageController {
         }
     }
 
+    @GetMapping(value = "{id}/log", produces = APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation("查询文章操作日志")
+    public ResultPageVo<ArticleLog> queryLog(@PathVariable("id")String id,
+                                             @RequestParam(required = false)String username,
+                                             @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
+                                             @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
+
+        List<ArticleLog> data = logService.query(id, username, page * rows, rows);
+        return new ResultPageVo.Builder<>(page, rows, data)
+                .count(true, () -> logService.count(id, username))
+                .build();
+    }
+
     private String currentSiteId(){
         return ManageCredentialContextUtils.currentSiteId();
+    }
+
+    private Credential getCredential(){
+        return ManageCredentialContextUtils.getCredential();
     }
 }

@@ -32,13 +32,15 @@ public class ArticleService {
     private final ArticleDao dao;
     private final ChannelService channelService;
     private final CounterService counterService;
+    private final ArticleLogService logService;
 
     @Autowired
     public ArticleService(ArticleDao dao, ChannelService channelService,
-                          CounterService counterService) {
+                          CounterService counterService, ArticleLogService logService) {
         this.dao = dao;
         this.channelService = channelService;
         this.counterService = counterService;
+        this.logService = logService;
     }
 
     public Article get(String id){
@@ -51,7 +53,7 @@ public class ArticleService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Article save(Article t){
+    public Article save(Article t, String managerId){
         t.setId(IdGenerators.uuid());
         t.setState(Article.State.REEDIT);
         if(t.getTop() == null){
@@ -65,6 +67,7 @@ public class ArticleService {
         }
         dao.insert(t);
 
+        logService.save(t.getId(), t.getTitle(), managerId, "创建文章");
         counterService.newEmpty(t.getId(), refDetail(t.getTitle()));
 
         return dao.findOne(t.getId());
@@ -75,7 +78,7 @@ public class ArticleService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Article update(Article t){
+    public Article update(Article t, String managerId){
         Article o = get(t.getId());
         if(!StringUtils.equals(t.getSiteId(), o.getSiteId())){
             throw new BaseException("文章不存在");
@@ -83,8 +86,10 @@ public class ArticleService {
         if(StringUtils.isBlank(t.getSummary())){
             t.setSummary(HtmlUtils.text(t.getContent(), 150));
         }
+
         dao.update(t);
 
+        logService.save(t.getId(), t.getTitle(), managerId, "修改文章");
         counterService.updateDetail(t.getId(), refDetail(t.getTitle()));
 
         return get(t.getId());
@@ -117,7 +122,7 @@ public class ArticleService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Article copy(String id, String toChannelId, String siteId){
+    public Article copy(String id, String toChannelId, String siteId, String managerId){
         Article t = get(id);
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("文章不存在");
@@ -129,11 +134,11 @@ public class ArticleService {
         if(StringUtils.equals(t.getSiteId(), toChannelId)){
             throw new BaseException("不能拷贝到文章所在频道");
         }
-        return save(t);
+        return save(t, managerId);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Article move(String id, String toChannelId, String siteId){
+    public Article move(String id, String toChannelId, String siteId, String manageId){
         Article t = get(id);
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("文章不存在");
@@ -148,11 +153,12 @@ public class ArticleService {
         t.setId(IdGenerators.uuid());
         dao.insert(t);
         dao.delete(id);
+        logService.save(t.getId(), t.getTitle(), manageId, "改变频道");
         return get(t.getId());
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Article release(String id, String siteId){
+    public Article release(String id, String siteId, String managerId){
         Article t = get(id);
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("文章不存在");
@@ -163,11 +169,13 @@ public class ArticleService {
         if(!dao.updateState(id, Article.State.RELEASE)){
             throw new BaseException("发布文章失败");
         }
+
+        logService.save(t.getId(), t.getTitle(), managerId, "发布文章");
         return get(id);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Article close(String id, String siteId){
+    public Article close(String id, String siteId, String managerId){
         Article t = get(id);
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("文章不存在");
@@ -178,15 +186,20 @@ public class ArticleService {
         if(!dao.updateState(id, Article.State.CLOSE)){
             throw new BaseException("文章关闭失败");
         }
+
+        logService.save(t.getId(), t.getTitle(), managerId, "关闭文章");
+
         return get(id);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public boolean delete(String id, String siteId){
+    public boolean delete(String id, String siteId, String managerId){
         Article t = get(id);
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("文章不存在");
         }
+
+        logService.save(t.getId(), t.getTitle(), managerId, "删除文章");
         return dao.delete(id);
     }
 
