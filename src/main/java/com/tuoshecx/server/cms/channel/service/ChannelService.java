@@ -101,7 +101,7 @@ public class ChannelService {
             }
         }
 
-        if(!StringUtils.equals(o.getPath(), t.getParentId()) && dao.hasPath(t.getParentId(), t.getPath())){
+        if(!StringUtils.equals(o.getPath(), t.getPath()) && dao.hasPath(t.getParentId(), t.getPath())){
             throw new BaseException("频道路径已经存在");
         }
         o.setParentId(t.getParentId());
