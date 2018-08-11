@@ -216,8 +216,8 @@ public class ArticleService {
         return dao.find(siteId, channelId, path, state, title, offset, limit);
     }
 
-    public List<Article> querydWhole(String siteId, String channelId, Article.State state, int limit){
-        return dao.findWhole(siteId, channelId, state, limit);
+    public List<Article> queryWhole(String siteId, String channelId, String channelPath, Article.State state, int limit){
+        return dao.findWhole(siteId, channelId, channelPath, state, limit);
     }
 }
 

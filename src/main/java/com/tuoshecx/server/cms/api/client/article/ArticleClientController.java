@@ -8,7 +8,6 @@ import com.tuoshecx.server.cms.api.vo.ResultVo;
 import com.tuoshecx.server.cms.article.domain.Article;
 import com.tuoshecx.server.cms.article.service.ArticleService;
 import com.tuoshecx.server.cms.security.Credential;
-import com.tuoshecx.server.cms.sns.domain.Counter;
 import com.tuoshecx.server.cms.sns.service.CounterService;
 import com.tuoshecx.server.cms.sns.service.GoodService;
 import com.tuoshecx.server.cms.sns.service.ReadService;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 /**
@@ -49,21 +47,23 @@ public class ArticleClientController {
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询文章")
     public ResultPageVo<Article> query(@RequestParam(required = false) @ApiParam(value = "频道编号") String channelId,
-                                       @RequestParam(required = false) @ApiParam(value = "频道路径") String path,
+                                       @RequestParam(required = false) @ApiParam(value = "频道路径") String channelPath,
                                        @RequestParam(required = false) @ApiParam("文章标题") String title,
                                        @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                        @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
 
-        List<Article> data = service.query(getSiteId(), channelId, path, Article.State.RELEASE, title, page * rows, rows);
+        List<Article> data = service.query(getSiteId(), channelId, channelPath, Article.State.RELEASE, title, page * rows, rows);
         return new ResultPageVo.Builder<>(page, rows, data).build();
     }
 
     @GetMapping(value = "channel", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("得到频道下数字文章")
-    public ResultVo<List<Article>> queryByChannel(@RequestParam("channelId") String channelId,
+    public ResultVo<List<Article>> queryByChannel(@RequestParam(value = "channelId", required = false) String channelId,
+                                                  @RequestParam(value = "channelPath", required = false)String channelPath,
                                                   @RequestParam(value = "rows", defaultValue = "1") Integer rows){
 
-        List<Article> data = service.querydWhole(getSiteId(), channelId, Article.State.RELEASE, rows);
+        channelId = StringUtils.isBlank(channelId) && StringUtils.isBlank(channelPath)? "-1" : channelId;
+        List<Article> data = service.queryWhole(getSiteId(), channelId, channelPath, Article.State.RELEASE, rows);
         return ResultVo.success(data);
     }
 

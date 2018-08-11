@@ -190,10 +190,12 @@ public class ArticleDao {
         return jdbcTemplate.query(sql.toString(), params, notContentMapper);
     }
 
-    public List<Article> findWhole(String siteId, String channelId, Article.State state, int limit){
-        final String sql = "SELECT * FROM site_article WHERE is_delete = false AND site_id = ? AND channel_id = ? AND state = ? " +
+    public List<Article> findWhole(String siteId, String channelId, String channelPath, Article.State state, int limit){
+        final String sql = "SELECT * FROM site_article " +
+                " WHERE is_delete = false AND site_id = ? AND channel_id LIKE ? AND channel_path LIKE ? AND state = ? " +
                 " ORDER BY is_top DESC, show_order ASC, update_time DESC LIMIT ?";
 
-        return jdbcTemplate.query(sql, new Object[]{siteId, channelId, state.name(), limit}, mapper);
+        return jdbcTemplate.query(sql, new Object[]{siteId, DaoUtils.blankLike(channelId),
+                DaoUtils.blankLike(channelPath), state.name(), limit}, mapper);
     }
 }
