@@ -20,7 +20,7 @@ public class ResultVo<T> {
     @ApiModelProperty(value = "错误信息")
     private final String[] messages;
     @ApiModelProperty(value = "处理结果")
-    private final T rs;
+    protected final T rs;
 
     public static <T> ResultVo<T> success(T rs) {
         return new ResultVo<>(0, new String[0], rs);

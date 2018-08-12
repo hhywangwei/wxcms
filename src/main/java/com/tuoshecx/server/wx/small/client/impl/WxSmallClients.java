@@ -24,6 +24,8 @@ public class WxSmallClients {
     private final HttpClient<AnalysisRequest, VisitTrendAnalysisResponse> monthVisitTrendAnalysisClient;
     private final HttpClient<AnalysisRequest, SummaryTrendAnalysisResponse> summaryTrendAnalysisClient;
     private final HttpClient<AnalysisRequest, VisitPageResponse> visitPageClient;
+    private final HttpClient<GetSmallQrcodeRequest, SmallQrcodeResponse> getSmallQrcodeClient;
+    private final HttpClient<GetSmallQrcodeLimitRequest, SmallQrcodeResponse> getSmallQrcodeLimitClient;
 
 
     public WxSmallClients(RestTemplate restTemplate) {
@@ -39,6 +41,8 @@ public class WxSmallClients {
         this.monthVisitTrendAnalysisClient = new MonthVisitTrendAnalysisClient(restTemplate, objectMapper);
         this.summaryTrendAnalysisClient = new SummaryTrendAnalysisClient(restTemplate, objectMapper);
         this.visitPageClient = new VisitPageAnalysisClient(restTemplate, objectMapper);
+        this.getSmallQrcodeClient = new GetSmallQrcodeClient(restTemplate, objectMapper);
+        this.getSmallQrcodeLimitClient = new GetSmallQrcodeLimitClient(restTemplate, objectMapper);
     }
 
     private ObjectMapper initObjectMapper(){
@@ -89,5 +93,13 @@ public class WxSmallClients {
 
     public HttpClient<AnalysisRequest, VisitPageResponse> visitPageClient(){
         return visitPageClient;
+    }
+
+    public HttpClient<GetSmallQrcodeRequest, SmallQrcodeResponse> getSmallQrcodeClient(){
+        return getSmallQrcodeClient;
+    }
+
+    public HttpClient<GetSmallQrcodeLimitRequest, SmallQrcodeResponse> getSmallQrcodeLimitClient(){
+        return getSmallQrcodeLimitClient;
     }
 }

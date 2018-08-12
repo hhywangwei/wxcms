@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -56,6 +57,8 @@ public class Article {
     private Boolean comment;
     @ApiModelProperty("是否顶置")
     private Boolean top;
+    @ApiModelProperty("冻结")
+    private Boolean freeze;
     @ApiModelProperty("修改时间")
     private Date updateTime;
     @ApiModelProperty("创建时间")
@@ -225,6 +228,14 @@ public class Article {
         this.top = top;
     }
 
+    public Boolean getFreeze() {
+        return freeze;
+    }
+
+    public void setFreeze(Boolean freeze) {
+        this.freeze = freeze;
+    }
+
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -266,13 +277,14 @@ public class Article {
                 Objects.equals(showOrder, article.showOrder) &&
                 Objects.equals(comment, article.comment) &&
                 Objects.equals(top, article.top) &&
+                Objects.equals(freeze, article.freeze) &&
                 Objects.equals(updateTime, article.updateTime) &&
                 Objects.equals(createTime, article.createTime);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, siteId, channelId, channelPath, title, shortTitle, subTitle, author, origin, tag, summary, content, image, template, state, showOrder, comment, top, updateTime, createTime);
+        int result = Objects.hash(id, siteId, channelId, channelPath, title, shortTitle, subTitle, author, origin, tag, summary, content, image, template, state, showOrder, comment, top, freeze, updateTime, createTime);
         result = 31 * result + Arrays.hashCode(keywords);
         result = 31 * result + Arrays.hashCode(catalogs);
         return result;
@@ -301,6 +313,7 @@ public class Article {
                 .append("showOrder", showOrder)
                 .append("comment", comment)
                 .append("top", top)
+                .append("freeze", freeze)
                 .append("updateTime", updateTime)
                 .append("createTime", createTime)
                 .toString();

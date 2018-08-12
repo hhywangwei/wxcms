@@ -1,7 +1,7 @@
 package com.tuoshecx.server.wx.small.client.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tuoshecx.server.wx.small.client.request.GetSmallQrcodeRequest;
+import com.tuoshecx.server.wx.small.client.request.GetSmallQrcodeLimitRequest;
 import com.tuoshecx.server.wx.small.client.response.SmallQrcodeResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,30 +12,30 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 /**
- * 得到微信小程序二维码
+ * 生成微信小程序场景二维码
  *
  * @author <a href="mailto:hhywangwei@gmail.com">WangWei</a>
  */
-public class GetSmallQrcodeClient extends WxSmallClient<GetSmallQrcodeRequest, SmallQrcodeResponse> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetSmallQrcodeClient.class);
+public class GetSmallQrcodeLimitClient extends WxSmallClient<GetSmallQrcodeLimitRequest, SmallQrcodeResponse> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetSmallQrcodeLimitClient.class);
 
-    public GetSmallQrcodeClient(RestTemplate restTemplate, ObjectMapper objectMapper) {
-        super(restTemplate, objectMapper, "smallQrcode");
+    public GetSmallQrcodeLimitClient(RestTemplate restTemplate, ObjectMapper objectMapper) {
+        super(restTemplate, objectMapper, "getSmallQrcodeLimit");
     }
 
     @Override
-    protected String buildBody(GetSmallQrcodeRequest request) {
-        return String.format("{\"path\":\"%s\", \"width\": %d, \"is_hyaline\": %b}",
-                request.getPath(), request.getWidth(), request.isHyaline());
+    protected String buildBody(GetSmallQrcodeLimitRequest request) {
+        return String.format("{\"path\":\"%s\", \"scene\": \"%s\", \"width\": %d, \"is_hyaline\": %b}",
+                request.getPath(), request.getScene(), request.getWidth(), request.isHyaline());
     }
 
     @Override
-    protected String buildUri(GetSmallQrcodeRequest request) {
-        return "https://api.weixin.qq.com/wxa/getwxacode?access_token={token}";
+    protected String buildUri(GetSmallQrcodeLimitRequest request) {
+        return "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={token}";
     }
 
     @Override
-    protected Object[] uriParams(GetSmallQrcodeRequest request) {
+    protected Object[] uriParams(GetSmallQrcodeLimitRequest request) {
         return new Object[]{request.getToken()};
     }
 

@@ -86,6 +86,9 @@ wx:
       call_key: interaction_notify
       keyword_ids: [2, 3, 4]
       remark: 政民互动通知
+    qrcode:
+      bind_user_path: pages/index/index
+      article_release_path: pages/index/index
 
 tencent:
   map_key: L2XBZ-L7LWD-GAV46-H23SI-KAGJF-KRFUN

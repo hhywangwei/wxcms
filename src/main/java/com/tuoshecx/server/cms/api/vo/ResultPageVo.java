@@ -62,6 +62,10 @@ public class ResultPageVo<T> extends ResultVo<Collection<T>> {
         return count;
     }
 
+    public boolean hasNext(){
+        return limit == rs.size();
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

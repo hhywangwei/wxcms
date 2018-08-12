@@ -3,6 +3,7 @@ package com.tuoshecx.server.wx.small.client.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuoshecx.server.wx.small.client.request.LoginRequest;
 import com.tuoshecx.server.wx.small.client.response.LoginResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -22,7 +23,8 @@ class LoginClient extends WxSmallClient<LoginRequest, LoginResponse> {
 
     @Override
     public LoginResponse request(LoginRequest request) {
-        return doResponse(restTemplate.getForEntity(buildUri(request), byte[].class, uriParams(request)));
+        ResponseEntity<byte[]> responseEntity = restTemplate.getForEntity(buildUri(request), byte[].class, uriParams(request));
+        return doResponse(responseEntity);
     }
 
     @Override

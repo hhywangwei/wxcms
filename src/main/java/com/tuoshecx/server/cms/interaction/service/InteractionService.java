@@ -99,12 +99,15 @@ public class InteractionService {
         Organization organ= organService.get(t.getOrganId());
         o.setOrganId(organ.getId());
         o.setOrganName(organ.getName());
-        o.setAction(t.getAction());
+        o.setType(t.getType());
         o.setTitle(t.getTitle());
         o.setContent(t.getContent());
         o.setImages(t.getImages());
         if(t.getOpen() != null){
             o.setOpen(t.getOpen());
+        }
+        if(t.getTop() != null){
+            o.setTop(t.getTop());
         }
 
         if(dao.update(o)){

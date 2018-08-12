@@ -14,8 +14,13 @@ public class WxSmallResponse {
     private final String message;
 
     public WxSmallResponse(Map<String, Object> data){
-        this.code = (Integer)data.getOrDefault("errcode", 0);
-        this.message = (String)data.getOrDefault("errmsg", "");
+        this((Integer)data.getOrDefault("errcode", 0),
+                (String)data.getOrDefault("errmsg", ""));
+    }
+
+    public WxSmallResponse(Integer code, String message){
+        this.code= code;
+        this.message = message;
     }
 
     public Integer getCode() {

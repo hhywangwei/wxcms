@@ -45,6 +45,7 @@ public class ArticleDao {
         t.setComment(r.getBoolean("is_comment"));
         t.setShowOrder(r.getInt("show_order"));
         t.setTop(r.getBoolean("is_top"));
+        t.setFreeze(r.getBoolean("is_freeze"));
         t.setUpdateTime(r.getTimestamp("update_time"));
         t.setCreateTime(r.getTimestamp("create_time"));
 
@@ -83,13 +84,13 @@ public class ArticleDao {
     public void insert(Article t){
         Date now = new Date();
         final String sql = "INSERT INTO site_article (id, site_id, channel_id, channel_path, title, short_title, sub_title, " +
-                "author, origin, keywords, catalogs, tag, summary, content, image, is_comment, template, state, " +
-                "show_order, is_top, update_time, create_time) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getChannelId(), t.getChannelPath(), t.getTitle(), t.getShortTitle(), t.getSubTitle(),
-                t.getAuthor(), t.getOrigin(), DaoUtils.join(t.getKeywords()), DaoUtils.join(t.getCatalogs()),  t.getTag(),
-                t.getSummary(), t.getContent(), t.getImage(), t.getComment(), t.getTemplate(), t.getState().name(),
-                t.getShowOrder(), t.getTop(), now, now);
+                "author, origin, keywords, catalogs, tag, summary, content, image, is_comment, template, state, show_order, " +
+                "is_top, is_freeze, update_time, create_time) " +
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getChannelId(), t.getChannelPath(), t.getTitle(), t.getShortTitle(),
+                t.getSubTitle(), t.getAuthor(), t.getOrigin(), DaoUtils.join(t.getKeywords()), DaoUtils.join(t.getCatalogs()),
+                t.getTag(), t.getSummary(), t.getContent(), t.getImage(), t.getComment(), t.getTemplate(), t.getState().name(),
+                t.getShowOrder(), t.getTop(), t.getFreeze(), now, now);
     }
 
     public boolean update(Article t){
@@ -120,6 +121,11 @@ public class ArticleDao {
     public boolean top(String id, boolean isTop){
         final String sql = "UPDATE site_article SET is_top = ?, update_time = ? WHERE id = ? AND is_delete = false";
         return jdbcTemplate.update(sql, isTop, DaoUtils.timestamp(new Date()), id) > 0;
+    }
+
+    public void updateFreeze(String channelId, boolean freeze){
+        final String sql = "UPDATE site_article SET is_freeze = ? WHERE channel_id = ? AND is_delete = false";
+        jdbcTemplate.update(sql, freeze, channelId);
     }
 
     public Article findOne(String id){
@@ -197,5 +203,19 @@ public class ArticleDao {
 
         return jdbcTemplate.query(sql, new Object[]{siteId, DaoUtils.blankLike(channelId),
                 DaoUtils.blankLike(channelPath), state.name(), limit}, mapper);
+    }
+
+    public List<Article> findRelease(String siteId, String channelId, String path, String title, int offset, int limit){
+        final String sql = "SELECT id, site_id, channel_id, channel_path, title, short_title, sub_title, " +
+                "tag, summary, image, author, template, state, is_top, show_order, update_time, create_time " +
+                "FROM site_article " +
+                "WHERE site_id = ? AND channel_id LIKE ? AND channel_path LIKE ?  AND title LIKE ? AND state = ?" +
+                "AND is_delete = false AND is_freeze = false " +
+                "ORDER BY is_top DESC, show_order ASC, update_time DESC LIMIT ? OFFSET ?";
+
+        String pathLike = StringUtils.isBlank(path)? "%" : path + "%";
+        Object[] params = new Object[]{siteId, DaoUtils.blankLike(channelId),
+                pathLike, DaoUtils.like(title), Article.State.RELEASE.name(), limit, offset};
+        return jdbcTemplate.query(sql, params, notContentMapper);
     }
 }

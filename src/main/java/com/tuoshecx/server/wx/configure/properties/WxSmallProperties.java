@@ -5,13 +5,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
 
 /**
- * 微信消息模板配置
+ * 微信小程序配置
  *
  * @author <a href="mailto:hhywangwei@gmail.com">WangWei</a>
  */
 @ConfigurationProperties(prefix = "wx.small")
-public class WxMessageTemplateProperties {
+public class WxSmallProperties {
     private List<MessageTemplate> msgTemplates;
+    private Qrcode qrcode;
 
     public List<MessageTemplate> getMsgTemplates() {
         return msgTemplates;
@@ -19,6 +20,14 @@ public class WxMessageTemplateProperties {
 
     public void setMsgTemplates(List<MessageTemplate> msgTemplates) {
         this.msgTemplates = msgTemplates;
+    }
+
+    public Qrcode getQrcode() {
+        return qrcode;
+    }
+
+    public void setQrcode(Qrcode qrcode) {
+        this.qrcode = qrcode;
     }
 
     public static class MessageTemplate {
@@ -57,6 +66,27 @@ public class WxMessageTemplateProperties {
 
         public void setRemark(String remark) {
             this.remark = remark;
+        }
+    }
+
+    public static class Qrcode{
+        private String bindUserPath;
+        private String articleReleasePath;
+
+        public String getBindUserPath() {
+            return bindUserPath;
+        }
+
+        public void setBindUserPath(String bindUserPath) {
+            this.bindUserPath = bindUserPath;
+        }
+
+        public String getArticleReleasePath() {
+            return articleReleasePath;
+        }
+
+        public void setArticleReleasePath(String articleReleasePath) {
+            this.articleReleasePath = articleReleasePath;
         }
     }
 }

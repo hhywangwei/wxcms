@@ -23,7 +23,7 @@ public class InteractionSaveForm {
     @NotBlank
     @Pattern(regexp = "^CONSULT|COMPLAINT|SUGGEST$")
     @ApiModelProperty("互动类型")
-    private String action;
+    private String type;
     @NotBlank
     @Size(max = 2000)
     @ApiModelProperty("内容")
@@ -53,12 +53,12 @@ public class InteractionSaveForm {
         this.title = title;
     }
 
-    public String getAction() {
-        return action;
+    public String getType() {
+        return type;
     }
 
-    public void setAction(String action) {
-        this.action = action;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getContent() {
@@ -99,7 +99,7 @@ public class InteractionSaveForm {
         t.setUserId(userId);
         t.setOrganId(organId);
         t.setTitle(title);
-        t.setAction(Interaction.Action.valueOf(action));
+        t.setType(Interaction.Type.valueOf(type));
         t.setContent(content);
         t.setImages(images);
         t.setOpen(open);

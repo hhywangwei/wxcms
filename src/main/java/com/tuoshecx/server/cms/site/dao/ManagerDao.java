@@ -50,14 +50,14 @@ public class ManagerDao {
 
     public void insert(Manager t){
         final String sql = "INSERT INTO site_manager " +
-                "(id, site_id, username, password, name, head_img, phone, roles, is_manager, is_enable, update_time, create_time) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "(id, site_id, username, password, name, head_img, phone, roles, is_manager, is_enable, user_id, " +
+                "update_time, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         final Date now = new Date();
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getUsername(), t.getPassword(),
                 StringUtils.defaultString(t.getName()), t.getHeadImg(),
                 StringUtils.defaultString(t.getPhone()), DaoUtils.join(t.getRoles()), t.getManager(),
-                t.getEnable(), DaoUtils.timestamp(now), DaoUtils.timestamp(now));
+                t.getEnable(), t.getId(), DaoUtils.timestamp(now), DaoUtils.timestamp(now));
     }
 
     public boolean update(Manager t){
@@ -69,7 +69,7 @@ public class ManagerDao {
     }
 
     public boolean delete(String id){
-        final String sql = "UPDATE site_manager SET username = CONCAT(username,?), is_delete =true " +
+        final String sql = "UPDATE site_manager SET username = CONCAT(username,?), user_id = id, is_delete =true " +
                 "WHERE id =? AND is_delete =false";
         final String random = "@" + String.valueOf(RandomUtils.nextInt(10000000, 99999999));
         return jdbcTemplate.update(sql, random, id) > 0;
@@ -94,6 +94,12 @@ public class ManagerDao {
     public boolean hasUsername(String username){
         final String sql = "SELECT COUNT(id) FROM site_manager WHERE username =?";
         Integer count = jdbcTemplate.queryForObject(sql, new Object[]{username}, Integer.class);
+        return count != null && count > 0;
+    }
+
+    public boolean hasUserId(String userId){
+        final String sql = "SELECT COUNT(id) FROM site_manager WHERE user_id= ?";
+        Integer count = jdbcTemplate.queryForObject(sql, new Object[]{userId}, Integer.class);
         return count != null && count > 0;
     }
 

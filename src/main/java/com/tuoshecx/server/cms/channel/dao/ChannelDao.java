@@ -30,6 +30,7 @@ public class ChannelDao {
         t.setPathFull(r.getString("path_full"));
         t.setState(Channel.State.valueOf(r.getString("state")));
         t.setShowOrder(r.getInt("show_order"));
+        t.setHide(r.getBoolean("is_hide"));
         t.setUpdateTime(r.getTimestamp("update_time"));
         t.setCreateTime(r.getTimestamp("create_time"));
 
@@ -44,16 +45,16 @@ public class ChannelDao {
     public void insert(Channel t){
         final Date now = new Date();
         final String sql = "INSERT INTO site_channel (id, parent_id, site_id, name, icon, template, path, path_full," +
-                " state, show_order, update_time, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " state, show_order, is_hide, update_time, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, t.getId(), t.getParentId(), t.getSiteId(), t.getName(), t.getIcon(), t.getTemplate(),
-                t.getPath(), t.getPathFull(), Channel.State.WAIT.name(), t.getShowOrder(), now, now);
+                t.getPath(), t.getPathFull(), Channel.State.WAIT.name(), t.getShowOrder(), t.getHide(), now, now);
     }
 
     public boolean update(Channel t){
         final String sql = "UPDATE site_channel SET name = ?, icon = ?, template = ?, path = ?, path_full = ?, " +
-                "show_order = ?, parent_id = ?, update_time = ? WHERE id = ? AND is_delete = false";
+                "show_order = ?, is_hide = ?, parent_id = ?, update_time = ? WHERE id = ? AND is_delete = false";
         return jdbcTemplate.update(sql, t.getName(), t.getIcon(), t.getTemplate(), t.getPath(), t.getPathFull(),
-                t.getShowOrder(), t.getParentId(), DaoUtils.timestamp(new Date()), t.getId()) > 0;
+                t.getShowOrder(), t.getHide(), t.getParentId(), DaoUtils.timestamp(new Date()), t.getId()) > 0;
     }
 
     public boolean updateState(String id, Channel.State state){
@@ -93,10 +94,17 @@ public class ChannelDao {
 
     public List<Channel> findChildren(String siteId, String parentId, Channel.State state, String name){
         final String sql = "SELECT * FROM site_channel WHERE site_id = ? AND  parent_id = ? " +
-                "AND state LIKE ? AND name LIKE ? AND is_delete = false Order By show_order ASC, create_time ASC";
+                "AND state LIKE ? AND name LIKE ? AND is_delete = false ORDER BY show_order ASC, create_time ASC";
 
         String stateLike = state == null? "%" : state.name();
         return jdbcTemplate.query(sql, new Object[]{siteId, parentId, stateLike, DaoUtils.like(name)}, mapper);
+    }
+
+    public List<Channel> findOpenAndNotHideChildren(String siteId, String parentId, String name){
+        final String sql = "SELECT * FROM site_channel WHERE site_id = ? AND parent_id = ?  AND state = ? AND name LIKE ?" +
+                "AND is_hide = false AND is_delete = false ORDER BY show_order ASC, create_time ASC";
+
+        return jdbcTemplate.query(sql, new Object[]{siteId, parentId, Channel.State.OPEN.name(), DaoUtils.like(name)}, mapper);
     }
 
     public Long count(String siteId, String parentId, Channel.State state, String name){
@@ -109,7 +117,7 @@ public class ChannelDao {
 
     public List<Channel> find(String siteId, String parentId, Channel.State state, String name, int offset, int limit){
         final String sql = "SELECT * FROM site_channel WHERE site_id = ? AND parent_id = ? " +
-                "AND state LIKE ? AND name LIKE ? AND is_delete = false Order By show_order ASC, create_time ASC LIMIT ? OFFSET ?";
+                "AND state LIKE ? AND name LIKE ? AND is_delete = false ORDER BY show_order ASC, create_time ASC LIMIT ? OFFSET ?";
 
         String stateLike = state == null? "%" : state.name();
         return jdbcTemplate.query(sql, new Object[]{siteId, parentId, stateLike, DaoUtils.like(name), limit, offset}, mapper);

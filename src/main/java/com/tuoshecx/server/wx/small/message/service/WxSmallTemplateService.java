@@ -1,6 +1,6 @@
 package com.tuoshecx.server.wx.small.message.service;
 
-import com.tuoshecx.server.wx.configure.properties.WxMessageTemplateProperties;
+import com.tuoshecx.server.wx.configure.properties.WxSmallProperties;
 import com.tuoshecx.server.wx.small.client.WxSmallClientService;
 import com.tuoshecx.server.wx.small.client.response.MessageTemplateAddResponse;
 import com.tuoshecx.server.wx.small.client.response.MessageTemplateQueryResponse;
@@ -26,12 +26,12 @@ public class WxSmallTemplateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(WxSmallTemplateService.class);
     private static final int MAX_OFFSET = 2;
 
-    private final WxMessageTemplateProperties properties;
+    private final WxSmallProperties properties;
     private final WxSmallClientService clientService;
     private final SmallTemplateService service;
 
     @Autowired
-    public WxSmallTemplateService(WxMessageTemplateProperties properties, WxSmallClientService clientService,
+    public WxSmallTemplateService(WxSmallProperties properties, WxSmallClientService clientService,
                                   SmallTemplateService service) {
 
         this.properties = properties;
@@ -41,7 +41,7 @@ public class WxSmallTemplateService {
 
     public void refresh(String appid){
 
-        for(WxMessageTemplateProperties.MessageTemplate template: properties.getMsgTemplates()){
+        for(WxSmallProperties.MessageTemplate template: properties.getMsgTemplates()){
             LOGGER.debug("Refresh wx message template appid {} callKey is {}", appid, template.getCallKey());
             deleteTemplateSync(appid, template.getCallKey());
             saveTemplateSync(appid, template);
@@ -52,7 +52,7 @@ public class WxSmallTemplateService {
         }
     }
 
-    private void saveTemplateSync(String appid, WxMessageTemplateProperties.MessageTemplate template){
+    private void saveTemplateSync(String appid, WxSmallProperties.MessageTemplate template){
 
         MessageTemplateAddResponse e = clientService.addMessageTemplate(appid, template.getId(), template.getKeywordIds());
 

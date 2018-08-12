@@ -60,6 +60,9 @@ public class ChannelService {
         }
 
         t.setId(IdGenerators.uuid());
+        if(t.getIcon() == null){
+            t.setIcon("");
+        }
         String full = pathFull(t);
         LOGGER.debug("Channel full path is {}", full);
         t.setPathFull(full);
@@ -106,7 +109,7 @@ public class ChannelService {
         }
         o.setParentId(t.getParentId());
         o.setName(t.getName());
-        o.setIcon(t.getIcon());
+        o.setIcon(t.getIcon() == null?  "": t.getIcon());
         o.setTemplate(t.getTemplate());
         o.setPath(t.getPath());
         String full = pathFull(o);
@@ -148,6 +151,7 @@ public class ChannelService {
             throw new BaseException("频道已经关闭");
         }
         if(dao.updateState(id, Channel.State.CLOSE)){
+            articleDao.updateFreeze(id, true);
             return get(id);
         }else{
             throw new BaseException("频道关闭失败");
@@ -164,6 +168,7 @@ public class ChannelService {
             throw new BaseException("频道已经发布");
         }
         if(dao.updateState(id, Channel.State.OPEN)){
+            articleDao.updateFreeze(id, false);
             return get(id);
         }else{
             throw new BaseException("频道发布失败");
@@ -172,6 +177,10 @@ public class ChannelService {
 
     public List<Channel> queryChildren(String siteId, String parentId, Channel.State state, String name){
         return dao.findChildren(siteId, parentId, state, name);
+    }
+
+    public List<Channel> queryOpenAndNotHideChildren(String siteId, String parentId, String name){
+        return dao.findOpenAndNotHideChildren(siteId, parentId, name);
     }
 
     public Long count(String siteId, String parentId, Channel.State state, String name){

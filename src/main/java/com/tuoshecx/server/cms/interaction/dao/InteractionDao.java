@@ -33,7 +33,7 @@ public class InteractionDao {
         t.setOrganId(r.getString("organ_id"));
         t.setOrganName(r.getString("organ_name"));
         t.setTitle(r.getString("title"));
-        t.setAction(Interaction.Action.valueOf(r.getString("action")));
+        t.setType(Interaction.Type.valueOf(r.getString("action")));
         t.setContent(r.getString("content"));
         t.setImages(DaoUtils.toArray(r.getString("images")));
         t.setOpen(r.getBoolean("is_open"));
@@ -58,15 +58,15 @@ public class InteractionDao {
                 " title, action, content, images, is_open, is_top, show_order, state, form_id, create_time) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getUserId(), t.getNickname(), t.getHeadImg(),
-                t.getOrganId(), t.getOrganName(), t.getTitle(), t.getAction().name(), t.getContent(), DaoUtils.join(t.getImages()),
+                t.getOrganId(), t.getOrganName(), t.getTitle(), t.getType().name(), t.getContent(), DaoUtils.join(t.getImages()),
                 t.getOpen(), t.getTop(), t.getShowOrder(), Interaction.State.WAIT.name(), t.getFormId(), DaoUtils.timestamp(new Date()));
     }
 
     public boolean update(Interaction t){
         final String sql = "UPDATE site_interaction SET organ_id = ?, organ_name = ?, title = ?, action = ?, content = ?," +
-                "images = ?, is_open = ? WHERE id = ?";
-        return jdbcTemplate.update(sql, t.getOrganId(), t.getOrganName(), t.getTitle(), t.getAction().name(), t.getContent(),
-                DaoUtils.join(t.getImages()), t.getOpen(), t.getId()) > 0;
+                "images = ?, is_open = ?, is_top = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, t.getOrganId(), t.getOrganName(), t.getTitle(), t.getType().name(), t.getContent(),
+                DaoUtils.join(t.getImages()), t.getOpen(), t.getTop(), t.getId()) > 0;
     }
 
     public boolean updateState(String id, Interaction.State state){

@@ -20,12 +20,12 @@ import java.util.Map;
 /**
  * 实现微信小程序请求
  *
- * @param <T> 输出参数类型
- * @param <R> 输出数据类型
+ * @param <I> 输出参数类型
+ * @param <O> 输出数据类型
  */
 abstract class WxSmallClient<I, O extends WxSmallResponse> implements HttpClient<I, O> {
     private static final Logger LOGGER = LoggerFactory.getLogger(WxSmallClient.class);
-    private static final Charset UTF_8_CHARSET = Charset.forName("UTF-8");
+    protected static final Charset UTF_8_CHARSET = Charset.forName("UTF-8");
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -33,7 +33,7 @@ abstract class WxSmallClient<I, O extends WxSmallResponse> implements HttpClient
     private final String clientName;
 
     /**
-     * 构造{@link WxComponentClient}
+     * 构造{@link WxSmallClient}
      *
      * @param restTemplate {@link RestTemplate}
      * @param objectMapper {@link ObjectMapper}
@@ -100,9 +100,19 @@ abstract class WxSmallClient<I, O extends WxSmallResponse> implements HttpClient
             map.put("errmsg", "Http state code is " + response.getStatusCodeValue());
             return buildResponse(map);
         }
+        return parseResponse(response);
+    }
 
+    /**
+     *  解析body为输出对象
+     *
+     * @param response 输出对象
+     * @return 输出对象
+     */
+    protected O parseResponse(ResponseEntity<byte[]> response){
         try{
-            String content = new String(response.getBody(), UTF_8_CHARSET);
+            byte[] bytes = response.getBody();
+            String content =bytes == null? "{}": new String(bytes, UTF_8_CHARSET);
             LOGGER.debug("{} Response is {}", clientName, content);
             return buildResponse(objectMapper.readValue(content, mapType));
         }catch (Exception e){

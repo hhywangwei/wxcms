@@ -52,7 +52,7 @@ public class ArticleClientController {
                                        @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                        @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
 
-        List<Article> data = service.query(getSiteId(), channelId, channelPath, Article.State.RELEASE, title, page * rows, rows);
+        List<Article> data = service.queryRelease(getSiteId(), channelId, channelPath, title, page * rows, rows);
         return new ResultPageVo.Builder<>(page, rows, data).build();
     }
 

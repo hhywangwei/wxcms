@@ -34,6 +34,8 @@ public class Channel {
     private State state;
     @ApiModelProperty(value = "显示顺序，按照正序显示")
     private Integer showOrder;
+    @ApiModelProperty(value = "频道是否隐藏")
+    private Boolean hide;
     @ApiModelProperty(value = "修改时间")
     private Date updateTime;
     @ApiModelProperty(value = "创建时间")
@@ -123,6 +125,14 @@ public class Channel {
         this.showOrder = showOrder;
     }
 
+    public Boolean getHide() {
+        return hide;
+    }
+
+    public void setHide(Boolean hide) {
+        this.hide = hide;
+    }
+
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -154,13 +164,14 @@ public class Channel {
                 Objects.equals(pathFull, channel.pathFull) &&
                 state == channel.state &&
                 Objects.equals(showOrder, channel.showOrder) &&
+                Objects.equals(hide, channel.hide) &&
                 Objects.equals(updateTime, channel.updateTime) &&
                 Objects.equals(createTime, channel.createTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, parentId, siteId, name, icon, template, path, pathFull, state, showOrder, updateTime, createTime);
+        return Objects.hash(id, parentId, siteId, name, icon, template, path, pathFull, state, showOrder, hide, updateTime, createTime);
     }
 
     @Override
@@ -176,6 +187,7 @@ public class Channel {
                 .append("pathFull", pathFull)
                 .append("state", state)
                 .append("showOrder", showOrder)
+                .append("hide", hide)
                 .append("updateTime", updateTime)
                 .append("createTime", createTime)
                 .toString();

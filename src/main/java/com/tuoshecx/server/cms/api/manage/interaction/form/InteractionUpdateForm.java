@@ -25,13 +25,15 @@ public class InteractionUpdateForm {
     @NotBlank
     @Pattern(regexp = "^CONSULT|COMPLAINT|SUGGEST$")
     @ApiModelProperty("互动类型")
-    private String action;
+    private String type;                  //兼容VUE处理
     @NotBlank
     @Size(max = 2000)
     @ApiModelProperty("内容")
     private String content;
     @ApiModelProperty("互动图片")
     private String[] images;
+    @ApiModelProperty("是否置顶")
+    private Boolean top = Boolean.FALSE;
 
     public String getId() {
         return id;
@@ -57,12 +59,12 @@ public class InteractionUpdateForm {
         this.title = title;
     }
 
-    public String getAction() {
-        return action;
+    public String getType() {
+        return type;
     }
 
-    public void setAction(String action) {
-        this.action = action;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getContent() {
@@ -81,6 +83,14 @@ public class InteractionUpdateForm {
         this.images = images;
     }
 
+    public Boolean getTop() {
+        return top;
+    }
+
+    public void setTop(Boolean top) {
+        this.top = top;
+    }
+
     public Interaction toDomain(String userId) {
         Interaction t = new Interaction();
 
@@ -88,9 +98,10 @@ public class InteractionUpdateForm {
         t.setUserId(userId);
         t.setOrganId(organId);
         t.setTitle(title);
-        t.setAction(Interaction.Action.valueOf(action));
+        t.setType(Interaction.Type.valueOf(type));
         t.setContent(content);
         t.setImages(images);
+        t.setTop(top);
 
         return t;
     }

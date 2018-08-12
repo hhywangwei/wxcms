@@ -246,6 +246,33 @@ public class WxSmallClientService {
      }
 
     /**
+     * 得到微信小程序二维码
+     *
+     * @param appid appid
+     * @param path path
+     * @return 二维码
+     */
+     public SmallQrcodeResponse getSmallQrcode(String appid, String path){
+         String token = getAccessToken(appid);
+         GetSmallQrcodeRequest request = new GetSmallQrcodeRequest(token, path, 256, false);
+         return clients.getSmallQrcodeClient().request(request);
+     }
+
+    /**
+     * 生成微信小程序二维码
+     *
+     * @param appid appid
+     * @param path  path
+     * @param scene 参数
+     * @return 二维码
+     */
+     public SmallQrcodeResponse getSmallQrcodeLimit(String appid, String path, String scene){
+         String token = getAccessToken(appid);
+         GetSmallQrcodeLimitRequest request = new GetSmallQrcodeLimitRequest(token, path, scene, 256, false);
+         return clients.getSmallQrcodeLimitClient().request(request);
+     }
+
+    /**
      * 删除微信用户登陆session_key
      *
      * @param openid 用户openid

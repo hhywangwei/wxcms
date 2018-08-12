@@ -30,7 +30,7 @@ public class Interaction {
     @ApiModelProperty("互动标题")
     private String title;
     @ApiModelProperty("互动类型")
-    private Action action;
+    private Type type;
     @ApiModelProperty("内容")
     private String content;
     @ApiModelProperty("互动图片")
@@ -56,7 +56,7 @@ public class Interaction {
         WAIT, HANDING, REPLY, REFUSE
     }
 
-    public enum Action {
+    public enum Type {
         CONSULT, COMPLAINT, SUGGEST
     }
 
@@ -124,12 +124,12 @@ public class Interaction {
         this.title = title;
     }
 
-    public Action getAction() {
-        return action;
+    public Type getType() {
+        return type;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public String getContent() {
@@ -225,7 +225,7 @@ public class Interaction {
                 Objects.equals(organId, that.organId) &&
                 Objects.equals(organName, that.organName) &&
                 Objects.equals(title, that.title) &&
-                action == that.action &&
+                type == that.type &&
                 Objects.equals(content, that.content) &&
                 Arrays.equals(images, that.images) &&
                 Objects.equals(reply, that.reply) &&
@@ -240,7 +240,7 @@ public class Interaction {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, siteId, userId, nickname, headImg, organId, organName, title, action, content, reply, open, state, top, showOrder, replyTime, formId, createTime);
+        int result = Objects.hash(id, siteId, userId, nickname, headImg, organId, organName, title, type, content, reply, open, state, top, showOrder, replyTime, formId, createTime);
         result = 31 * result + Arrays.hashCode(images);
         return result;
     }
@@ -256,7 +256,7 @@ public class Interaction {
                 .append("organId", organId)
                 .append("organName", organName)
                 .append("title", title)
-                .append("action", action)
+                .append("type", type)
                 .append("content", content)
                 .append("images", images)
                 .append("reply", reply)

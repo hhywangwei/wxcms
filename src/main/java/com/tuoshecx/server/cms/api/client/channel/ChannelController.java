@@ -8,10 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,8 +29,10 @@ public class ChannelController {
 
     @GetMapping(value = "{id}/children", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询子频道，一级频道用root查询")
-    public ResultVo<List<Channel>> queryChildren(@PathVariable("id")String id){
-        return ResultVo.success(service.queryChildren(getSiteId(), id, Channel.State.OPEN, StringUtils.EMPTY));
+    public ResultVo<List<Channel>> queryChildren(@PathVariable("id")String id,
+                                                 @RequestParam(required = false)String name){
+
+        return ResultVo.success(service.queryOpenAndNotHideChildren(getSiteId(), id, name));
     }
 
     private String getSiteId(){

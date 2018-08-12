@@ -189,6 +189,9 @@ public class ManagerService {
         if(!StringUtils.equals(manager.getSiteId(), user.getSiteId())){
             throw new BaseException("关联管理员不存在");
         }
+        if(dao.hasUserId(user.getId())){
+            throw new BaseException("用户已经关联管理员");
+        }
 
         if(!dao.updateUser(id, user.getId(), user.getNickname(), user.getHeadImg())){
             throw new BaseException("绑定管理员失败");
@@ -206,7 +209,7 @@ public class ManagerService {
         }
 
         String empty = StringUtils.EMPTY;
-        if(!dao.updateUser(id, empty, empty, empty)){
+        if(!dao.updateUser(id, id, empty, empty)){
             throw new BaseException("解除绑定失败");
         }
 

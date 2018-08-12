@@ -65,9 +65,13 @@ public class ArticleService {
         if(StringUtils.isBlank(t.getSummary())){
             t.setSummary(HtmlUtils.text(t.getContent(), 150));
         }
+        if(t.getImage() == null){
+            t.setImage("");
+        }
 
         Channel channel = channelService.get(t.getChannelId());
         t.setChannelPath(channel.getPathFull());
+        t.setFreeze(channel.getState() == Channel.State.CLOSE);
 
         dao.insert(t);
 
@@ -168,6 +172,10 @@ public class ArticleService {
         if(!StringUtils.equals(t.getSiteId(), siteId)){
             throw new BaseException("文章不存在");
         }
+        Channel channel = channelService.get(t.getChannelId());
+        if(channel.getState() != Channel.State.OPEN){
+            throw new BaseException("频道还未发布");
+        }
         if(t.getState() == Article.State.RELEASE){
             throw new BaseException("文章已经发布");
         }
@@ -218,6 +226,10 @@ public class ArticleService {
 
     public List<Article> queryWhole(String siteId, String channelId, String channelPath, Article.State state, int limit){
         return dao.findWhole(siteId, channelId, channelPath, state, limit);
+    }
+
+    public List<Article> queryRelease(String siteId, String channelId, String path, String title, int offset, int limit){
+        return dao.findRelease(siteId, channelId, path, title, offset, limit);
     }
 }
 

@@ -21,6 +21,8 @@ import com.tuoshecx.server.cms.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -42,6 +44,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 @RequestMapping("/client/account")
 @Api(value = "/client/account", tags = "C-用户信息管理API接口")
 public class AccountClientController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountClientController.class);
+
     private static final List<String> RELEASE_ROLES = initReleaseRoles();
 
     @Autowired
@@ -111,11 +115,11 @@ public class AccountClientController {
             return ResultVo.error(result.getAllErrors());
         }
 
+        LOGGER.info("User id {}, site is {}", getCredential().getId(), getSiteId());
         Optional<Manager> optional = managerService.getByBindUser(getCredential().getId(), getSiteId());
         if(!optional.isPresent()){
             throw new BaseException(200, "无发布文章权限");
         }
-
         Manager manager = optional.get();
         if(!hasReleaseRoles(manager.getRoles())){
             throw new BaseException(200, "无发布文章权限");

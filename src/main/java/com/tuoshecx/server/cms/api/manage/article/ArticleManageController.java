@@ -11,17 +11,26 @@ import com.tuoshecx.server.cms.article.domain.ArticleLog;
 import com.tuoshecx.server.cms.article.service.ArticleLogService;
 import com.tuoshecx.server.cms.article.service.ArticleService;
 import com.tuoshecx.server.cms.security.Credential;
+import com.tuoshecx.server.cms.site.service.SiteWxService;
+import com.tuoshecx.server.wx.configure.properties.WxSmallProperties;
+import com.tuoshecx.server.wx.small.client.WxSmallClientService;
+import com.tuoshecx.server.wx.small.client.response.SmallQrcodeResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.xml.transform.Result;
 
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
@@ -40,6 +49,15 @@ public class ArticleManageController {
 
     @Autowired
     private ArticleLogService logService;
+
+    @Autowired
+    private WxSmallClientService clientService;
+
+    @Autowired
+    private SiteWxService wxService;
+
+    @Autowired
+    private WxSmallProperties properties;
 
     @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("新增文章")
@@ -119,6 +137,38 @@ public class ArticleManageController {
         }
 
         return ResultVo.success(service.showOrder(form.getId(), form.getShowOrder(), currentSiteId()));
+    }
+
+    @GetMapping(value = "{id}/releaseQrcode")
+    @ApiOperation("得到微信发布二维码")
+    public ResponseEntity<byte[]> releaseQrcode(@PathVariable("id")String id){
+        Article t = service.get(id);
+
+        if(!StringUtils.equals(t.getSiteId(), currentSiteId())){
+            return responseErrorMessage("文章不存在");
+        }
+        if(t.getState() == Article.State.RELEASE){
+            return responseErrorMessage("文章已经发布");
+        }
+
+        Optional<String> optional = wxService.getAppid(currentSiteId());
+        if(!optional.isPresent()){
+            return responseErrorMessage("公众号未授权");
+        }
+
+        String appid = optional.get();
+        SmallQrcodeResponse response = clientService.getSmallQrcodeLimit(
+                appid, properties.getQrcode().getArticleReleasePath(), id);
+        return response.isOk()?
+                ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(response.getImage()):
+                responseErrorMessage(response.getMessage());
+    }
+
+    private ResponseEntity<byte[]> responseErrorMessage(String message){
+        String m = String.format("{\"code\": %d, \"messages\": [\"%s\"]}", 1000, message);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(m.getBytes(Charset.forName("UTF-8")));
     }
 
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)

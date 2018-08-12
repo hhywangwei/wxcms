@@ -1,7 +1,6 @@
 package com.tuoshecx.server.cms.api.manage.channel.form;
 
 import com.tuoshecx.server.cms.channel.domain.Channel;
-import io.netty.channel.ChannelFutureListener;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -32,6 +31,9 @@ public class ChannelSaveForm {
     @NotNull
     @ApiModelProperty(value = "显示顺序，按照正序显示")
     private Integer showOrder = 9999;
+    @NotNull
+    @ApiModelProperty(value = "是否隐藏频道")
+    private Boolean hide = Boolean.FALSE;
 
     public String getParentId() {
         return parentId;
@@ -81,6 +83,14 @@ public class ChannelSaveForm {
         this.showOrder = showOrder;
     }
 
+    public Boolean getHide() {
+        return hide;
+    }
+
+    public void setHide(Boolean hide) {
+        this.hide = hide;
+    }
+
     public Channel toDomain(String siteId){
         Channel t= new Channel();
 
@@ -91,6 +101,7 @@ public class ChannelSaveForm {
         t.setShowOrder(showOrder);
         t.setTemplate(template);
         t.setPath(path);
+        t.setHide(hide);
 
         return t;
     }
