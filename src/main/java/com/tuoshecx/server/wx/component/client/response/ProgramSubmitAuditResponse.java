@@ -2,10 +2,10 @@ package com.tuoshecx.server.wx.component.client.response;
 
 import java.util.Map;
 
-public class SubmitAuditResponse extends ComponentResponse {
+public class ProgramSubmitAuditResponse extends ComponentResponse {
     private final Integer auditId;
 
-    public SubmitAuditResponse(Map<String, Object> data) {
+    public ProgramSubmitAuditResponse(Map<String, Object> data) {
         super(data);
         this.auditId = (Integer)data.getOrDefault("auditid", -1);
     }

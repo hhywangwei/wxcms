@@ -3,10 +3,10 @@ package com.tuoshecx.server.wx.component.client.request;
 import java.util.ArrayList;
 import java.util.List;
 
- public class SubmitAuditRequest extends ComponentRequest {
+ public class ProgramSubmitAuditRequest extends ComponentRequest {
     private final List<SubmitAuditItem> items;
 
-     public SubmitAuditRequest(String token) {
+     public ProgramSubmitAuditRequest(String token) {
          super(token);
          this.items = new ArrayList<>();
      }

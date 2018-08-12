@@ -4,7 +4,7 @@ import com.tuoshecx.server.BaseException;
 import com.tuoshecx.server.cms.site.service.SiteWxService;
 import com.tuoshecx.server.wx.component.client.ComponentClientService;
 import com.tuoshecx.server.wx.component.client.response.*;
-import com.tuoshecx.server.wx.component.client.request.SubmitAuditRequest;
+import com.tuoshecx.server.wx.component.client.request.ProgramSubmitAuditRequest;
 import com.tuoshecx.server.wx.component.devops.domain.DomainConfigure;
 import com.tuoshecx.server.wx.component.devops.domain.SmallAuditConfigure;
 import com.tuoshecx.server.wx.component.devops.domain.SmallDeploy;
@@ -163,9 +163,9 @@ public class DeployService {
             throw new BaseException("小程序审核信息不存在");
         }
 
-        SubmitAuditResponse response = componentClientService.submitAudit(t.getAppid(), e -> {
+        ProgramSubmitAuditResponse response = componentClientService.submitAudit(t.getAppid(), e -> {
             for(SmallAuditConfigure c: configures){
-                e.addItem(new SubmitAuditRequest.SubmitAuditItem(c.getTitle(), c.getAddress(), c.getTag(),
+                e.addItem(new ProgramSubmitAuditRequest.SubmitAuditItem(c.getTitle(), c.getAddress(), c.getTag(),
                         c.getFirstClass(), c.getSecondClass(), c.getThirdClass(), c.getFirstId(), c.getSecondId(),
                         c.getThirdId()));
             }

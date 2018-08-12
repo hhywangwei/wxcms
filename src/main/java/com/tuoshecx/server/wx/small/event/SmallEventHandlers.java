@@ -1,5 +1,6 @@
 package com.tuoshecx.server.wx.small.event;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuoshecx.server.cms.common.mime.MimeConverters;
 import com.tuoshecx.server.wx.component.client.ComponentClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ public class SmallEventHandlers {
     private final List<SmallEventHandler> handlers  = new ArrayList<>();
 
     @Autowired
-    public SmallEventHandlers(RestTemplate restTemplate, ComponentClientService clientService) {
-        handlers.add(new WxMessageTestHandler(restTemplate, clientService));
+    public SmallEventHandlers(RestTemplate restTemplate, ObjectMapper objectMapper, ComponentClientService clientService) {
+        handlers.add(new WxMessageTestHandler(restTemplate, objectMapper,clientService));
         handlers.add(new NoneSmallEventHandler());
     }
 

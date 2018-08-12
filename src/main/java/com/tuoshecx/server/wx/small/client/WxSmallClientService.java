@@ -1,5 +1,6 @@
 package com.tuoshecx.server.wx.small.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuoshecx.server.BaseException;
 import com.tuoshecx.server.cms.common.utils.DateUtils;
 import com.tuoshecx.server.cms.site.domain.SiteWxToken;
@@ -40,15 +41,13 @@ public class WxSmallClientService {
     private final ComponentTokenService componentTokenService;
 
     @Autowired
-    public WxSmallClientService(RestTemplate restTemplate,
-                                SiteWxService wxService,
-                                StringRedisTemplate redisTemplate,
-                                WxComponentProperties properties,
-                                ComponentTokenService componentTokenService) {
+    public WxSmallClientService(RestTemplate restTemplate, ObjectMapper objectMapper,
+                                SiteWxService wxService, StringRedisTemplate redisTemplate,
+                                WxComponentProperties properties, ComponentTokenService componentTokenService) {
 
         this.wxService = wxService;
         this.sessionDao = new RedisSessionDao(redisTemplate);
-        this.clients = new WxSmallClients(restTemplate);
+        this.clients = new WxSmallClients(restTemplate, objectMapper);
         this.properties = properties;
         this.componentTokenService = componentTokenService;
     }
@@ -273,16 +272,20 @@ public class WxSmallClientService {
      }
 
     /**
-     * 删除微信用户登陆session_key
+     * 检查一段文本是否含有违法违规内容。
      *
-     * @param openid 用户openid
+     * @param appid    appid
+     * @param content  检查的内容
+     * @return false:含有违法内容
      */
-    public void removeSessionKey(String openid){
-        sessionDao.remove(openid);
-    }
+     public boolean msgSecCheck(String appid, String content){
+         String token = getAccessToken(appid);
+         MsgSecCheckRequest request = new MsgSecCheckRequest(token, content);
+         return clients.msgSecCheckClient().request(request).getCode() == 0;
+     }
 
-    private String getAccessToken(String appid){
+     private String getAccessToken(String appid){
         Optional<SiteWxToken> optional = wxService.getToken(appid);
         return optional.orElseThrow(() -> new BaseException(5001, "微信公众号Token失效")).getAccessToken();
-    }
+     }
 }

@@ -36,6 +36,7 @@ public class CommentDao {
         t.setContent(r.getString("content"));
         t.setImages(DaoUtils.toArray(r.getString("images")));
         t.setState(Comment.State.valueOf(r.getString("state")));
+        t.setSecCheck(Comment.SecCheck.valueOf(r.getString("sec_check")));
         t.setCreateTime(r.getTimestamp("create_time"));
 
         return t;
@@ -48,15 +49,20 @@ public class CommentDao {
 
     public void insert(Comment t){
         final String sql = "INSERT INTO sns_comment (id, site_id, user_id, nickname, head_img, ref_id, ref_detail, " +
-                "content, images, state, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "content, images, state, sec_check, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getUserId(), t.getNickname(), t.getHeadImg(), t.getRefId(),
                 t.getRefDetail(), t.getContent(), DaoUtils.join(t.getImages()), Comment.State.WAIT.name(),
-                DaoUtils.timestamp(new Date()));
+                Comment.SecCheck.UNKNOWN.name(), DaoUtils.timestamp(new Date()));
     }
 
     public boolean updateState(String id, Comment.State state){
         final String sql = "UPDATE sns_comment SET state = ? WHERE id = ?";
         return jdbcTemplate.update(sql, state.name(), id) > 0;
+    }
+
+    public boolean updateSecCheck(String id, Comment.SecCheck secCheck){
+        final String sql = "UPDATE sns_comment SET sec_check = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, secCheck.name(), id) > 0;
     }
 
     public Comment findOne(String id){

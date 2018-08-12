@@ -47,6 +47,8 @@ public class Interaction {
     private Integer showOrder;
     @ApiModelProperty("微信form_id")
     private String formId;
+    @ApiModelProperty("文本内容是否合法")
+    private SecCheck secCheck;
     @ApiModelProperty("回复时间")
     private Date replyTime;
     @ApiModelProperty("创建时间")
@@ -58,6 +60,10 @@ public class Interaction {
 
     public enum Type {
         CONSULT, COMPLAINT, SUGGEST
+    }
+
+    public enum SecCheck {
+        UNKNOWN, OK, RISKY
     }
 
     public String getId() {
@@ -196,6 +202,14 @@ public class Interaction {
         this.formId = formId;
     }
 
+    public SecCheck getSecCheck() {
+        return secCheck;
+    }
+
+    public void setSecCheck(SecCheck secCheck) {
+        this.secCheck = secCheck;
+    }
+
     public Date getReplyTime() {
         return replyTime;
     }
@@ -233,14 +247,15 @@ public class Interaction {
                 state == that.state &&
                 Objects.equals(top, that.top) &&
                 Objects.equals(showOrder, that.showOrder) &&
-                Objects.equals(replyTime, that.replyTime) &&
                 Objects.equals(formId, that.formId) &&
+                secCheck == that.secCheck &&
+                Objects.equals(replyTime, that.replyTime) &&
                 Objects.equals(createTime, that.createTime);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, siteId, userId, nickname, headImg, organId, organName, title, type, content, reply, open, state, top, showOrder, replyTime, formId, createTime);
+        int result = Objects.hash(id, siteId, userId, nickname, headImg, organId, organName, title, type, content, reply, open, state, top, showOrder, formId, secCheck, replyTime, createTime);
         result = 31 * result + Arrays.hashCode(images);
         return result;
     }
@@ -264,8 +279,9 @@ public class Interaction {
                 .append("state", state)
                 .append("top", top)
                 .append("showOrder", showOrder)
-                .append("replyTime", replyTime)
                 .append("formId", formId)
+                .append("secCheck", secCheck)
+                .append("replyTime", replyTime)
                 .append("createTime", createTime)
                 .toString();
     }

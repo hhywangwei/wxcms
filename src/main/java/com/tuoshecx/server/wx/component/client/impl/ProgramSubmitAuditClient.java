@@ -1,8 +1,8 @@
 package com.tuoshecx.server.wx.component.client.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tuoshecx.server.wx.component.client.request.SubmitAuditRequest;
-import com.tuoshecx.server.wx.component.client.response.SubmitAuditResponse;
+import com.tuoshecx.server.wx.component.client.request.ProgramSubmitAuditRequest;
+import com.tuoshecx.server.wx.component.client.response.ProgramSubmitAuditResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.web.client.RestTemplate;
@@ -15,24 +15,24 @@ import java.util.stream.Collectors;
  *
  * @author <a href="mailto:hhywangwei@gmail.com">WangWei</a>
  */
-class SubmitAuditClient extends WxComponentClient<SubmitAuditRequest, SubmitAuditResponse> {
+class ProgramSubmitAuditClient extends WxComponentClient<ProgramSubmitAuditRequest, ProgramSubmitAuditResponse> {
 
-    SubmitAuditClient(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    ProgramSubmitAuditClient(RestTemplate restTemplate, ObjectMapper objectMapper) {
         super(restTemplate, objectMapper, "submitAuditClient");
     }
 
     @Override
-    protected String buildUri(SubmitAuditRequest request) {
+    protected String buildUri(ProgramSubmitAuditRequest request) {
         return "https://api.weixin.qq.com/wxa/submit_audit?access_token={token}";
     }
 
     @Override
-    protected Object[] uriParams(SubmitAuditRequest request) {
+    protected Object[] uriParams(ProgramSubmitAuditRequest request) {
         return new Object[]{request.getToken()};
     }
 
     @Override
-    protected String buildBody(SubmitAuditRequest request){
+    protected String buildBody(ProgramSubmitAuditRequest request){
         StringBuilder builder = new StringBuilder(200);
         builder.append("{");
         builder.append("\"item_list\":[");
@@ -41,7 +41,7 @@ class SubmitAuditClient extends WxComponentClient<SubmitAuditRequest, SubmitAudi
         return builder.toString();
     }
 
-    private String toItem(SubmitAuditRequest.SubmitAuditItem item){
+    private String toItem(ProgramSubmitAuditRequest.SubmitAuditItem item){
         StringBuilder builder = new StringBuilder(50);
 
         builder.append("{\"address\":\"").append(item.getAddress()).append("\",");
@@ -62,7 +62,7 @@ class SubmitAuditClient extends WxComponentClient<SubmitAuditRequest, SubmitAudi
     }
 
     @Override
-    protected SubmitAuditResponse buildResponse(Map<String, Object> data) {
-        return new SubmitAuditResponse(data);
+    protected ProgramSubmitAuditResponse buildResponse(Map<String, Object> data) {
+        return new ProgramSubmitAuditResponse(data);
     }
 }

@@ -1,5 +1,6 @@
 package com.tuoshecx.server.wx.component.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuoshecx.server.BaseException;
 import com.tuoshecx.server.cms.site.domain.SiteWxToken;
 import com.tuoshecx.server.cms.site.service.SiteWxService;
@@ -30,13 +31,14 @@ public class ComponentClientService {
     private final SiteWxService wxService;
 
     @Autowired
-    public ComponentClientService(WxComponentProperties properties, RestTemplate restTemplate, ComponentTokenService tokenService,
-                                  ComponentVerifyTicketService verifyTicketService, SiteWxService wxService){
+    public ComponentClientService(WxComponentProperties properties, RestTemplate restTemplate, ObjectMapper objectMapper,
+                                  ComponentTokenService tokenService, ComponentVerifyTicketService verifyTicketService,
+                                  SiteWxService wxService){
 
         this.properties = properties;
         this.tokenService = tokenService;
         this.verifyTicketService = verifyTicketService;
-        this.clients = new ComponentClients(restTemplate);
+        this.clients = new ComponentClients(restTemplate, objectMapper);
         this.wxService = wxService;
     }
 
@@ -147,11 +149,11 @@ public class ComponentClientService {
      *
      * @param appid 微信appid
      * @param func  构建请求方法
-     * @return {@link SubmitAuditResponse}
+     * @return {@link ProgramSubmitAuditResponse}
      */
-    public SubmitAuditResponse  submitAudit(String appid, Consumer<SubmitAuditRequest> consumer){
+    public ProgramSubmitAuditResponse submitAudit(String appid, Consumer<ProgramSubmitAuditRequest> consumer){
         String token = getAccessToken(appid);
-        SubmitAuditRequest request = new SubmitAuditRequest(token);
+        ProgramSubmitAuditRequest request = new ProgramSubmitAuditRequest(token);
         consumer.accept(request);
         return clients.submitAuditClient().request(request);
     }

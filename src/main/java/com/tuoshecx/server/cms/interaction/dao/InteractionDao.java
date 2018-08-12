@@ -42,6 +42,7 @@ public class InteractionDao {
         t.setShowOrder(r.getInt("show_order"));
         t.setReply(r.getString("reply"));
         t.setFormId(r.getString("form_id"));
+        t.setSecCheck(Interaction.SecCheck.valueOf(r.getString("sec_check")));
         t.setReplyTime(r.getTimestamp("reply_time"));
         t.setCreateTime(r.getTimestamp("create_time"));
 
@@ -55,11 +56,12 @@ public class InteractionDao {
 
     public void insert(Interaction t){
         final String sql = "INSERT INTO site_interaction (id, site_id, user_id, nickname, head_img, organ_id, organ_name," +
-                " title, action, content, images, is_open, is_top, show_order, state, form_id, create_time) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                " title, action, content, images, is_open, is_top, show_order, state, form_id, sec_check, create_time) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, t.getId(), t.getSiteId(), t.getUserId(), t.getNickname(), t.getHeadImg(),
                 t.getOrganId(), t.getOrganName(), t.getTitle(), t.getType().name(), t.getContent(), DaoUtils.join(t.getImages()),
-                t.getOpen(), t.getTop(), t.getShowOrder(), Interaction.State.WAIT.name(), t.getFormId(), DaoUtils.timestamp(new Date()));
+                t.getOpen(), t.getTop(), t.getShowOrder(), Interaction.State.WAIT.name(), t.getFormId(), t.getSecCheck().name(),
+                DaoUtils.timestamp(new Date()));
     }
 
     public boolean update(Interaction t){
@@ -87,6 +89,11 @@ public class InteractionDao {
     public boolean reply(String id, String reply){
         final String sql = "UPDATE site_interaction SET reply = ? WHERE id = ?";
         return jdbcTemplate.update(sql, reply, id) > 0;
+    }
+
+    public boolean updateSecCheck(String id, Interaction.SecCheck secCheck){
+        final String sql = "UPDATE site_interaction SET sec_check = ? WHERE id = ? ";
+        return jdbcTemplate.update(sql, secCheck.name(), id) > 0;
     }
 
     public Interaction findOne(String id){

@@ -1,6 +1,7 @@
 package com.tuoshecx.server.cms.interaction.service;
 
 import com.tuoshecx.server.BaseException;
+import com.tuoshecx.server.cms.check.SecCheckProducer;
 import com.tuoshecx.server.cms.common.id.IdGenerators;
 import com.tuoshecx.server.cms.interaction.dao.InteractionDao;
 import com.tuoshecx.server.cms.interaction.domain.Interaction;
@@ -36,12 +37,13 @@ public class InteractionService {
     private final GoodService goodService;
     private final CounterService counterService;
     private final InteractionMessageService messageService;
+    private final SecCheckProducer producer;
 
 
     @Autowired
     public InteractionService(InteractionDao dao, UserService userService, OrganizationService organService,
                               CommentService commentService, GoodService goodService, CounterService counterService,
-                              InteractionMessageService messageService) {
+                              InteractionMessageService messageService, SecCheckProducer producer) {
         this.dao = dao;
         this.userService = userService;
         this.organService = organService;
@@ -49,6 +51,7 @@ public class InteractionService {
         this.goodService = goodService;
         this.counterService = counterService;
         this.messageService = messageService;
+        this.producer = producer;
     }
 
     public Interaction get(String id){
@@ -68,6 +71,7 @@ public class InteractionService {
         t.setNickname(u.getNickname());
         t.setHeadImg(u.getHeadImg());
         t.setTop(false);
+        t.setSecCheck(Interaction.SecCheck.UNKNOWN);
         t.setShowOrder(9999);
 
         if(StringUtils.isNotBlank(t.getOrganId())){
@@ -77,7 +81,10 @@ public class InteractionService {
         }
 
         dao.insert(t);
+
         counterService.newEmpty(t.getId(), refDetail(t.getTitle()));
+        producer.product(t.getId(), "interaction");
+
         return get(t.getId());
     }
 
@@ -112,6 +119,8 @@ public class InteractionService {
 
         if(dao.update(o)){
             counterService.updateDetail(o.getId(), refDetail(o.getTitle()));
+            producer.product(t.getId(), "interaction");
+
             return get(t.getId());
         }else{
             throw new BaseException("修改政民错误");
@@ -205,6 +214,11 @@ public class InteractionService {
 
         String detail = "[政民互动] " + t.getTitle();
         return commentService.save(userId, t.getId(), detail, content, images);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void updateSecCheck(String id, boolean ok){
+        dao.updateSecCheck(id, ok? Interaction.SecCheck.OK: Interaction.SecCheck.RISKY);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

@@ -1,6 +1,5 @@
 package com.tuoshecx.server.wx.small.client.impl;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuoshecx.server.cms.common.client.HttpClient;
 import com.tuoshecx.server.wx.small.client.request.*;
@@ -26,10 +25,10 @@ public class WxSmallClients {
     private final HttpClient<AnalysisRequest, VisitPageResponse> visitPageClient;
     private final HttpClient<GetSmallQrcodeRequest, SmallQrcodeResponse> getSmallQrcodeClient;
     private final HttpClient<GetSmallQrcodeLimitRequest, SmallQrcodeResponse> getSmallQrcodeLimitClient;
+    private final HttpClient<MsgSecCheckRequest, MsgSecCheckResponse> msgSecCheckClient;
 
 
-    public WxSmallClients(RestTemplate restTemplate) {
-        ObjectMapper objectMapper = initObjectMapper();
+    public WxSmallClients(RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.loginClient = new LoginClient(restTemplate, objectMapper);
         this.sendTmpMsgClient = new SendTemplateMsgClient(restTemplate, objectMapper);
         this.sendCustomMsgClient = new SendCustomMsgClient(restTemplate, objectMapper);
@@ -43,12 +42,7 @@ public class WxSmallClients {
         this.visitPageClient = new VisitPageAnalysisClient(restTemplate, objectMapper);
         this.getSmallQrcodeClient = new GetSmallQrcodeClient(restTemplate, objectMapper);
         this.getSmallQrcodeLimitClient = new GetSmallQrcodeLimitClient(restTemplate, objectMapper);
-    }
-
-    private ObjectMapper initObjectMapper(){
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-        return mapper;
+        this.msgSecCheckClient = new MsgSecCheckClient(restTemplate, objectMapper);
     }
 
     public HttpClient<LoginRequest, LoginResponse> loginClient(){
@@ -101,5 +95,9 @@ public class WxSmallClients {
 
     public HttpClient<GetSmallQrcodeLimitRequest, SmallQrcodeResponse> getSmallQrcodeLimitClient(){
         return getSmallQrcodeLimitClient;
+    }
+
+    public HttpClient<MsgSecCheckRequest, MsgSecCheckResponse> msgSecCheckClient(){
+        return msgSecCheckClient;
     }
 }

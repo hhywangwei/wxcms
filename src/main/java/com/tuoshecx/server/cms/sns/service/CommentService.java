@@ -1,6 +1,7 @@
 package com.tuoshecx.server.cms.sns.service;
 
 import com.tuoshecx.server.BaseException;
+import com.tuoshecx.server.cms.check.SecCheckProducer;
 import com.tuoshecx.server.cms.common.id.IdGenerators;
 import com.tuoshecx.server.cms.sns.dao.CommentDao;
 import com.tuoshecx.server.cms.sns.domain.Comment;
@@ -26,12 +27,14 @@ public class CommentService {
     private final CommentDao dao;
     private final UserService userService;
     private final CounterService counterService;
+    private final SecCheckProducer producer;
 
     @Autowired
-    public CommentService(CommentDao dao, UserService userService, CounterService counterService) {
+    public CommentService(CommentDao dao, UserService userService, CounterService counterService, SecCheckProducer producer) {
         this.dao = dao;
         this.userService = userService;
         this.counterService = counterService;
+        this.producer = producer;
     }
 
     public Comment get(String id){
@@ -61,6 +64,7 @@ public class CommentService {
 
         dao.insert(t);
         counterService.incComment(t.getRefId(), 1);
+        producer.product(t.getId(), "comment");
 
         return get(t.getId());
     }
@@ -99,6 +103,11 @@ public class CommentService {
         }else{
             throw new BaseException("审核拒绝失败");
         }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void updateSecCheck(String id, boolean ok){
+        dao.updateSecCheck(id, ok? Comment.SecCheck.OK: Comment.SecCheck.RISKY);
     }
 
     public List<Comment> query(String refId, int offset, int limit){

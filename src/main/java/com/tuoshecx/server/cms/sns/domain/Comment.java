@@ -33,11 +33,17 @@ public class Comment {
     private State state;
     @ApiModelProperty("上传图片")
     private String[] images;
+    @ApiModelProperty("内容是否合法")
+    private SecCheck secCheck;
     @ApiModelProperty("创建时间")
     private Date createTime;
 
     public enum State {
         WAIT, PASS, REFUSE
+    }
+
+    public enum SecCheck {
+        UNKNOWN, OK, RISKY
     }
 
     public String getId() {
@@ -120,6 +126,14 @@ public class Comment {
         this.images = images;
     }
 
+    public SecCheck getSecCheck() {
+        return secCheck;
+    }
+
+    public void setSecCheck(SecCheck secCheck) {
+        this.secCheck = secCheck;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -143,12 +157,13 @@ public class Comment {
                 Objects.equals(content, comment.content) &&
                 state == comment.state &&
                 Arrays.equals(images, comment.images) &&
+                secCheck == comment.secCheck &&
                 Objects.equals(createTime, comment.createTime);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, siteId, userId, nickname, headImg, refId, refDetail, content, state, createTime);
+        int result = Objects.hash(id, siteId, userId, nickname, headImg, refId, refDetail, content, state, secCheck, createTime);
         result = 31 * result + Arrays.hashCode(images);
         return result;
     }
@@ -166,6 +181,7 @@ public class Comment {
                 .append("content", content)
                 .append("state", state)
                 .append("images", images)
+                .append("secCheck", secCheck)
                 .append("createTime", createTime)
                 .toString();
     }

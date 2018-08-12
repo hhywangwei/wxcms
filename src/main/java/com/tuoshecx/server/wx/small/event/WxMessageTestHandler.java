@@ -1,5 +1,6 @@
 package com.tuoshecx.server.wx.small.event;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuoshecx.server.wx.component.client.ComponentClientService;
 import com.tuoshecx.server.wx.component.client.response.ObtainQueryAuthResponse;
 import com.tuoshecx.server.wx.small.client.impl.WxSmallClients;
@@ -17,9 +18,9 @@ class WxMessageTestHandler extends SmallBaseEventHandler {
     private final ComponentClientService componentClientService;
     private final WxSmallClients clients;
 
-    WxMessageTestHandler(RestTemplate restTemplate, ComponentClientService clientService) {
+    WxMessageTestHandler(RestTemplate restTemplate, ObjectMapper objectMapper, ComponentClientService clientService) {
         this.componentClientService = clientService;
-        this.clients = new WxSmallClients(restTemplate);
+        this.clients = new WxSmallClients(restTemplate, objectMapper);
     }
 
     @Override
