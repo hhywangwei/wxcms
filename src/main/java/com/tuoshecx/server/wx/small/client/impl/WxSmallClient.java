@@ -25,7 +25,7 @@ import java.util.Map;
  */
 abstract class WxSmallClient<I, O extends WxSmallResponse> implements HttpClient<I, O> {
     private static final Logger LOGGER = LoggerFactory.getLogger(WxSmallClient.class);
-    protected static final Charset UTF_8_CHARSET = Charset.forName("UTF-8");
+    static final Charset UTF_8_CHARSET = Charset.forName("UTF-8");
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;

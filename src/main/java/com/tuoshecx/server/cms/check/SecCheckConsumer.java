@@ -7,10 +7,8 @@ import com.tuoshecx.server.cms.site.service.SiteWxService;
 import com.tuoshecx.server.cms.sns.domain.Comment;
 import com.tuoshecx.server.cms.sns.service.CommentService;
 import com.tuoshecx.server.wx.small.client.WxSmallClientService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -54,19 +52,19 @@ public class SecCheckConsumer implements ApplicationListener<ApplicationReadyEve
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        executorService.execute(() -> {
-            while (!stop.get()){
-                check();
-            }
-        });
-
-        if(shutdownHookRegistered.compareAndSet(false, true)){
-            registerShutdownHook(new Thread(() -> {
-                stop.compareAndSet(false, true);
-                executorService.shutdown();
-                LOGGER.info("Sec check to shutdown...");
-            }));
-        }
+//        executorService.execute(() -> {
+//            while (!stop.get()){
+//                check();
+//            }
+//        });
+//
+//        if(shutdownHookRegistered.compareAndSet(false, true)){
+//            registerShutdownHook(new Thread(() -> {
+//                stop.compareAndSet(false, true);
+//                executorService.shutdown();
+//                LOGGER.info("Sec check to shutdown...");
+//            }));
+//        }
 
         LOGGER.info("Start sec check consumer ...");
     }
@@ -98,18 +96,16 @@ public class SecCheckConsumer implements ApplicationListener<ApplicationReadyEve
 
         handlers.put("interaction", e -> {
             Interaction t = interactionService.get(e);
-            wxService.getAppid(t.getSiteId()).ifPresent(appid -> {
-                boolean  ok =clientService.msgSecCheck(appid, t.getContent());
-                interactionService.updateSecCheck(t.getId(), ok);
-            });
+            wxService.getAppid(t.getSiteId()).ifPresent(appid ->
+                clientService.msgSecCheck(appid, t.getContent()).
+                        ifPresent(ok -> interactionService.updateSecCheck(t.getId(), ok)));
         });
 
         handlers.put("comment", e -> {
             Comment t = commentService.get(e);
-            wxService.getAppid(t.getSiteId()).ifPresent(appid -> {
-                boolean  ok =clientService.msgSecCheck(appid, t.getContent());
-                commentService.updateSecCheck(t.getId(), ok);
-            });
+            wxService.getAppid(t.getSiteId()).ifPresent(appid ->
+                clientService.msgSecCheck(appid, t.getContent())
+                        .ifPresent(ok -> commentService.updateSecCheck(t.getId(), ok)));
         });
 
         return handlers;

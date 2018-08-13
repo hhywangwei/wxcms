@@ -278,10 +278,19 @@ public class WxSmallClientService {
      * @param content  检查的内容
      * @return false:含有违法内容
      */
-     public boolean msgSecCheck(String appid, String content){
+     public Optional<Boolean> msgSecCheck(String appid, String content){
          String token = getAccessToken(appid);
          MsgSecCheckRequest request = new MsgSecCheckRequest(token, content);
-         return clients.msgSecCheckClient().request(request).getCode() == 0;
+         int code = clients.msgSecCheckClient().request(request).getCode();
+         if(code == 0){
+             return Optional.of(Boolean.TRUE);
+         }
+
+         if(code == 87014){
+             return Optional.of(Boolean.FALSE);
+         }
+
+         return Optional.empty();
      }
 
      private String getAccessToken(String appid){

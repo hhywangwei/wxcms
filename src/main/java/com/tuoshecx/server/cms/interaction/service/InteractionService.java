@@ -119,8 +119,9 @@ public class InteractionService {
 
         if(dao.update(o)){
             counterService.updateDetail(o.getId(), refDetail(o.getTitle()));
-            producer.product(t.getId(), "interaction");
-
+            if(!StringUtils.equals(o.getContent(), t.getContent())){
+                producer.product(t.getId(), "interaction");
+            }
             return get(t.getId());
         }else{
             throw new BaseException("修改政民错误");
