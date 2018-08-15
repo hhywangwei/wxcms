@@ -165,9 +165,11 @@ public class InteractionDao {
         return jdbcTemplate.query(sql, new Object[]{siteId, DaoUtils.like(title), limit, offset}, mapper);
     }
 
-    public List<Interaction> findByUserId(String userId, int offset, int limit){
-        final String sql = "SELECT * FROM site_interaction WHERE user_id = ? ORDER BY create_time DESC LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, new Object[]{userId, limit, offset}, mapper);
+    public List<Interaction> findByUserId(String userId, boolean handling, int offset, int limit){
+        final String sql = "SELECT * FROM site_interaction WHERE user_id = ? AND state IN (?, ?) ORDER BY create_time DESC LIMIT ? OFFSET ?";
+        Object[] params = handling? new Object[]{userId, Interaction.State.REPLY.name(), Interaction.State.REFUSE.name(), limit, offset} :
+                new Object[]{userId, Interaction.State.WAIT.name(), Interaction.State.HANDING.name(), limit, offset};
+        return jdbcTemplate.query(sql, params, mapper);
     }
 
 }

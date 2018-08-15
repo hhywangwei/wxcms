@@ -121,8 +121,9 @@ public class DeployService {
 
     public SmallDeploy programCommit(String id){
         SmallDeploy t = smallDeployService.get(id);
+        String extJson = buildExtJson(t.getAppid(), t.getTemplateId());
         ComponentResponse  response = componentClientService.programCommit(t.getAppid(), t.getTemplateId(),
-                "V1.0", "tuoshecx.com", buildExtJson(t.getAppid(), t.getTemplateId()));
+                "V1.0", "tuoshecx.com", extJson);
 
         if(response.isOk()){
             saveDeployLog(id, "COMMIT", "提交小程序成功");
@@ -139,14 +140,16 @@ public class DeployService {
         String m = optional.map(configure -> {
             StringBuilder builder = new StringBuilder(200);
             builder.append("{\"extAppid\":\"").append(appid).append("\"");
-            appendNotBlank(builder, "ext", configure.getExt());
-            appendNotBlank(builder, "extPages", configure.getExtPages());
-            appendNotBlank(builder, "pages", configure.getPages());
-            appendNotBlank(builder, "window", configure.getWindow());
-            appendNotBlank(builder, "tabBar", configure.getTabBar());
+            appendNotBlank(builder, "\"ext\"", StringUtils.replace(configure.getExt(), "$appid", appid));
+            appendNotBlank(builder, "\"extPages\"", configure.getExtPages());
+            appendNotBlank(builder, "\"pages\"", configure.getPages());
+            appendNotBlank(builder, "\"window\"", configure.getWindow());
+            appendNotBlank(builder, "\"tabBar\"", configure.getTabBar());
             builder.append("}");
             return builder.toString();
         }).orElseGet(() ->  String.format("{\"extAppid\":\"%s\",\"ext\":{\"appId\":\"%s\"}}",  appid, appid));
+        m = StringUtils.remove(m, "\r");
+        m = StringUtils.remove(m, "\n");
         return StringUtils.replace(m, "\"", "\\\"");
     }
 

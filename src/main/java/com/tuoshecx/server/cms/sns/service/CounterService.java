@@ -73,11 +73,11 @@ public class CounterService {
         dao.incShare(refId, count);
     }
 
-    public Optional<Counter> getOptional(String id){
+    public Optional<Counter> getOptional(String refId){
         try{
-            return Optional.of(dao.findOne(id));
+            return Optional.of(dao.findOne(refId));
         }catch (DataAccessException e){
-            LOGGER.error("Get {} counter fail, error is {}", id, e.getMessage());
+            LOGGER.error("Get {} counter fail, error is {}", refId, e.getMessage());
             return Optional.empty();
         }
     }

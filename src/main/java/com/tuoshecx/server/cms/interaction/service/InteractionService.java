@@ -231,8 +231,8 @@ public class InteractionService {
         return dao.find(siteId, title, offset, limit);
     }
 
-    public List<Interaction> queryByUserId(String userId, int offset, int limit){
-        return dao.findByUserId(userId, offset, limit);
+    public List<Interaction> queryByUserId(String userId, boolean handling, int offset, int limit){
+        return dao.findByUserId(userId, handling, offset, limit);
     }
 
     public Long count(String siteId, String title, String nickname, String mobile, Interaction.State state){

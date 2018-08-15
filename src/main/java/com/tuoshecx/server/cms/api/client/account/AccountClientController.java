@@ -89,10 +89,11 @@ public class AccountClientController {
 
     @GetMapping(value = "interaction", produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询我的政民互动")
-    public ResultPageVo<Interaction> myInteraction(@RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
+    public ResultPageVo<Interaction> myInteraction(@RequestParam(defaultValue = "false") Boolean handling,
+                                                   @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                                    @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
 
-        List<Interaction> data= interactionService.queryByUserId(getCredential().getId(), page * rows, rows);
+        List<Interaction> data= interactionService.queryByUserId(getCredential().getId(), handling,page * rows, rows);
         return new ResultPageVo.Builder<>(page, rows, data).build();
     }
 

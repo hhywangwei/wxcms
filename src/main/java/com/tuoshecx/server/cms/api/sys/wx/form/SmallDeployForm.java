@@ -1,6 +1,5 @@
 package com.tuoshecx.server.cms.api.sys.wx.form;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
