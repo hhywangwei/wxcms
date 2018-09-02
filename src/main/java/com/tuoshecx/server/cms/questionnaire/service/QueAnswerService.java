@@ -6,6 +6,8 @@ import com.tuoshecx.server.cms.questionnaire.dao.QueInfoDao;
 import com.tuoshecx.server.cms.questionnaire.domain.QueAnswer;
 import com.tuoshecx.server.cms.site.domain.Manager;
 import com.tuoshecx.server.cms.site.service.ManagerService;
+import com.tuoshecx.server.cms.user.domain.User;
+import com.tuoshecx.server.cms.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,10 +24,12 @@ import java.util.List;
 public class QueAnswerService {
 
     private final QueAnswerDao queAnswerDao;
+    private final UserService userService;
 
     @Autowired
-    public QueAnswerService(QueAnswerDao queAnswerDao, ManagerService managerService) {
+    public QueAnswerService(QueAnswerDao queAnswerDao, UserService userService) {
         this.queAnswerDao = queAnswerDao;
+        this.userService = userService;
 
     }
 
@@ -36,7 +40,12 @@ public class QueAnswerService {
      */
     @Transactional(propagation = Propagation.REQUIRED)
     public QueAnswer save(QueAnswer q){
+
+        User user = userService.get(q.getUserId());
         q.setId(IdGenerators.uuid());
+        q.setUserId(q.getUserId());
+        q.setHeadImg(user.getHeadImg());
+        q.setNickName(user.getNickname());
         queAnswerDao.insert(q);
         return queAnswerDao.findOne(q.getId());
     }
