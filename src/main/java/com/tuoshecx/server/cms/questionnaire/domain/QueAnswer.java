@@ -20,7 +20,7 @@ public class QueAnswer {
     private String userId;
     @ApiModelProperty(value = "问卷答案用户头像")
     private String headImg;
-    @ApiModelProperty(value = "问卷答案用户头像")
+    @ApiModelProperty(value = "问卷答案昵称")
     private String nickName;
     @ApiModelProperty(value = "问卷调查表编号", required = true)
     private String queInfoId;
