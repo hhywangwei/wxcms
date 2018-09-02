@@ -76,6 +76,17 @@ public class QueAnswerDao {
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, mapper);
     }
 
+    /**
+     * 是否已经答题
+     * @param userId
+     * @param queInfoId
+     * @return
+     */
+    public boolean isAnswer(String userId,String queInfoId){
+        final String sql = "SELECT * FROM  que_answer  WHERE is_delete = false AND user_id = ? AND que_info_id = ?";
+        return jdbcTemplate.update(sql, userId,queInfoId) > 0;
+    }
+
 
     /**
      * 通过userId或问卷调查信息id查询问卷用户答案
