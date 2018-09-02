@@ -74,6 +74,16 @@ public class QueAnswerService {
     }
 
     /**
+     * 是否已经答应
+     * @param userId
+     * @param queInfoId
+     * @return
+     */
+    public boolean isAnswer(String userId,String queInfoId){
+        return queAnswerDao.isAnswer(userId, queInfoId);
+    }
+
+    /**
      * 通过userId和问卷信息id统计答题条数
      * @param userId
      * @param queInfoId
