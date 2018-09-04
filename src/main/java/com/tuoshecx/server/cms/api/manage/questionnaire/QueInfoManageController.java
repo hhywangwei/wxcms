@@ -58,7 +58,7 @@ public class QueInfoManageController {
      * @param result
      * @return
      */
-    @PostMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(consumes = APPLICATION_JSON_UTF8_VALUE, produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("更新调查问卷信息")
     public ResultVo<QueInfo> udpate(@Valid @RequestBody QueInfoUpdateForm form, BindingResult result){
         if(result.hasErrors()){

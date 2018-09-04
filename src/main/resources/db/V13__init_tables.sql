@@ -46,5 +46,5 @@ CREATE TABLE IF NOT EXISTS que_answer(
   create_time DATETIME NOT NULL COMMENT '创建时间',
   is_delete TINYINT DEFAULT 0 NOT NULL COMMENT '是否删除',
   PRIMARY KEY (id),
-  UNIQUE KEY uniq_user_que_key (user_id，que_info_id)
+  UNIQUE KEY uniq_user_que_key (user_id,que_info_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
