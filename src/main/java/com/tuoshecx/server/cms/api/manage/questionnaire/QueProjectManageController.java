@@ -27,9 +27,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
  * @author LuJun
  */
 @RestController
-@RequestMapping("/manage/QueProject")
-@Api(value = "/manage/QueProject", tags = "M-问卷调查项目API接口")
-public class QueProjectController {
+@RequestMapping("/manage/queProject")
+@Api(value = "/manage/queProject", tags = "M-问卷调查项目API接口")
+public class QueProjectManageController {
 
     @Autowired
     private QueProjectService queProjectService;

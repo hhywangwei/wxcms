@@ -8,7 +8,6 @@ import com.tuoshecx.server.cms.api.manage.questionnaire.form.QueInfoUpdateForm;
 import com.tuoshecx.server.cms.api.vo.OkVo;
 import com.tuoshecx.server.cms.api.vo.ResultPageVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
-import com.tuoshecx.server.cms.channel.domain.Channel;
 import com.tuoshecx.server.cms.questionnaire.domain.QueInfo;
 import com.tuoshecx.server.cms.questionnaire.service.QueInfoService;
 import com.tuoshecx.server.cms.security.Credential;
@@ -30,9 +29,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
  * @author LuJun
  */
 @RestController
-@RequestMapping("/manage/QueInfo")
-@Api(value = "/manage/QueInfo", tags = "M-问卷调查信息API接口")
-public class QueInfoController {
+@RequestMapping("/manage/queInfo")
+@Api(value = "/manage/queInfo", tags = "M-问卷调查信息API接口")
+public class QueInfoManageController {
 
     @Autowired
     private QueInfoService queInfoService;

@@ -19,9 +19,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
  * @author LuJun
  */
 @RestController
-@RequestMapping("/manage/QueAnswer")
-@Api(value = "/manage/QueAnswer", tags = "M-问卷调查答案API接口")
-public class QueAnswerController {
+@RequestMapping("/manage/queAnswer")
+@Api(value = "/manage/queAnswer", tags = "M-问卷调查答案API接口")
+public class QueAnswerManageController {
 
     @Autowired
     private QueAnswerService queAnswerService;
