@@ -68,7 +68,7 @@ public class QueInfo {
     }
 
     public void setState(State state) {
-        this.state = State.WAIT;
+        this.state = state;
     }
 
     public String getOrganId() {

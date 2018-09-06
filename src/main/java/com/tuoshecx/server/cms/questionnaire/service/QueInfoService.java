@@ -41,6 +41,7 @@ public class QueInfoService {
         Manager manager = managerService.get(managerId);
         q.setId(IdGenerators.uuid());
         q.setCreateUser(manager.getUsername());
+        q.setUpdateUser(manager.getUsername());
         queInfoDao.insert(q);
         return queInfoDao.findOne(q.getId());
     }
@@ -76,8 +77,8 @@ public class QueInfoService {
      * @param limit
      * @return
      */
-    public List<QueInfo> queryInfo(String organId,String state ,int offset, int limit){
-        return queryInfo(organId,state,offset,limit);
+    public List<QueInfo> queryInfo(String organId,String title,QueInfo.State state ,int offset, int limit){
+        return queInfoDao.findListByOrganId(organId,title,state,offset,limit);
     }
 
     /**
@@ -85,6 +86,7 @@ public class QueInfoService {
      * @param id
      * @return
      */
+    @Transactional(propagation = Propagation.REQUIRED)
     public boolean open(String id,String managerId){
         Manager manager = managerService.get(managerId);
         return queInfoDao.updateState(id,QueInfo.State.OPEN,manager.getUsername());
@@ -95,6 +97,7 @@ public class QueInfoService {
      * @param id
      * @return
      */
+    @Transactional(propagation = Propagation.REQUIRED)
     public boolean close(String id,String managerId){
         Manager manager = managerService.get(managerId);
         return queInfoDao.updateState(id,QueInfo.State.CLOSE,manager.getUsername());
@@ -115,7 +118,7 @@ public class QueInfoService {
      * @param state
      * @return
      */
-    public Long count(String organId,String state){
-        return queInfoDao.count(organId,state);
+    public Long count(String organId,String title,QueInfo.State state){
+        return queInfoDao.count(organId,title,state);
     }
 }

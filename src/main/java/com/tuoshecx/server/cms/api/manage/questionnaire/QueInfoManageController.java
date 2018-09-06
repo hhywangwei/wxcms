@@ -14,6 +14,7 @@ import com.tuoshecx.server.cms.security.Credential;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -48,8 +49,7 @@ public class QueInfoManageController {
         if(result.hasErrors()){
             return ResultVo.error(result.getAllErrors());
         }
-
-        return ResultVo.success(queInfoService.save(form.toDomain(),getCredential().getId()));
+        return ResultVo.success(queInfoService.save(form.toDomain(currentSiteId()),getCredential().getId()));
     }
 
     /**
@@ -65,7 +65,7 @@ public class QueInfoManageController {
             return ResultVo.error(result.getAllErrors());
         }
 
-        return ResultVo.success(queInfoService.udpate(form.toDomain(),getCredential().getId()));
+        return ResultVo.success(queInfoService.udpate(form.toDomain(currentSiteId()),getCredential().getId()));
     }
 
     /**
@@ -116,7 +116,7 @@ public class QueInfoManageController {
 
     /**
      * 分页查询调查问卷信息
-     * @param organId
+     * @param title
      * @param state
      * @param page
      * @param rows
@@ -124,21 +124,25 @@ public class QueInfoManageController {
      */
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询调查问卷项目")
-    public ResultPageVo<QueInfo> query(@RequestParam(required = false) @ApiParam("组织机构编号") String organId,
+    public ResultPageVo<QueInfo> query(@RequestParam(required = false) @ApiParam("组织机构编号") String title,
                                        @RequestParam(required = false) @ApiParam("问卷调查信息状态") String state,
                                        @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                        @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
         try{
-            List<QueInfo> data = queInfoService.queryInfo(organId,state,page * rows, rows);
+            QueInfo.State stateObj = StringUtils.isBlank(state)? null: QueInfo.State.valueOf(state);
+            List<QueInfo> data = queInfoService.queryInfo(currentSiteId(),title,stateObj,page * rows, rows);
             return new ResultPageVo.Builder<>(page, rows, data)
-                    .count(true, () -> queInfoService.count(organId, state))
+                    .count(true, () -> queInfoService.count(currentSiteId(),title, QueInfo.State.valueOf(state)))
                     .build();
         }catch (Exception e){
-            throw new BaseException("查询调查问卷信息错误");
+            throw new BaseException("查询调查问卷信息错误"+e.getMessage());
         }
     }
 
 
+    private String currentSiteId(){
+        return ManageCredentialContextUtils.currentSiteId();
+    }
 
     private Credential getCredential(){
         return ManageCredentialContextUtils.getCredential();

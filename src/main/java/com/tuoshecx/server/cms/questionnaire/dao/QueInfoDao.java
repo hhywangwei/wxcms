@@ -1,5 +1,7 @@
 package com.tuoshecx.server.cms.questionnaire.dao;
 
+import com.tuoshecx.server.cms.base.domain.Sys;
+import com.tuoshecx.server.cms.channel.domain.Channel;
 import com.tuoshecx.server.cms.common.utils.DaoUtils;
 import com.tuoshecx.server.cms.questionnaire.domain.QueInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +55,7 @@ public class QueInfoDao {
         final Date now = new Date();
         final String sql = "INSERT INTO que_info (id, title, content, state, organ_id,is_delete, create_user, update_user," +
                 "create_time,update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, q.getId(), q.getTitle(), q.getContent(), q.getState(), q.getOrganId(),q.getDelete() ,q.getCreateUser(),
+        jdbcTemplate.update(sql, q.getId(), q.getTitle(), q.getContent(), QueInfo.State.WAIT.name(), q.getOrganId(),q.getDelete() ,q.getCreateUser(),
                 q.getUpdateUser(), now, now);
     }
 
@@ -63,8 +65,8 @@ public class QueInfoDao {
      * @return
      */
     public boolean update(QueInfo q){
-        final String sql = "UPDATE que_info SET title = ?, content = ?, state = ? ,organ_id = ?,is_delete = ? ,update_user = ?,update_time = ? WHERE id = ?";
-        return jdbcTemplate.update(sql, q.getTitle(), q.getContent(), q.getState(), q.getOrganId(),q.getDelete(), q.getUpdateUser(),
+        final String sql = "UPDATE que_info SET title = ?, content = ?,organ_id = ? ,update_user = ?,update_time = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, q.getTitle(), q.getContent(), q.getOrganId(), q.getUpdateUser(),
                 DaoUtils.timestamp(new Date()), q.getId()) > 0;
     }
 
@@ -104,12 +106,12 @@ public class QueInfoDao {
      * @param organId
      * @return
      */
-    public List<QueInfo> findListByOrganId(String organId,String state ,int offset, int limit){
+    public List<QueInfo> findListByOrganId(String organId,String title,QueInfo.State state ,int offset, int limit){
         StringBuilder sql = new StringBuilder(100);
-        sql.append("SELECT * FROM que_info ");
-        buildWhere(sql,organId,state);
+        sql.append("SELECT * FROM que_info");
+        buildWhere(sql,organId,title,state);
         sql.append("ORDER BY create_time DESC LIMIT ? OFFSET ?");
-        Object[] params = DaoUtils.appendOffsetLimit(params(organId, state),offset,limit);
+        Object[] params = DaoUtils.appendOffsetLimit(params(organId,title,state),offset,limit);
         return jdbcTemplate.query(sql.toString(),params,mapper);
     }
 
@@ -119,37 +121,45 @@ public class QueInfoDao {
      * @param state
      * @return
      */
-    public Long count(String organId,String state){
+    public Long count(String organId,String title,QueInfo.State state){
         StringBuilder sql = new StringBuilder(100);
         sql.append("SELECT COUNT(id) FROM que_info ");
-        buildWhere(sql,organId,state);
-        Object[] params = params(organId, state);
+        buildWhere(sql,organId,title,state);
+        Object[] params = params(organId,title,state);
         return jdbcTemplate.queryForObject(sql.toString(),params,Long.class);
     }
 
-    private void buildWhere(StringBuilder sql,String organId,String state){
+    private void buildWhere(StringBuilder sql,String organId,String title,QueInfo.State state){
 
-        sql.append(" WHERE is_delete = false ");
+        sql.append(" WHERE is_delete = false");
 
         if (StringUtils.isNotBlank(organId)){
-            sql.append(" AND organ_id = ? ");
+            sql.append(" AND organ_id = ?");
         }
 
-        if (StringUtils.isNotBlank(state)){
-            sql.append("AND state = ?");
+        if (StringUtils.isNotBlank(title)){
+            sql.append(" AND title LIKE ? ");
+        }
+
+        if (state != null){
+            sql.append(" AND state = ?");
         }
     }
 
 
-    private Object[] params(String organId, String state){
-        List<Object>  params = new ArrayList<>(2);
+    private Object[] params(String organId,String title, QueInfo.State state){
+        List<Object>  params = new ArrayList<>(3);
 
-        if(StringUtils.isNotBlank(organId)){
+        if (StringUtils.isNotBlank(organId)){
             params.add(organId);
         }
 
-        if(StringUtils.isNotBlank(state)){
-            params.add(state);
+        if(StringUtils.isNotBlank(title)){
+            params.add(title);
+        }
+
+        if(state != null){
+            params.add(state.name());
         }
 
         return params.toArray();

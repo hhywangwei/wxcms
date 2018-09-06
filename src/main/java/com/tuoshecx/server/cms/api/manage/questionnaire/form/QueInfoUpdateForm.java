@@ -24,10 +24,6 @@ public class QueInfoUpdateForm {
     @Size(max = 1000)
     @ApiModelProperty(value = "问卷调查信息内容")
     private String content;
-    @NotBlank
-    @Size(max = 32)
-    @ApiModelProperty(value = "组织机构编号", required = true)
-    private String organId;
 
     public String getId() {
         return id;
@@ -53,15 +49,8 @@ public class QueInfoUpdateForm {
         this.content = content;
     }
 
-    public String getOrganId() {
-        return organId;
-    }
 
-    public void setOrganId(String organId) {
-        this.organId = organId;
-    }
-
-    public QueInfo toDomain(){
+    public QueInfo toDomain(String organId){
         QueInfo q= new QueInfo();
         q.setId(id);
         q.setTitle(title);
