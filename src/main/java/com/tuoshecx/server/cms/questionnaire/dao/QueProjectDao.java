@@ -78,17 +78,17 @@ public class QueProjectDao {
 
 
     /**
-     * 通过问卷调查信息id编号和项目类型查询问卷调查项目集合(分页查询)
+     * 通过问卷调查信息id编号,标题,项目类型查询问卷调查项目集合(分页查询)
      * 按题目类型升序(1:单选，2：多选，3：是非)和创建时间降序
      * @param queInfoId
      * @return
      */
-    public List<QueProject> findListByInfoIdAndType(String queInfoId,String type,int offset, int limit){
+    public List<QueProject> findListByInfoIdAndType(String queInfoId,String title,String type,int offset, int limit){
         StringBuilder sql = new StringBuilder(100);
-        sql.append("SELECT * FROM que_project ");
-        buildWhere(sql,queInfoId,type);
-        sql.append("ORDER BY type ASC,create_time DESC LIMIT ? OFFSET ?");
-        Object[] params = DaoUtils.appendOffsetLimit(params(queInfoId, type),offset,limit);
+        sql.append("SELECT * FROM que_project WHERE que_info_id = ? ");
+        buildWhere(sql,title,type);
+        sql.append(" ORDER BY type ASC,create_time DESC LIMIT ? OFFSET ?");
+        Object[] params = DaoUtils.appendOffsetLimit(params(queInfoId,title,type),offset,limit);
         return jdbcTemplate.query(sql.toString(),params,mapper);
     }
 
@@ -98,31 +98,33 @@ public class QueProjectDao {
      * @param type
      * @return
      */
-    public Long count(String queInfoId,String type){
+    public Long count(String queInfoId,String title,String type){
         StringBuilder sql = new StringBuilder(100);
-        sql.append("SELECT COUNT(id) FROM que_project ");
-        buildWhere(sql,queInfoId,type);
-        Object[] params = params(queInfoId, type);
+        sql.append("SELECT COUNT(id) FROM que_project WHERE que_info_id = ?");
+        buildWhere(sql,title,type);
+        Object[] params = params(queInfoId,title,type);
         return jdbcTemplate.queryForObject(sql.toString(),params,Long.class);
     }
 
-    private void buildWhere(StringBuilder sql,String queInfoId,String type){
+    private void buildWhere(StringBuilder sql,String title,String type){
 
-        if (StringUtils.isNotBlank(queInfoId)){
-            sql.append(" AND que_info_id = ? ");
+
+        if (StringUtils.isNotBlank(title)){
+            sql.append(" AND title LIKE ? ");
         }
 
         if (StringUtils.isNotBlank(type)){
-            sql.append("AND type = ?");
+            sql.append(" AND type = ?");
         }
     }
 
 
-    private Object[] params(String queInfoId, String type){
+    private Object[] params(String queInfoId,String title ,String type){
         List<Object>  params = new ArrayList<>(2);
+        params.add(queInfoId);
 
-        if(StringUtils.isNotBlank(queInfoId)){
-            params.add(queInfoId);
+        if(StringUtils.isNotBlank(title)){
+            params.add(title);
         }
 
         if(StringUtils.isNotBlank(type)){

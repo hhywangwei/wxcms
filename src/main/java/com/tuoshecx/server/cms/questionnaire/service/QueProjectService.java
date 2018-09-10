@@ -40,6 +40,8 @@ public class QueProjectService {
     public QueProject save(QueProject q,String managerId){
         Manager manager = managerService.get(managerId);
         q.setCreateUser(manager.getUsername());
+        q.setUpdateUser(manager.getUsername());
+        q.setId(IdGenerators.uuid());
         queProjectDao.insert(q);
         return queProjectDao.findOne(q.getId());
     }
@@ -53,7 +55,6 @@ public class QueProjectService {
     @Transactional(propagation = Propagation.REQUIRED)
     public QueProject udpate(QueProject q,String managerId){
         Manager manager = managerService.get(managerId);
-        q.setId(IdGenerators.uuid());
         q.setUpdateUser(manager.getUsername());
         queProjectDao.update(q);
         return queProjectDao.findOne(q.getId());
@@ -76,8 +77,8 @@ public class QueProjectService {
      * @param limit
      * @return
      */
-    public List<QueProject> queryProject(String queInfoId,String type,int offset, int limit){
-        return queProjectDao.findListByInfoIdAndType(queInfoId,type,offset,limit);
+    public List<QueProject> queryProject(String queInfoId,String title,String type,int offset, int limit){
+        return queProjectDao.findListByInfoIdAndType(queInfoId,title,type,offset,limit);
     }
 
     /**
@@ -86,8 +87,8 @@ public class QueProjectService {
      * @param type
      * @return
      */
-    public Long count(String queInfoId,String type){
-        return queProjectDao.count(queInfoId,type);
+    public Long count(String queInfoId,String title,String type){
+        return queProjectDao.count(queInfoId,title,type);
     }
 
 }
