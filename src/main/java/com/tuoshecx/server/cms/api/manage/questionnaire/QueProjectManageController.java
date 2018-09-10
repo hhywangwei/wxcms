@@ -95,9 +95,6 @@ public class QueProjectManageController {
                                           @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                           @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
         try{
-            System.out.println("*************"+queInfoId);
-            System.out.println("*************"+title);
-            System.out.println("*************"+type);
             List<QueProject> data = queProjectService.queryProject(queInfoId,title,type,page * rows, rows);
             return new ResultPageVo.Builder<>(page, rows, data)
                     .count(true, () -> queProjectService.count(queInfoId,title,type))
