@@ -83,8 +83,8 @@ public class QueAnswerDao {
      * @return
      */
     public boolean isAnswer(String userId,String queInfoId){
-        final String sql = "SELECT * FROM  que_answer  WHERE is_delete = false AND user_id = ? AND que_info_id = ?";
-        return jdbcTemplate.update(sql, userId,queInfoId) > 0;
+        final String sql = "SELECT COUNT(id) FROM  que_answer  WHERE is_delete = false AND user_id = ? AND que_info_id = ?";
+        return jdbcTemplate.queryForObject(sql,new Object[]{userId,queInfoId},Integer.class) > 0;
     }
 
 

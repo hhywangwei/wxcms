@@ -19,10 +19,6 @@ public class QueAnswerSaveForm {
     @Size(max = 32)
     @ApiModelProperty(value = "问卷调查表编号")
     private String queInfoId;
-    @NotBlank
-    @Size(max = 32)
-    @ApiModelProperty(value = "组织机构编号")
-    private String organId;
     @ApiModelProperty(value = "问卷答案答题时间")
     private String answerTime;
     @NotBlank
@@ -36,14 +32,6 @@ public class QueAnswerSaveForm {
 
     public void setQueInfoId(String queInfoId) {
         this.queInfoId = queInfoId;
-    }
-
-    public String getOrganId() {
-        return organId;
-    }
-
-    public void setOrganId(String organId) {
-        this.organId = organId;
     }
 
     public String getAnswerTime() {
@@ -62,13 +50,13 @@ public class QueAnswerSaveForm {
         this.answer = answer;
     }
 
-    public QueAnswer toDomain(String userId){
+    public QueAnswer toDomain(String organId){
         QueAnswer q = new QueAnswer();
-        q.setUserId(userId);
         q.setOrganId(organId);
         q.setQueInfoId(queInfoId);
         q.setAnswerTime(answerTime);
         q.setAnswer(answer);
+        q.setDelete(Boolean.FALSE);
         return q;
     }
 }

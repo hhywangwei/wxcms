@@ -34,7 +34,7 @@ public class ApiConfigure implements WebMvcConfigurer {
 
         registry.addInterceptor(new ClientAuthorizationInterceptor(tokenService))
                 .addPathPatterns("/client/**")
-                .excludePathPatterns("/client/login", "/client/wxLogin");
+                .excludePathPatterns("/client/login", "/client/wxLogin","/client/register");
 
         registry.addInterceptor(new ManageAuthorizationInterceptor(tokenService, authenticateService))
                 .addPathPatterns("/manage/**")

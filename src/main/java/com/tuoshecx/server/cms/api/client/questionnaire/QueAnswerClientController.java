@@ -3,11 +3,16 @@ package com.tuoshecx.server.cms.api.client.questionnaire;
 import com.tuoshecx.server.BaseException;
 import com.tuoshecx.server.cms.api.client.ClientCredentialContextUtils;
 import com.tuoshecx.server.cms.api.client.questionnaire.form.QueAnswerSaveForm;
+import com.tuoshecx.server.cms.api.manage.ManageCredentialContextUtils;
 import com.tuoshecx.server.cms.api.vo.ResultPageVo;
 import com.tuoshecx.server.cms.api.vo.ResultVo;
+import com.tuoshecx.server.cms.base.domain.Sys;
 import com.tuoshecx.server.cms.questionnaire.domain.QueAnswer;
 import com.tuoshecx.server.cms.questionnaire.domain.QueInfo;
+import com.tuoshecx.server.cms.questionnaire.domain.QueProject;
 import com.tuoshecx.server.cms.questionnaire.service.QueAnswerService;
+import com.tuoshecx.server.cms.questionnaire.service.QueInfoService;
+import com.tuoshecx.server.cms.questionnaire.service.QueProjectService;
 import com.tuoshecx.server.cms.security.Credential;
 import com.tuoshecx.server.cms.user.service.UserService;
 import io.swagger.annotations.Api;
@@ -36,6 +41,11 @@ public class QueAnswerClientController {
     private QueAnswerService queAnswerService;
 
     @Autowired
+    private QueInfoService queInfoService;
+
+    @Autowired QueProjectService queProjectService;
+
+    @Autowired
     private UserService userService;
 
     /**
@@ -50,12 +60,7 @@ public class QueAnswerClientController {
         if(result.hasErrors()){
             return ResultVo.error(result.getAllErrors());
         }
-
-        if (isAnswer(form.getQueInfoId(),getCredential().getId())){
-            throw new BaseException("该用户已经提交答案，不能重复提交");
-        }else{
-            return ResultVo.success(queAnswerService.save(form.toDomain(getCredential().getId())));
-        }
+        return ResultVo.success(queAnswerService.save(form.toDomain(getSiteId()),getCredential().getId()));
     }
 
     /**
@@ -71,6 +76,43 @@ public class QueAnswerClientController {
 
 
     /**
+     * 获取问卷调查信息
+     * @return
+     */
+    @GetMapping(value = "getQueInfo",produces = APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation("获取调查问卷信息")
+    public ResultVo<List<QueInfo>> getQueInfo(){
+        return ResultVo.success(queInfoService.queryByorganId(getSiteId(),QueInfo.State.OPEN));
+    }
+
+    /**
+     * 获取问卷调查项目
+     * @param queInfoId
+     * @param page
+     * @param rows
+     * @return
+     */
+    @GetMapping(value = "getQueProject",produces = APPLICATION_JSON_UTF8_VALUE)
+    @ApiOperation("获取调查问卷项目")
+    public ResultPageVo<QueProject> getQueProject(@RequestParam(required = true) @ApiParam("调查问卷信息编号id") String queInfoId,
+                                                  @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
+                                                  @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
+
+        if (queAnswerService.isAnswer(getCredential().getId(),queInfoId)){
+            throw new BaseException("您已经提交过答案了！");
+        }
+
+        try{
+                List<QueProject> data = queProjectService.queryProject(queInfoId,"","",page * rows, rows);
+                return new ResultPageVo.Builder<>(page, rows, data)
+                        .count(true, () -> queProjectService.count(queInfoId, "",""))
+                        .build();
+        }catch (Exception e){
+            throw new BaseException("获取调查问卷项目错误！");
+        }
+    }
+
+    /**
      * 分页查询调查问卷答案
      * @param userId
      * @param queInfoId
@@ -79,7 +121,7 @@ public class QueAnswerClientController {
      * @return
      */
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
-    @ApiOperation("查询调查问卷项目")
+    @ApiOperation("查询调查问卷答案")
     public ResultPageVo<QueAnswer> query(@RequestParam(required = false) @ApiParam("用户编号id") String userId,
                                          @RequestParam(required = false) @ApiParam("问卷调查信息编号id") String queInfoId,
                                          @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
@@ -95,8 +137,8 @@ public class QueAnswerClientController {
     }
 
 
-    private boolean isAnswer(String userId,String queInfoId){
-        return queAnswerService.isAnswer(userId,queInfoId);
+    private String getSiteId(){
+        return ClientCredentialContextUtils.currentSiteId();
     }
 
     private Credential getCredential(){

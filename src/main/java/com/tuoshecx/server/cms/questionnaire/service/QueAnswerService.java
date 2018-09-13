@@ -1,5 +1,6 @@
 package com.tuoshecx.server.cms.questionnaire.service;
 
+import com.tuoshecx.server.BaseException;
 import com.tuoshecx.server.cms.common.id.IdGenerators;
 import com.tuoshecx.server.cms.questionnaire.dao.QueAnswerDao;
 import com.tuoshecx.server.cms.questionnaire.dao.QueInfoDao;
@@ -9,6 +10,7 @@ import com.tuoshecx.server.cms.site.service.ManagerService;
 import com.tuoshecx.server.cms.user.domain.User;
 import com.tuoshecx.server.cms.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +32,6 @@ public class QueAnswerService {
     public QueAnswerService(QueAnswerDao queAnswerDao, UserService userService) {
         this.queAnswerDao = queAnswerDao;
         this.userService = userService;
-
     }
 
     /**
@@ -39,15 +40,23 @@ public class QueAnswerService {
      * @return
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public QueAnswer save(QueAnswer q){
+    public QueAnswer save(QueAnswer q,String userId){
 
-        User user = userService.get(q.getUserId());
-        q.setId(IdGenerators.uuid());
-        q.setUserId(q.getUserId());
-        q.setHeadImg(user.getHeadImg());
-        q.setNickName(user.getNickname());
-        queAnswerDao.insert(q);
-        return queAnswerDao.findOne(q.getId());
+        try {
+            if (isAnswer(userId,q.getQueInfoId())){
+                throw new BaseException("答案不能重复提交");
+            }else{
+                User user = userService.get(userId);
+                q.setId(IdGenerators.uuid());
+                q.setUserId(userId);
+                q.setHeadImg(user.getHeadImg());
+                q.setNickName(user.getNickname());
+                queAnswerDao.insert(q);
+                return queAnswerDao.findOne(q.getId());
+            }
+        }catch (DataAccessException e){
+            throw new BaseException("答案提交失败"+e.getMessage());
+        }
     }
 
     /**

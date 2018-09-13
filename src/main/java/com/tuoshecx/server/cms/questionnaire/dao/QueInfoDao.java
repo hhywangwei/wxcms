@@ -102,6 +102,18 @@ public class QueInfoDao {
     }
 
     /**
+     * 通过组织机构id编号和状态查询问卷调查信息
+     * @param organId
+     * @param state
+     * @return
+     */
+    public List<QueInfo> findByOrganId(String organId,QueInfo.State state){
+        final String sql = "SELECT * FROM que_info WHERE organ_id = ? AND state = ? AND is_delete = false ORDER BY create_time DESC";
+        return jdbcTemplate.query(sql,new Object[]{organId,state.name()},mapper);
+    }
+
+
+    /**
      * 通过组织机构id编号查询问卷调查信息集合(分页查询)
      * @param organId
      * @return
