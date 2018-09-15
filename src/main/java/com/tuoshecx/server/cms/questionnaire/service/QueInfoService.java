@@ -69,15 +69,6 @@ public class QueInfoService {
         return queInfoDao.delete(id);
     }
 
-    /**
-     * 通过组织机构id和状态获取调查信息
-     * @param organId
-     * @param state
-     * @return
-     */
-    public List<QueInfo> queryByorganId(String organId,QueInfo.State state){
-        return queInfoDao.findByOrganId(organId,state);
-    }
 
     /**
      * 分页查询问卷调查信息

@@ -81,8 +81,17 @@ public class QueAnswerClientController {
      */
     @GetMapping(value = "getQueInfo",produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("获取调查问卷信息")
-    public ResultVo<List<QueInfo>> getQueInfo(){
-        return ResultVo.success(queInfoService.queryByorganId(getSiteId(),QueInfo.State.OPEN));
+    public ResultPageVo<QueInfo> getQueInfo(@RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
+                                            @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
+
+        try{
+            List<QueInfo> data = queInfoService.queryInfo(getSiteId(),"",QueInfo.State.OPEN,page * rows, rows);
+            return new ResultPageVo.Builder<>(page, rows, data)
+                    .count(true, () -> queInfoService.count(getSiteId(), "",QueInfo.State.OPEN))
+                    .build();
+        }catch (Exception e){
+            throw new BaseException("获取调查问卷信息错误！");
+        }
     }
 
     /**
