@@ -1,12 +1,18 @@
 package com.tuoshecx.server.cms.api.client.questionnaire.form;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.tuoshecx.server.BaseException;
+import com.tuoshecx.server.cms.base.domain.Sys;
 import com.tuoshecx.server.cms.questionnaire.domain.QueAnswer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import springfox.documentation.spring.web.json.Json;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Map;
 
 /**
  * 新增调查问卷答案
@@ -21,10 +27,10 @@ public class QueAnswerSaveForm {
     private String queInfoId;
     @ApiModelProperty(value = "问卷答案答题时间")
     private String answerTime;
-    @NotBlank
+    @NotNull
     @Size(max = 1000)
     @ApiModelProperty(value = "问卷答案")
-    private String answer;
+    private Map<String,String> answer;
 
     public String getQueInfoId() {
         return queInfoId;
@@ -42,11 +48,11 @@ public class QueAnswerSaveForm {
         this.answerTime = answerTime;
     }
 
-    public String getAnswer() {
+    public Map<String, String> getAnswer() {
         return answer;
     }
 
-    public void setAnswer(String answer) {
+    public void setAnswer(Map<String, String> answer) {
         this.answer = answer;
     }
 
@@ -55,7 +61,13 @@ public class QueAnswerSaveForm {
         q.setOrganId(organId);
         q.setQueInfoId(queInfoId);
         q.setAnswerTime(answerTime);
-        q.setAnswer(answer);
+        try {
+            ObjectMapper map = new ObjectMapper();
+            String answerJson = map.writeValueAsString(answer);
+            q.setAnswer(answerJson);
+        }catch (Exception e){
+            new BaseException("答案类型转换失败");
+        }
         q.setDelete(Boolean.FALSE);
         return q;
     }
