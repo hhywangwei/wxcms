@@ -124,7 +124,7 @@ public class QueInfoManageController {
      */
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询调查问卷项目")
-    public ResultPageVo<QueInfo> query(@RequestParam(required = false) @ApiParam("组织机构编号") String title,
+    public ResultPageVo<QueInfo> query(@RequestParam(required = false) @ApiParam("问卷调查新标题") String title,
                                        @RequestParam(required = false) @ApiParam("问卷调查信息状态") String state,
                                        @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                        @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
