@@ -82,13 +82,13 @@ public class QueAnswerService {
     /**
      * 通过userId和问卷信息id分页查询问卷答题
      * @param userId
-     * @param queInfoId
+     * @param organId
      * @param offset
      * @param limit
      * @return
      */
-    public List<QueAnswer> queryAnswer(String userId,String queInfoId,int offset, int limit){
-        return queAnswerDao.findList(userId, queInfoId, offset, limit);
+    public List<QueAnswer> queryAnswer(String userId,String organId,String queInfoId,int offset, int limit){
+        return queAnswerDao.findList(userId, organId,queInfoId ,offset, limit);
     }
 
     /**
@@ -104,11 +104,11 @@ public class QueAnswerService {
     /**
      * 通过userId和问卷信息id统计答题条数
      * @param userId
-     * @param queInfoId
+     * @param organId
      * @return
      */
-    public Long count(String userId,String queInfoId){
-        return queAnswerDao.count(userId, queInfoId);
+    public Long count(String userId,String organId,String queInfoId){
+        return queAnswerDao.count(userId, organId,queInfoId);
     }
 
 }

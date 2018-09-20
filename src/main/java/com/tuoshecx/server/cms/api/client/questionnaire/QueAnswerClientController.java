@@ -123,25 +123,21 @@ public class QueAnswerClientController {
 
     /**
      * 分页查询调查问卷答案
-     * @param userId
-     * @param queInfoId
      * @param page
      * @param rows
      * @return
      */
     @GetMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ApiOperation("查询调查问卷答案")
-    public ResultPageVo<QueAnswer> query(@RequestParam(required = false) @ApiParam("用户编号id") String userId,
-                                         @RequestParam(required = false) @ApiParam("问卷调查信息编号id") String queInfoId,
-                                         @RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
+    public ResultPageVo<QueAnswer> query(@RequestParam(defaultValue = "0") @ApiParam(value = "查询页数") int page,
                                          @RequestParam(defaultValue = "15") @ApiParam(value = "查询每页记录数") int rows){
         try{
-            List<QueAnswer> data = queAnswerService.queryAnswer(userId,queInfoId,page * rows, rows);
+            List<QueAnswer> data = queAnswerService.queryAnswer(getCredential().getId(),getSiteId(),"",page * rows, rows);
             return new ResultPageVo.Builder<>(page, rows, data)
-                    .count(true, () -> queAnswerService.count(userId, queInfoId))
+                    .count(true, () -> queAnswerService.count(getCredential().getId(), getSiteId(),""))
                     .build();
         }catch (Exception e){
-            throw new BaseException("查询调查问卷答案错误");
+            throw new BaseException("查询调查问卷答案错误"+e.getMessage());
         }
     }
 

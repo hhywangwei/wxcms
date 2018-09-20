@@ -3,6 +3,7 @@ package com.tuoshecx.server.cms.questionnaire.dao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuoshecx.server.BaseException;
 import com.tuoshecx.server.cms.article.domain.Article;
+import com.tuoshecx.server.cms.base.domain.Sys;
 import com.tuoshecx.server.cms.common.utils.DaoUtils;
 import com.tuoshecx.server.cms.questionnaire.domain.QueAnswer;
 import org.apache.catalina.LifecycleState;
@@ -93,55 +94,65 @@ public class QueAnswerDao {
     /**
      * 通过userId或问卷调查信息id查询问卷用户答案
      * @param userId
-     * @param queInfoId
+     * @param organId
      * @return
      */
-    public List<QueAnswer> findList(String userId,String queInfoId,int offset, int limit){
+    public List<QueAnswer> findList(String userId,String organId,String queInfoId,int offset, int limit){
         StringBuilder sql = new StringBuilder(100);
         sql.append("SELECT * FROM que_answer ");
-        buildWhere(sql,userId,queInfoId);
-        sql.append("ORDER BY create_time DESC");
-        Object[] params = DaoUtils.appendOffsetLimit(params(userId, queInfoId),offset,limit);
+        buildWhere(sql,userId,organId,queInfoId);
+        sql.append("ORDER BY create_time DESC LIMIT ? OFFSET ?");
+        Object[] params = DaoUtils.appendOffsetLimit(params(userId, organId,queInfoId),offset,limit);
         return jdbcTemplate.query(sql.toString(), params,mapper);
     }
 
     /**
      * 通过userId和问卷调查信息编号查询条数
      * @param userId
-     * @param queInfoId
+     * @param organId
      * @return
      */
-    public Long count(String userId,String queInfoId){
+    public Long count(String userId,String organId,String queInfoId){
         StringBuilder sql = new StringBuilder(100);
         sql.append("SELECT COUNT(id) FROM que_answer ");
-        buildWhere(sql,userId,queInfoId);
-        Object[] params = params(userId, queInfoId);
+        buildWhere(sql,userId,organId,queInfoId);
+        Object[] params = params(userId, organId,queInfoId);
         return jdbcTemplate.queryForObject(sql.toString(),params,Long.class);
     }
 
-    private void buildWhere(StringBuilder sql,String userId,String queInfoId){
+    private void buildWhere(StringBuilder sql,String userId,String organId,String queInfoId){
 
-        sql.append(" WHERE is_delete = false ");
+        sql.append(" WHERE is_delete = false");
+
         if (StringUtils.isNotBlank(userId)){
             sql.append(" AND user_id = ? ");
         }
 
+        if (StringUtils.isNotBlank(organId)){
+            sql.append(" AND organ_id = ? ");
+        }
+
         if (StringUtils.isNotBlank(queInfoId)){
-            sql.append("AND que_info_id = ?");
+            sql.append(" AND que_info_id = ? ");
         }
     }
 
 
-    private Object[] params(String userId, String queInfoId){
-        List<Object>  params = new ArrayList<>(2);
+    private Object[] params(String userId, String organId,String queInfoId){
+        List<Object>  params = new ArrayList<>(3);
 
         if(StringUtils.isNotBlank(userId)){
             params.add(userId);
         }
 
+        if(StringUtils.isNotBlank(organId)){
+            params.add(organId);
+        }
+
         if(StringUtils.isNotBlank(queInfoId)){
             params.add(queInfoId);
         }
+
 
         return params.toArray();
     }
